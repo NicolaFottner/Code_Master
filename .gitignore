@@ -1,0 +1,9 @@
+# ignore dir and files:
+Evals/
+
+hinton_unused
+
+data/old
+
+plots_results
+

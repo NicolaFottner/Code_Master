@@ -1,0 +1,7 @@
+# ignore dir and files:
+hinton_unused
+
+data/old
+
+plots_results
+
