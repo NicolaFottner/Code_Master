@@ -30,26 +30,20 @@
 % ... for the simulation with a third rbm layer, see folder "/three
 
 configurations;
-%configurations_list = [];
 
-for k = 1:3
-    elem.layer2=1300;
-    elem.layer3= 0 * (k == 2) + 50 * (k == 2) + 100* (k == 3);
-    for z = 1:2
-        for u = 1:2
-            elem.dropout= (z == 1);
-            elem.minibatchsize= 6 * (u == 1) + 12 * (u == 2);
-            configurations_list = [configurations_list;elem];
-        end 
-    end 
-end
+% configurations_list = [];
+% elem.layer2=200;
+% elem.layer3= 0;
+% elem.dropout= 1;
+% elem.minibatchsize= 60;
+% configurations_list = [configurations_list;elem];
 
 % and do all again with dropout 0.4
 
 for z=1:size(configurations_list,1)
-    for ii=1:5
+    for ii=1:10
         % initialize hyperparameters
-        maxepoch=5002; % 
+        maxepoch=500; % 
         geo_shape_class = 6; %problem of 6 class/shapes
         numhid2 = configurations_list(z).layer2;
         numhid3 = configurations_list(z).layer3;
@@ -57,21 +51,12 @@ for z=1:size(configurations_list,1)
         g_batchsize = configurations_list(z).minibatchsize;
         numhid = 1000;
         if dropout
-            if numhid2 == 1300
-                p_layer1 = 0.5;
-                a1=1;a2=a1; %see fast dropout 2013 paper: a = (1-p) / p
-                p_layer2 = NaN;
-                if numhid3 ~= 0
-                    p_layer2 = 0.5;a3=a1;
-                end
-            else
-                p_layer1 = 0.4;
-                a1=1.5;a2=a1; %see fast dropout 2013 paper: a = (1-p) / p
-                p_layer2 = NaN;
-                if numhid3 ~= 0
-                    p_layer2 = 0.4;a3=a1;
-                end
-            end
+            p_layer1 = 0.5;
+            a1=1;a2=a1; %see fast dropout 2013 paper: a = (1-p) / p
+            p_layer2 = NaN;
+            if numhid3 ~= 0
+                p_layer2 = 0.5;a3=a1;
+            end 
         else
             p_layer1 = NaN;
             p_layer2 = NaN;
@@ -95,7 +80,7 @@ for z=1:size(configurations_list,1)
         numcases = DN.batchsize;
               
         fprintf(1,'Importing data: Geometric Shapes \n');
-        import_6shapes;
+        import_shapes;
         fprintf(1,'Start Training. \n'); 
         fprintf(1,'Number Epochs: %3i \n', maxepoch);
         

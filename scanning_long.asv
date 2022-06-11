@@ -1,0 +1,53 @@
+
+% scan files
+addpath("Evals/")
+sourceDir = 'Evals/'; % already in 64x64 format
+fprintf(1,'Importing Data from runned simulations \n');
+loadData = dir([sourceDir '*.mat']);
+
+load([loadData(1).name],"properties");
+d = properties.dropout;
+m = properties.minibatchsize;
+h2 = properties.numhid2;
+h3=properties.numhid3;
+sim_list={};
+sim_list(1,1) = cellstr(strcat(sourceDir,loadData(1).name));
+j = 1;
+z  = 2; 
+for i=2:size(loadData,1)
+    load([loadData(i).name],"properties");
+    if properties.dropout == d &&  m == properties.minibatchsize &&  h2 == properties.numhid2 && h3 == properties.numhid3
+        sim_list(j,z) = cellstr(strcat(sourceDir,loadData(i).name));
+        z = z+1;
+    else 
+        d = properties.dropout;
+        m = properties.minibatchsize;
+        h2 = properties.numhid2;
+        h3=properties.numhid3;
+        j = j+1;
+        z =1;
+        sim_list(j,z) = cellstr(strcat(sourceDir,loadData(i).name));
+        z=z+1;
+    end
+end
+
+scan_evals(sim_list(1,:)');
+
+e1=sim_list(1,:);
+e2=sim_list(2,:);
+e3=sim_list(3,:);
+length(sourceDir{1,1})
+
+
+% for i=1:size(sourceDir,1)
+%     scan_evals(sourceDir(i,:)');
+% end
+
+
+
+
+
+
+
+
+

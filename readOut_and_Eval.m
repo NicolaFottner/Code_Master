@@ -11,7 +11,6 @@
 
 dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date without "-YYYY"
 
-
 %% Create train and test set for perceptron:
 g_batchdata_f = [];g_batchtargets_f= [];
 for i=1:size(g_batchtargets,3)  % I prefer to use a loop over "reshape" for now
@@ -130,7 +129,16 @@ else
     reco_error.layer3 = full_rec_err_3;
 end
 % save data into single file:
-filename = "Evals/" + clean_date + "_" + int2str(c(4)) + "h" + int2str(c(5))+"m_" + "H2"+ int2str(numhid2)+ "_H3"+ int2str(numhid3);
+% /clock string to better scan the eval files
+hour_str = int2str(c(4));
+min_str = int2str(c(5));
+if length(hour_str) == 1
+    hour_str = ['0' hour_str(1)];
+end
+if length(min_str) == 1
+    min_str = ['0' min_str(1)];
+end
+filename = "Evals/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "H2"+ int2str(numhid2)+ "_H3"+ int2str(numhid3);
 save(filename,'properties','Classifier','Classifier_Details','Id_BasedOnGeoS','histograms','Overfitting','reco_error');
 
 %% Plot receptive fields

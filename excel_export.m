@@ -11,7 +11,7 @@ strg = "Test Error";
 legend_strg = [param;strg;"Epoch2";"Epoch3";param;strg;"Epoch2";"Epoch3"];
 C(:,end+1) = cellstr(legend_strg);
 
-for i=1:3
+for i=1:6
     sourceDir = [sourceDir int2str(i) '/'];
     loadData = dir([sourceDir '*.mat']);
     te_err=[];
@@ -65,7 +65,7 @@ legend_strg = [param;"1/Cross";"2/Elipse";"3/Hexagon";"4/Rectangle";"5/Square";"
     "----";"----";param;"1/Cross";"2/Elipse";"3/Hexagon";"4/Rectangle";"5/Square";"6/Triangle";];
 C(:,end+1) = cellstr(legend_strg);
 
-for i=1:3
+for i=1:6
     sourceDir = [sourceDir int2str(i) '/'];
     loadData = dir([sourceDir '*.mat']);
     te_err=[];
@@ -111,7 +111,7 @@ param = "Parameters";
 legend_strg = [param;"Geoshape";"Letters";"Ps-Letters";param;"Geoshape";"Letters";"Ps-Letters"];
 C(:,end+1) = cellstr(legend_strg);
 
-for i=1:3
+for i=1:6
     sourceDir = [sourceDir int2str(i) '/'];
     loadData = dir([sourceDir '*.mat']);
     te_err=[];
@@ -163,7 +163,7 @@ legend_strg = [param;"Target";"(p)/A" ; "(p)/H"; "(p)/M";"(p)/U"; "(p)/T";"(p)/X
 "-----";"-----";param;"Target";"(p)/A" ; "(p)/H"; "(p)/M";"(p)/U"; "(p)/T";"(p)/X";"-----";"-----"];
 C(:,end+1) = cellstr(legend_strg);
 
-for i=1:3
+for i=1:6
     sourceDir = [sourceDir int2str(i) '/'];
     loadData = dir([sourceDir '*.mat']);
     te_err=[]; % for letters
@@ -239,7 +239,7 @@ end
 Id_BasedonS_Details =C;
 
 %% writeOut
-filename = "excel_files/01J/sim5.xlsx";
+filename = "excel_files/08J_sim5.xlsx";
 writecell(Test_Error,filename,'Sheet','Test_Error');
 writecell(Classifier_details,filename,'Sheet','Classifier_details');
 writecell(Id_BasedOnShape,filename,'Sheet','Id_BasedOnShape');

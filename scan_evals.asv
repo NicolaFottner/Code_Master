@@ -17,6 +17,7 @@ sourceDir = list_sourceDir;
 % end
 % sourceDir = s;
 
+ee = sourceDir(2);
 
 %%%% Classifier
 te_acc = [];
