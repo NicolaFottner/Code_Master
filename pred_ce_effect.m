@@ -9,19 +9,20 @@ addpath("testolin/")
 addpath("data_plotting/")
 addpath("data")
 %load data
-load data/CE_JointData.mat data target_l target_s
-%load rbm data:
+load openCV_CE_data.mat  %data target_l target_s
+
+%load rbm data
 load t_model DN
 vishid_1 = DN.L{1,1}.vishid;
 hidbiases_1 = DN.L{1,1}.hidbiases;
 clear DN
-load g_rbm_2.mat vishid_2 hidbiases_2
+load rbm2_16J11h39.mat vishid_2 hidbiases_2
 
 %%% Create variables for Table -- visualization purpose
 % table with accuracy values for shape
-Targets = ["Letter" ; "PseudoLetter"; "All"];
-Congruent_Case = zeros(3,1); 
-Incongruent_Case =  zeros(3,1); 
+Targets = ["Cong_Letter" ; "Cong_Ps-Letter"; "Inc_Letter";"Inc_Ps-Letter"];
+letter_decision = zeros(3,1); 
+ps-letter_decision =  zeros(3,1); 
 Combined = zeros(3,1); 
 % table with CE values for shape
 CE = zeros(3,1); 
@@ -33,62 +34,34 @@ Incongruent_Case_l =  zeros(3,1);
 Combined_l = zeros(3,1); 
 
 
+%% letter congruent
 % pass data throught RBMs:
-hid_out_1_d = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,size(data,1),1)));
+hid_out_1_d = 1./(1 + exp(-cong_l_d*vishid_1 - repmat(hidbiases_1,size(cong_l_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
-
 % add biases
 ONES = ones(size(rbms_pass, 1), 1);  
 rbms_pass = [rbms_pass ONES];
-
-%create sets for congruent and incongruent cases
-cong_cases = zeros(size(rbms_pass,1)/2,size(rbms_pass,2));
-incong_cases = zeros(size(rbms_pass,1)/2,size(rbms_pass,2));
-
-cong_ts = zeros(size(rbms_pass,1)/2,size(target_s,2));
-cong_tl= zeros(size(rbms_pass,1)/2,size(target_s,2));
-incong_ts= zeros(size(rbms_pass,1)/2,size(target_s,2));
-incong_tl= zeros(size(rbms_pass,1)/2,size(target_s,2));
-
-j1 = 1;j2 = 1;
-for i=1:size(rbms_pass,1)
-    idx_l = find(target_l(i,:));
-    idx_s = find(target_s(i,:));
-    if idx_l == 1 && idx_s == 6 || idx_l == 2 && idx_s == 4 || idx_l == 3 && idx_s == 5 || ...
-            idx_l == 4 && idx_s == 1 || idx_l == 5 && idx_s == 2 || idx_l == 6 && idx_s == 3 || ...
-                idx_l == 7 && idx_s == 6 || idx_l == 8 && idx_s == 4 || idx_l == 9 && idx_s == 5 || ...
-                    idx_l == 10 && idx_s == 1 || idx_l == 11 && idx_s == 2 || idx_l == 12 && idx_s == 3 
-        cong_cases(j1,:) = rbms_pass(i,:);
-        cong_ts(j1,:) = target_s(i,:);
-        cong_tl(j1,:) = target_l(i,:);
-        j1 = j1 +1;
-    else
-        incong_cases(j2,:) = rbms_pass(i,:);
-        incong_ts(j2,:) = target_s(i,:);
-        incong_tl(j2,:) = target_l(i,:);
-        j2 = j2 +1 ; 
-    end
-end
-
-% Compute general prediction:
+% Compute prediction:
 pred = rbms_pass*weights;
 % [a,b] =max(pred,[],2); --- % a has also  values  > 1 ---- 
 % i.e. a is unnormalized
 [~, max_act] = max(pred,[],2); % max_act are indices of dim2 in pred of the highest value
-[r1,~] = find(target_l'); % find which columns (rows in transpose) are 1
-[r2,~] = find(target_s'); % find which columns (rows in transpose) are 1
-
+[r1,~] = find(cong_l_t'); % find which columns (rows in transpose) are 1
+[r2,~] = find(cong_l_s'); % find which columns (rows in transpose) are 1
 acc_l = (max_act == r1);
 acc_s = (max_act == r2);
 accuracy_l = mean(acc_l);
 accuracy_s = mean(acc_s);
 
 fprintf(1,'\n Prediction / Assesment of the Congruency Effect\n');
-fprintf(1,'\n ------- All targets ------- \n');
-fprintf(1,'\n All cases -- on geo-shape \n Accuracy = %d ',accuracy_s);
+fprintf(1,'\n ------- Case : Congruent ------- \n');
+fprintf(1,'\n ------- Target : Letter ------- \n');
 fprintf(1,'\n If Decision based on letter? \n Accuracy = %d\n ',accuracy_l);
+fprintf(1,'\n If Decision based on shape? \n Accuracy = %d\n ',accuracy_s);
+
 Combined(3) = accuracy_s;
 Combined_l(3) = accuracy_l;
+
 % Compute incong and cong predictions:
 inc_pred = incong_cases*weights;
 cong_pred = cong_cases*weights;
@@ -295,7 +268,7 @@ fprintf(1,'\n If decision based on pseudoletter? \n Accuracy= %d\n ',accuracy_l)
 diff_ce = accuracy_s_c*100 - accuracy_s * 100;
 fprintf(1,'\n\n Congruency effect for pseudoletters of magnitude: %d\n ',diff_ce);
 CE(2) = diff_ce;
-CE_l(2) = accuracy_l_c*100 - accuracy_l;
+CE_l(2) = accuracy_l_c*100 - accuracy_l; % @todo *100
 Accuracy_Measurements_shape = table(Targets,Congruent_Case,Incongruent_Case,Combined);
 Accuracy_Measurements_letter = table(Targets,Congruent_Case_l,Incongruent_Case_l,Combined_l);
 CE_Measurements = table(Targets,CE);

@@ -3,7 +3,7 @@ addpath("Evals/mean/")
 sourceDir = 'Evals/mean/'; % already in 64x64 format
 loadData = dir([sourceDir '*.mat']);
 
-mean_list = strings(11,6);
+mean_list = strings(9,6);
 for i=1:size(loadData,1)
     load([loadData(i).name],"mean_properties");
     if i == 1
@@ -26,9 +26,6 @@ for i=1:size(loadData,1)
         end
     end
 end
-
-
-
 
 %% test error
 C  = {};
@@ -344,8 +341,8 @@ writecell(Id_BasedonS_Details,filename,'Sheet','Id_BasedonS_Details');
 %% GET THE RELEVANT DATA
 
 % CASE: Id Based on Shape --- Details
-letter_case = zeros(66,6);
-pletter_case = zeros(66,6);
+letter_case = zeros(54,6);
+pletter_case = zeros(54,6);
 
 for i=1:size(mean_list,1)
 
@@ -387,7 +384,7 @@ for i=1:size(letter_case,1)
     end
 end
 for i=1:size(b_file_names)
-    fprintf("Best Model: " + b_file_names(i));
+    fprintf("\nBest Model: " + b_file_names(i));
 end
 
 

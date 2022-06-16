@@ -31,17 +31,25 @@
 
 configurations;
 
-% configurations_list = [];
-% elem.layer2=200;
-% elem.layer3= 0;
-% elem.dropout= 1;
-% elem.minibatchsize= 60;
-% configurations_list = [configurations_list;elem];
+configurations_list = [];
+elem.layer2=300;
+elem.layer3= 0;
+elem.dropout= 0;
+elem.minibatchsize= 12;
+configurations_list = [configurations_list;elem];
+
+elem.layer2=350;
+elem.layer3= 0;
+elem.dropout= 0;
+elem.minibatchsize= 24;
+configurations_list = [configurations_list;elem];
 
 % and do all again with dropout 0.4
 
+% from 12J: missing z=34 onwards
+
 for z=1:size(configurations_list,1)
-    for ii=1:10
+    for ii=1:5    %% --- 10
         % initialize hyperparameters
         maxepoch=500; % 
         geo_shape_class = 6; %problem of 6 class/shapes

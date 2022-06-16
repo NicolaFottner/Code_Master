@@ -1,7 +1,10 @@
 % 1. import data (geometrical shapes) from local directory
 % 2. create "mini-batches"
 % equivalent to the concatenation of the methods "converter.m" and "make_batches.m" from the original code
+
 load openCV_final_Shapes.mat data;
+%load openCV_Shapes_xtra_balanced.mat data;
+
 shapedata = zeros(size(data));
 for i=1:size(data,1)
     shapedata(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);

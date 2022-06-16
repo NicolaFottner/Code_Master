@@ -3,7 +3,10 @@ addpath("Evals/mean/")
 sourceDir = 'Evals/mean/'; % already in 64x64 format
 loadData = dir([sourceDir '*.mat']);
 
-mean_list = strings(11,6);
+% strings(x,y), with x: number of architectures
+%                    y: number of cases within a architecture
+mean_list = strings(2,1);
+
 for i=1:size(loadData,1)
     load([loadData(i).name],"mean_properties");
     if i == 1
@@ -26,6 +29,9 @@ for i=1:size(loadData,1)
         end
     end
 end
+
+%
+mean_list(1,:) = [];
 
 %% test error
 C  = {};
@@ -329,7 +335,7 @@ Id_BasedonS_Details =C;
 
 
 %% writeOut
-filename = "excel_files/09J_sim5.xlsx";
+filename = "excel_files/12J_sim5.xlsx";
 writecell(Test_Error,filename,'Sheet','Test_Error');
 writecell(Classifier_details,filename,'Sheet','Classifier_details');
 writecell(Id_BasedOnShape,filename,'Sheet','Id_BasedOnShape');
@@ -341,8 +347,8 @@ writecell(Id_BasedonS_Details,filename,'Sheet','Id_BasedonS_Details');
 %% GET THE RELEVANT DATA
 
 % CASE: Id Based on Shape --- Details
-letter_case = zeros(66,6);
-pletter_case = zeros(66,6);
+letter_case = zeros(54,6);
+pletter_case = zeros(54,6);
 
 for i=1:size(mean_list,1)
 

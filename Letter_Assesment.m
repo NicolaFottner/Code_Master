@@ -9,15 +9,29 @@ else
     strh3 = "three/";
 end
 % load dataset for the 6 shapes
-load openCV_6SHAPE.mat data target_l %target_l is just their s-target
-s_data = data; s_target = target_l;
-clear data; clear target_l
+
+%load openCV_final_Shapes.mat data target_s %target_l is just their s-target
+load openCV_Shapes_xtra.mat data target_s
+
+s_data = zeros(size(data));
+for i=1:size(data,1)
+    s_data(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
+end
+s_target = double(target_s);
+clear data; clear target_s
 
 % load dataset for the 6 letters
-load openCV_LetterData.mat data target_s target_l;
-target_s= double(target_s);
+load openCV_final_letters.mat data target_s target_l;
+%load openCV_letters_xtra.mat data target_s target_l;
 
-%% Preparation-Computations (only letters)
+
+d_double = zeros(size(data));
+for i=1:size(data,1)
+    d_double(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
+end
+clear data; data = d_double;
+target_s= double(target_s);
+%% Prep Computation
 weights = W2;
 
 % pass shapedata throught RBMs:
@@ -69,11 +83,9 @@ fprintf(1,'\n Accuracy = %d ',accuracy_l);
 
 %%%% Extended ASSESMENT
 %% Letters
-%%%%%% LETTERS %%%%%%%% (assement of identification based on their "congruent"shape)
-% divide per letter
+%(assement of identification based on their "congruent"shape)
 max_a = [];max_h = [];max_m = [];max_u = [];max_t = [];max_x = [];
 pred_a = [];pred_h = [];pred_m = [];pred_u = [];pred_t = [];pred_x = [];
-
 for i=1:size(max_act_l,1)
     idx_l = find(target_l(i,:));
     if idx_l == 1 
@@ -97,68 +109,63 @@ for i=1:size(max_act_l,1)
     end
 end
 
-% highest values stored in max_act_l
-f = figure;
-% for letter A:
-subplot(2,3,1);
 mode_A = mode(max_a);
 std_A = std(max_a);
 prD_A =  mean(pred_a,1);
-bar(prD_A);
-xlabel('Letter A');
-
-% for letter H:
-subplot(2,3,2);
 mode_H = mode(max_h);
 std_H = std(max_h);
 prD_H =  mean(pred_h,1);
-bar(prD_H);
-xlabel('Letter H');
-
-% for letter M:
-subplot(2,3,3);
 mode_M = mode(max_m);
 std_M = std(max_m);
 prD_M =  mean(pred_m,1);
-bar(prD_M);
-xlabel('Letter M');
-
-
-% for letter U:
-subplot(2,3,4);
 mode_U = mode(max_u);
 std_U = std(max_u);
 prD_U =  mean(pred_u,1);
-bar(prD_U);
-xlabel('Letter U');
-
-
-% for letter T:
-subplot(2,3,5);
 mode_T = mode(max_t);
 std_T = std(max_t);
 prD_T =  mean(pred_t,1);
-bar(prD_T);
-xlabel('Letter T');
-
-% for letter X:
-subplot(2,3,6);
 mode_X = mode(max_x);
 std_X = std(max_x);
 prD_X =  mean(pred_x,1);
-bar(prD_X);
-xlabel('Letter X');
-sgtitle("Day: " + clean_date + ", Models' Prediction/Prob Distr: ");
 
-file_namee = "plots_results/Id_basedOnGeoS/" + strh3+ clean_date + "_" + int2str(c(4)) + "h" + int2str(c(5))+"m_"+ "L_prD"+ ".pdf";
-exportgraphics(f,file_namee);
+% % highest values stored in max_act_l
+% f = figure;
+% % for letter A:
+% subplot(2,3,1);
+% bar(prD_A);
+% xlabel('Letter A');
+% 
+% % for letter H:
+% subplot(2,3,2);
+% bar(prD_H);
+% xlabel('Letter H');
+% 
+% % for letter M:
+% subplot(2,3,3);
+% bar(prD_M);
+% xlabel('Letter M');
+% % for letter U:
+% subplot(2,3,4);
+% bar(prD_U);
+% xlabel('Letter U');
+% % for letter T:
+% subplot(2,3,5);
+% bar(prD_T);
+% xlabel('Letter T');
+% % for letter X:
+% subplot(2,3,6);
+% bar(prD_X);
+% xlabel('Letter X');
+% sgtitle("Day: " + clean_date + ", Models' Prediction/Prob Distr: ");
+% file_namee = "plots_results/Id_basedOnGeoS6/" + clean_date + "_" + int2str(c(4)) + "h" + int2str(c(5))+"m_"+ "L_PrD"+ ".pdf";
+% exportgraphics(f,file_namee)
+
 r1 = ones(size(rbms_pass_l,1)/6,1);r2 = ones(size(rbms_pass_l,1)/6,1)*2;r3 = ones(size(rbms_pass_l,1)/6,1)*3;
 r4 = ones(size(rbms_pass_l,1)/6,1)*4;r5 = ones(size(rbms_pass_l,1)/6,1)*5;r6 = ones(size(rbms_pass_l,1)/6,1)*6;
 acc1 = (max_a == r6);acc2 = (max_h == r4);acc3 = (max_m == r5);
 acc4 = (max_u == r2);acc5 = (max_t == r1);acc6 = (max_x == r3);
 acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
 acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
-
 % create Table for Letters:
 Targets = ["A" ; "H"; "M"; "U"; "T"; "X"];
 Mode = [mode_A;mode_H;mode_M;mode_U;mode_T;mode_X];
@@ -166,13 +173,20 @@ Std = [std_A;std_H;std_M;std_U;std_T;std_X];
 Acc = [acc1;acc2;acc3;acc4;acc5;acc6];
 table_letter = table(Targets,Mode,Std,Acc);
 letter_pdr = [prD_A;prD_H;prD_M;prD_U;prD_T;prD_X];
+
 clear data;
 
 %% PSEUDO-LETTERS
 % import data   
-load openCV_PseudoLetterData.mat data target_pl target_ps
-target_s = target_ps;
-target_l = target_pl;
+load openCV_final_pletters.mat data target_l target_s
+%load openCV_pletters_xtra.mat data target_l target_s
+
+d_double = zeros(size(data));
+for i=1:size(data,1)
+    d_double(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
+end
+clear data; data = d_double;
+target_ps = double(target_s);
 % pass letterdata throught RBMs:
 hid_out_1_pl = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,size(data,1),1)));
 rbms_pass_pl = 1./(1 + exp(-hid_out_1_pl*vishid_2 - repmat(hidbiases_2,size(hid_out_1_pl,1),1)));
@@ -188,11 +202,11 @@ pred3 = rbms_pass_pl*weights;
 softmax_pred3 = softmax(dlarray(pred3','CB'));
 pred3 = extractdata(softmax_pred3)';
 [~, max_act_pl] = max(pred3,[],2);
-[r3,~] = find(target_s');
+[r3,~] = find(target_ps');
 acc_pl = (max_act_pl == r3);
 accuracy_pl = mean(acc_pl);
 %loss?
-l_loss = extractdata(crossentropy(softmax_pred3,target_s'));
+l_loss = extractdata(crossentropy(softmax_pred3,target_ps'));
 fprintf(1,'\n Identification of PSEUDO-Letter based on their respetive geometrical shape');
 fprintf(1,'\n Accuracy = %d ',accuracy_pl);
 
@@ -222,76 +236,78 @@ for i=1:size(max_act_pl,1)
         pred_px = [pred_px;pred3(i,:)];
     end
 end
-
-% highest values stored in max_act_pl
-f = figure;
-% for letter pA:
-subplot(2,3,1);
 mode_pA = mode(max_pa);
 std_pA = std(max_pa);
 prD_pA =  mean(pred_pa,1);
-bar(prD_pA);
-xlabel('letter pA');
-% for letter pH:
-subplot(2,3,2);
 mode_pH = mode(max_ph);
 std_pH = std(max_ph);
 prD_pH =  mean(pred_ph,1);
-bar(prD_pH);
-xlabel('letter pH');
-% for letter pM:
-subplot(2,3,3);
 mode_pM = mode(max_pm);
 std_pM = std(max_pm);
 prD_pM =  mean(pred_pm,1);
-bar(prD_pM);
-xlabel('letter pM');
-% for letter pU:
-subplot(2,3,4);
 mode_pU = mode(max_pu);
 std_pU = std(max_pu);
 prD_pU =  mean(pred_pu,1);
-bar(prD_pU);
-xlabel('letter pU');
-% for letter pT:
-subplot(2,3,5);
 mode_pT = mode(max_pt);
 std_pT = std(max_pt);
 prD_pT =  mean(pred_pt,1);
-bar(prD_pT);
-xlabel('letter pT');
-% for letter pX:
-subplot(2,3,6);
 mode_pX = mode(max_px);
 std_pX = std(max_px);
 prD_pX =  mean(pred_px,1);
-bar(prD_pX);
-xlabel('letter pX');
-sgtitle("Day: " + clean_date + ", Models' Prediction/Prob Distr: ");
+% highest values stored in max_act_pl
+% f = figure;
+% % for letter pA:
+% subplot(2,3,1);
+% bar(prD_pA);
+% xlabel('letter pA');
+% % for letter pH:
+% subplot(2,3,2);
+% bar(prD_pH);
+% xlabel('letter pH');
+% % for letter pM:
+% subplot(2,3,3);
+% bar(prD_pM);
+% xlabel('letter pM');
+% % for letter pU:
+% subplot(2,3,4);
+% bar(prD_pU);
+% xlabel('letter pU');
+% % for letter pT:
+% subplot(2,3,5);
+% bar(prD_pT);
+% xlabel('letter pT');
+% % for letter pX:
+% subplot(2,3,6);
+% bar(prD_pX);
+% xlabel('letter pX');
+% sgtitle("Day: " + clean_date + ", Models' Prediction/Prob Distr: ");
+% file_name = "plots_results/Id_basedOnGeoS6/" + clean_date + "_" + int2str(c(4)) + "h" + int2str(c(5))+"m_"+"pL_PrD" + ".pdf";
+% exportgraphics(f,file_name)
 
-file_namee = "plots_results/Id_basedOnGeoS/" + strh3 + clean_date + "_" + int2str(c(4)) + "h" + int2str(c(5))+"m_"+ "pL_prD"+ ".pdf";
-exportgraphics(f,file_namee);
 r1 = ones(size(rbms_pass_pl,1)/6,1);r2 = ones(size(rbms_pass_pl,1)/6,1)*2;r3 = ones(size(rbms_pass_pl,1)/6,1)*3;
 r4 = ones(size(rbms_pass_pl,1)/6,1)*4;r5 = ones(size(rbms_pass_pl,1)/6,1)*5;r6 = ones(size(rbms_pass_pl,1)/6,1)*6;
 acc1 = (max_pa == r6);acc2 = (max_ph == r4);acc3 = (max_pm == r5);
 acc4 = (max_pu == r2);acc5 = (max_pt == r1);acc6 = (max_px == r3);
 acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
 acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
-
-% create Table for pLetters:
+% create Table for Letters:
 pTargets = ["pA" ; "pH"; "pM"; "pU"; "pT"; "pX"];
 pMode = [mode_pA;mode_pH;mode_pM;mode_pU;mode_pT;mode_pX];
 pStd = [std_pA;std_pH;std_pM;std_pU;std_pT;std_pX];
-Acc = [acc1;acc2;acc3;acc4;acc5;acc6];  
+Acc = [acc1;acc2;acc3;acc4;acc5;acc6];
 table_pletter = table(pTargets,pMode,pStd,Acc);
 pletter_pdr = [prD_pA;prD_pH;prD_pM;prD_pU;prD_pT;prD_pX];
 
 %save the results/data
-filename = "plots_results/Id_basedOnGeoS/" + strh3 + clean_date + "_" + int2str(c(4)) + "h" + int2str(c(5))+"m_" + "Eval_L&pL";
-save(filename,'table_letter','table_pletter','letter_pdr','pletter_pdr','accuracy_s','accuracy_pl', 'accuracy_l','final_epoch','numhid2','numhid3');
-file_name = "plots_results/Id_basedOnGeoS/" + strh3 + clean_date + "_" + int2str(c(4)) + "h" + int2str(c(5))+"m_"+"pL_PrD" + ".pdf";
-exportgraphics(f,file_name)
+% filename = "plots_results/Id_basedOnGeoS6/" + clean_date + "_" + int2str(c(4)) + "h" + int2str(c(5))+"m_" + "Eval_L&pL";
+% save(filename,'table_letter','table_pletter','letter_pdr','pletter_pdr','accuracy_s','accuracy_pl', 'accuracy_l','final_epoch');
 
-
+Id_BasedOnGeoS.table_letter = table_letter;
+Id_BasedOnGeoS.table_pletter = table_pletter;
+Id_BasedOnGeoS.letter_pdr = letter_pdr;
+Id_BasedOnGeoS.pletter_pdr = pletter_pdr;
+Id_BasedOnGeoS.accuracy_s = accuracy_s;
+Id_BasedOnGeoS.accuracy_pl = accuracy_pl;
+Id_BasedOnGeoS.accuracy_l = accuracy_l;
 
 

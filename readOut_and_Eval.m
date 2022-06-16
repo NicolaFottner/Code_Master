@@ -99,11 +99,9 @@ class_specific_output; %compute details of the output and saves them
 
 %% Perform Assesment: Classifaction as Shape Id.
 % pred_ce_effect;
-if geo_shape_class ==12
-    Letter_Assesment;
-else % todo: check, I believe both are pretty the same -- not anymore
-    Letter_Assesment6;
-end
+
+Letter_Assesment;
+
 
 properties.dropout = dropout;
 properties.dropout_p1 = p_layer1;
