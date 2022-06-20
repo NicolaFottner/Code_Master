@@ -115,13 +115,18 @@ acc5 = (max_sq == r5); % square ---- M
 acc6 = (max_tr == r6);% triangle ---- A
 acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
 acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
-% create Table for Letters:
-Targets = ["Cross/T" ; "Elipse/U"; "Hexa/X"; "Rect/H"; "Square/M"; "Tria/A"];
-Mode = [mode_cr;mode_el;mode_he;mode_re;mode_sq;mode_tr];
-Std = [std_cr;std_el;std_he;std_re;std_sq;std_tr];
-Acc = [acc1;acc2;acc3;acc4;acc5;acc6];
+% create Table for Letters: (with old order:)
+% Targets = ["Cross/T" ; "Elipse/U"; "Hexa/X"; "Rect/H"; "Square/M"; "Tria/A"];
+% Acc = [acc1;acc2;acc3;acc4;acc5;acc6];
+% Mode = [mode_cr;mode_el;mode_he;mode_re;mode_sq;mode_tr];
+% Std = [std_cr;std_el;std_he;std_re;std_sq;std_tr];
+%%% better order:
+Targets = ["A/Tria";"H/Rect";"M/Squ";"U/Elips";"T/Cross";"X/Hexa"];
+Acc = [acc6;acc4;acc5;acc2;acc1;acc3];
+Mode = [mode_tr;mode_re;mode_sq;mode_el;mode_cr;mode_he];
+Std = [mode_tr;mode_re;mode_sq;mode_el;mode_cr;mode_he];
 cl_ce_details = table(Targets,Mode,Std,Acc);
-cl_ce_pdr = [prD_cr;prD_el;prD_he;prD_re;prD_sq;prD_tr];
+cl_ce_pdr = [prD_tr;prD_re;prD_sq;prD_el;prD_cr;prD_he];
 
 %% EVAL - Pseudo Letter congruent
 % pass data throught RBMs:
@@ -195,10 +200,10 @@ acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
 acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
 % create Table for Letters:
 %Targets = ["pA" ; "pH"; "pM"; "pU"; "pT"; "pX"];
-Targets = ["Cross/pT" ; "Elipse/pU"; "Hexa/pX"; "Rect/pH"; "Square/pM"; "Tria/pA"];
-Mode = [mode_cr;mode_el;mode_he;mode_re;mode_sq;mode_tr];
-Std = [std_cr;std_el;std_he;std_re;std_sq;std_tr];
-Acc = [acc1;acc2;acc3;acc4;acc5;acc6];
+Targets = ["pA/Tria";"pH/Rect";"pM/Squ";"pU/Elips";"pT/Cross";"pX/Hexa"];
+Acc = [acc6;acc4;acc5;acc2;acc1;acc3];
+Mode = [mode_tr;mode_re;mode_sq;mode_el;mode_cr;mode_he];
+Std = [mode_tr;mode_re;mode_sq;mode_el;mode_cr;mode_he];
 cpl_ce_details = table(Targets,Mode,Std,Acc);
 cpl_ce_pdr = [prD_cr;prD_el;prD_he;prD_re;prD_sq;prD_tr];
 
@@ -273,10 +278,10 @@ acc6 = (max_tr == r6);% triangle ---- A
 acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
 acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
 % create Table for Letters:
-Targets = ["Cross/T" ; "Elipse/U"; "Hexa/X"; "Rect/H"; "Square/M"; "Tria/A"];
-Mode = [mode_cr;mode_el;mode_he;mode_re;mode_sq;mode_tr];
-Std = [std_cr;std_el;std_he;std_re;std_sq;std_tr];
-Acc = [acc1;acc2;acc3;acc4;acc5;acc6];
+Targets = ["A/Tria";"H/Rect";"M/Squ";"U/Elips";"T/Cross";"X/Hexa"];
+Acc = [acc6;acc4;acc5;acc2;acc1;acc3];
+Mode = [mode_tr;mode_re;mode_sq;mode_el;mode_cr;mode_he];
+Std = [mode_tr;mode_re;mode_sq;mode_el;mode_cr;mode_he];
 incl_ce_details = table(Targets,Mode,Std,Acc);
 incl_ce_pdr = [prD_cr;prD_el;prD_he;prD_re;prD_sq;prD_tr];
 
@@ -351,10 +356,10 @@ acc6 = (max_tr == r6);% triangle ---- A
 acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
 acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
 % create Table for Letters:
-Targets = ["Cross/pT" ; "Elipse/pU"; "Hexa/pX"; "Rect/pH"; "Square/pM"; "Tria/pA"];
-Mode = [mode_cr;mode_el;mode_he;mode_re;mode_sq;mode_tr];
-Std = [std_cr;std_el;std_he;std_re;std_sq;std_tr];
-Acc = [acc1;acc2;acc3;acc4;acc5;acc6];
+Targets = ["pA/Tria";"pH/Rect";"pM/Squ";"pU/Elips";"pT/Cross";"pX/Hexa"];
+Acc = [acc6;acc4;acc5;acc2;acc1;acc3];
+Mode = [mode_tr;mode_re;mode_sq;mode_el;mode_cr;mode_he];
+Std = [mode_tr;mode_re;mode_sq;mode_el;mode_cr;mode_he];
 incpl_ce_details = table(Targets,Mode,Std,Acc);
 incpl_ce_pdr = [prD_cr;prD_el;prD_he;prD_re;prD_sq;prD_tr];
 
