@@ -32,11 +32,11 @@
 configurations;
 
 configurations_list = [];
-elem.layer2=300;
-elem.layer3= 0;
-elem.dropout= 0;
-elem.minibatchsize= 12;
-configurations_list = [configurations_list;elem];
+% elem.layer2=300;
+% elem.layer3= 0;
+% elem.dropout= 0;
+% elem.minibatchsize= 12;
+% configurations_list = [configurations_list;elem];
 
 elem.layer2=350;
 elem.layer3= 0;
@@ -49,9 +49,9 @@ configurations_list = [configurations_list;elem];
 % from 12J: missing z=34 onwards
 
 for z=1:size(configurations_list,1)
-    for ii=1:5    %% --- 10
+    for ii=1:1    %% --- 10
         % initialize hyperparameters
-        maxepoch=500; % 
+        maxepoch=500; % 500
         geo_shape_class = 6; %problem of 6 class/shapes
         numhid2 = configurations_list(z).layer2;
         numhid3 = configurations_list(z).layer3;
@@ -118,15 +118,19 @@ for z=1:size(configurations_list,1)
         rbm2.finalmomentum    = 0.9;
         rbm2.earlyStopping = true;
         restart=1;
-        if dropout
-            % @todo: DO I NEED THIS? can I just use p_layer2 = 1?
-            rbm_2DropO;
-        else
-            rbm_2;
-        end
-        vishid_2=vishid; hidbiases_2=hidbiases; visbiases_2=visbiases; hid_out_2 = batchposhidprobs_2;
-        save g_rbm_2 vishid_2 hidbiases_2 visbiases_2; % hid_out_2;
-        %load g_rbm_2 vishid_2 hidbiases_2 visbiases_2 hid_out_2 g_pass;
+%         if dropout
+%             % @todo: DO I NEED THIS? can I just use p_layer2 = 1?
+%             rbm_2DropO;
+%         else
+%             rbm_2;
+%         end
+%         vishid_2=vishid; hidbiases_2=hidbiases; visbiases_2=visbiases; hid_out_2 = batchposhidprobs_2;
+        %save g_rbm_2 vishid_2 hidbiases_2 visbiases_2; % hid_out_2;
+        load rbm2_16J11h39.mat vishid_2 hidbiases_2 visbiases_2;
+        load rbm2_16J11h39_err.mat overfitting_g_2 full_rec_err_g
+        addpath("Evals/");
+        load 16Jun_11h39m_H2350_H30.mat properties;
+        final_epoch = properties.epoch2;
 
         %% RBM 3 
         if numhid3 ~= 0

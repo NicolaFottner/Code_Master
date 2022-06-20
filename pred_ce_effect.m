@@ -1,15 +1,38 @@
 
 weights = W2;
-
-dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2)); %store date without "-YYYY"
-c = clock;
-
-%function [weights, accuracy, te_accuracy,tr_loss,te_loss] = pred_ce_effect(weights,jointdata,lettertarget,shapetarget)
-addpath("testolin/")
-addpath("data_plotting/")
-addpath("data")
-%load data
-load openCV_CE_data.mat  %data target_l target_s
+load openCV_CE_data.mat 
+%% Prep and convert openCV_CE_data from uint8 to double:
+shapedata = zeros(size(cong_l_d));
+for i=1:size(cong_l_d,1)
+    shapedata(i,:) = reshape(im2double(reshape(cong_l_d(i,:),[40 40 1])), [1 1600]);
+end
+cong_l_d = shapedata;
+cong_l_t =  double(cong_l_t);
+cong_l_s = double(cong_l_s);
+%%%
+shapedata = zeros(size(cong_pl_d));
+for i=1:size(cong_pl_d,1)
+    shapedata(i,:) = reshape(im2double(reshape(cong_pl_d(i,:),[40 40 1])), [1 1600]);
+end
+cong_pl_d = shapedata;
+cong_pl_t =  double(cong_pl_t);
+cong_pl_s = double(cong_pl_s);
+%%%
+shapedata = zeros(size(inc_l_d));
+for i=1:size(inc_l_d,1)
+    shapedata(i,:) = reshape(im2double(reshape(inc_l_d(i,:),[40 40 1])), [1 1600]);
+end
+inc_l_d = shapedata;
+inc_l_t =  double(inc_l_t);
+inc_l_s = double(inc_l_s);
+%%%
+shapedata = zeros(size(inc_pl_d));
+for i=1:size(inc_pl_d,1)
+    shapedata(i,:) = reshape(im2double(reshape(inc_pl_d(i,:),[40 40 1])), [1 1600]);
+end
+inc_pl_d = shapedata;
+inc_pl_t =  double(inc_pl_t);
+inc_pl_s = double(inc_pl_s);
 
 %load rbm data
 load t_model DN
@@ -20,21 +43,10 @@ load rbm2_16J11h39.mat vishid_2 hidbiases_2
 
 %%% Create variables for Table -- visualization purpose
 % table with accuracy values for shape
-Targets = ["Cong_Letter" ; "Cong_Ps-Letter"; "Inc_Letter";"Inc_Ps-Letter"];
-letter_decision = zeros(3,1); 
-ps-letter_decision =  zeros(3,1); 
-Combined = zeros(3,1); 
-% table with CE values for shape
-CE = zeros(3,1); 
-% table with CE values for letters
-CE_l = zeros(3,1);
-% table with accuracy values for letter
-Congruent_Case_l = zeros(3,1); 
-Incongruent_Case_l =  zeros(3,1); 
-Combined_l = zeros(3,1); 
+Shape_decisionAcc = zeros(4,1); 
+Letter_decisionAcc = zeros(4,1);
 
-
-%% letter congruent
+%% EVAL - Letter congruent
 % pass data throught RBMs:
 hid_out_1_d = 1./(1 + exp(-cong_l_d*vishid_1 - repmat(hidbiases_1,size(cong_l_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
@@ -45,6 +57,8 @@ rbms_pass = [rbms_pass ONES];
 pred = rbms_pass*weights;
 % [a,b] =max(pred,[],2); --- % a has also  values  > 1 ---- 
 % i.e. a is unnormalized
+softmax_pred = softmax(dlarray(pred','CB'));
+pred = extractdata(softmax_pred)';
 [~, max_act] = max(pred,[],2); % max_act are indices of dim2 in pred of the highest value
 [r1,~] = find(cong_l_t'); % find which columns (rows in transpose) are 1
 [r2,~] = find(cong_l_s'); % find which columns (rows in transpose) are 1
@@ -52,231 +66,318 @@ acc_l = (max_act == r1);
 acc_s = (max_act == r2);
 accuracy_l = mean(acc_l);
 accuracy_s = mean(acc_s);
-
 fprintf(1,'\n Prediction / Assesment of the Congruency Effect\n');
 fprintf(1,'\n ------- Case : Congruent ------- \n');
 fprintf(1,'\n ------- Target : Letter ------- \n');
 fprintf(1,'\n If Decision based on letter? \n Accuracy = %d\n ',accuracy_l);
 fprintf(1,'\n If Decision based on shape? \n Accuracy = %d\n ',accuracy_s);
+Shape_decisionAcc(1) = accuracy_s;
+Letter_decisionAcc(1) = accuracy_l;
 
-Combined(3) = accuracy_s;
-Combined_l(3) = accuracy_l;
-
-% Compute incong and cong predictions:
-inc_pred = incong_cases*weights;
-cong_pred = cong_cases*weights;
-
-[~, max_act] = max(inc_pred,[],2); 
-[r1,~] = find(incong_tl'); 
-[r2,~] = find(incong_ts');
-acc_l = (max_act == r1);
-acc_s = (max_act == r2);
-incong_acc_l = mean(acc_l);
-incong_acc_s = mean(acc_s);
-
-fprintf(1,'\n Incongrent cases & All targets -- geoshape\n Accuracy = %d ',incong_acc_s);
-fprintf(1,'\n If decision based on letter?\n Accuracy = %d\n ',incong_acc_l);
-Incongruent_Case(3) = incong_acc_s;
-Incongruent_Case_l(3) = incong_acc_l;
-
-[~, max_act] = max(cong_pred,[],2);
-[r1,~] = find(cong_tl'); 
-[r2,~] = find(cong_ts');
-acc_l = (max_act == r1);
-acc_s = (max_act == r2);
-cong_acc_l = mean(acc_l);
-cong_acc_s = mean(acc_s);
-
-fprintf(1,'\n Congrent cases & All targets -- geoshape\n Accuracy = %d ',cong_acc_s);
-fprintf(1,'\n If decision based on letter?\n Accuracy = %d\n ',cong_acc_l);
-Congruent_Case(3) = cong_acc_s;
-Congruent_Case_l(3) = cong_acc_l;
-ce = [incong_acc_s * 100,cong_acc_s*100];
-diff_ce = cong_acc_s*100 - incong_acc_s * 100;
-fprintf(1,'\n\n General Congruency effect of magnitude: %d\n ',diff_ce);
-CE(3) = diff_ce;
-CE_l(3) = cong_acc_l*100 -incong_acc_l*100;
-
-
-%%%%%%%%%%%%%%%%%%% GET DATA COMPARING LETTER AND PSEUDOLETTERS %%%%%%%%%%%
-
-% Divide letters and pseudo letters up:
-% comparing letters to pseudoletters
-
-letter_cases = zeros(size(rbms_pass,1)/2,size(rbms_pass,2));
-ps_letter_cases = zeros(size(rbms_pass,1)/2,size(rbms_pass,2));
-letter_t_l = zeros(size(rbms_pass,1)/2,size(target_l,2));
-letter_t_s = zeros(size(rbms_pass,1)/2,size(target_s,2));
-ps_letter_t_l = zeros(size(rbms_pass,1)/2,size(target_l,2));
-ps_letter_t_s = zeros(size(rbms_pass,1)/2,size(target_s,2));
-
-j1 = 1;j2 = 1;
-for i=1:size(rbms_pass,1)
-    idx_l = find(target_l(i,:));
-    if idx_l == 1 || idx_l == 2 || idx_l == 3 || idx_l == 4 ||idx_l == 5 || idx_l == 6
-        letter_cases(j1,:) = rbms_pass(i,:);
-        letter_t_s(j1,:) = target_s(i,:);
-        letter_t_l(j1,:) = target_l(i,:);
-        j1 = j1 +1;
-    else
-        ps_letter_cases(j2,:) = rbms_pass(i,:);
-        ps_letter_t_s(j2,:) = target_s(i,:);
-        ps_letter_t_l(j2,:) = target_l(i,:);
-        j2 = j2 +1 ; 
+%%%% Extended ASSESMENT
+max_cr = [];max_el = [];max_he = [];max_re = [];max_sq = [];max_tr = [];
+pred_cr = [];pred_el= [];pred_he = [];pred_re = [];pred_sq = [];pred_tr = [];
+for i=1:size(max_act,1)
+    idx_l = find(cong_l_s(i,:));
+    if idx_l == 1 
+        max_cr = [max_cr;max_act(i)];
+        pred_cr = [pred_cr;pred(i,:)];
+    elseif idx_l == 2
+        max_el= [max_el;max_act(i)];
+        pred_el = [pred_el;pred(i,:)];
+    elseif idx_l == 3
+        max_he= [max_he;max_act(i)];
+        pred_he = [pred_he;pred(i,:)];
+    elseif idx_l == 4
+        max_re= [max_re;max_act(i)];
+        pred_re = [pred_re;pred(i,:)];
+    elseif idx_l == 5
+        max_sq= [max_sq;max_act(i)];
+        pred_sq = [pred_sq;pred(i,:)];
+    elseif idx_l == 6
+        max_tr= [max_tr;max_act(i)];
+        pred_tr = [pred_tr;pred(i,:)];
     end
 end
+mode_cr = mode(max_cr);std_cr = std(max_cr);prD_cr =  mean(pred_cr,1);
+mode_el = mode(max_el);std_el = std(max_el);prD_el =  mean(pred_el,1);
+mode_he = mode(max_he);std_he = std(max_he);prD_he =  mean(pred_he,1);
+mode_re = mode(max_re);std_re = std(max_re);prD_re =  mean(pred_re,1);
+mode_sq = mode(max_sq);std_sq = std(max_sq);prD_sq =  mean(pred_sq,1);
+mode_tr = mode(max_tr);std_tr = std(max_tr);prD_tr =  mean(pred_tr,1);
+r1 = ones(size(rbms_pass,1)/6,1);r2 = ones(size(rbms_pass,1)/6,1)*2;r3 = ones(size(rbms_pass,1)/6,1)*3;
+r4 = ones(size(rbms_pass,1)/6,1)*4;r5 = ones(size(rbms_pass,1)/6,1)*5;r6 = ones(size(rbms_pass,1)/6,1)*6;
+acc1 = (max_cr == r1);% cross, ---- T
+acc2 = (max_el == r2);% elipse ---- U
+acc3 = (max_he == r3);% hexagon ---- X
+acc4 = (max_re == r4);% rectangle ---- H
+acc5 = (max_sq == r5); % square ---- M
+acc6 = (max_tr == r6);% triangle ---- A
+acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
+acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
+% create Table for Letters:
+Targets = ["Cross/T" ; "Elipse/U"; "Hexa/X"; "Rect/H"; "Square/M"; "Tria/A"];
+Mode = [mode_cr;mode_el;mode_he;mode_re;mode_sq;mode_tr];
+Std = [std_cr;std_el;std_he;std_re;std_sq;std_tr];
+Acc = [acc1;acc2;acc3;acc4;acc5;acc6];
+cl_ce_details = table(Targets,Mode,Std,Acc);
+cl_ce_pdr = [prD_cr;prD_el;prD_he;prD_re;prD_sq;prD_tr];
 
-%%%%%%%%%%% COMPUTE FOR LETTERS
-% divide data to congruent and incongruent for letters
-cong_cases = zeros(size(letter_cases,1)/2,size(letter_cases,2));
-incong_cases = zeros(size(letter_cases,1)/2,size(letter_cases,2));
-cong_ts = zeros(size(letter_cases,1)/2,size(letter_t_s,2));
-cong_tl= zeros(size(letter_cases,1)/2,size(letter_t_l,2));
-incong_ts= zeros(size(letter_cases,1)/2,size(letter_t_s,2));
-incong_tl= zeros(size(letter_cases,1)/2,size(letter_t_l,2));
-j1 = 1;j2 = 1;
-for i=1:size(letter_cases,1)
-    idx_l = find(letter_t_l(i,:));
-    idx_s = find(letter_t_s(i,:));
-    if idx_l == 1 && idx_s == 6 || idx_l == 2 && idx_s == 4 || idx_l == 3 && idx_s == 5 || ...
-            idx_l == 4 && idx_s == 1 || idx_l == 5 && idx_s == 2 || idx_l == 6 && idx_s == 3 || ...
-                idx_l == 7 && idx_s == 6 || idx_l == 8 && idx_s == 4 || idx_l == 9 && idx_s == 5 || ...
-                    idx_l == 10 && idx_s == 1 || idx_l == 11 && idx_s == 2 || idx_l == 12 && idx_s == 3 
-        cong_cases(j1,:) = letter_cases(i,:);
-        cong_ts(j1,:) = letter_t_s(i,:);
-        cong_tl(j1,:) = letter_t_l(i,:);
-        j1 = j1 +1;
-    else
-        incong_cases(j2,:) = letter_cases(i,:);
-        incong_ts(j2,:) = letter_t_s(i,:);
-        incong_tl(j2,:) = letter_t_l(i,:);
-        j2 = j2 +1 ; 
+%% EVAL - Pseudo Letter congruent
+% pass data throught RBMs:
+hid_out_1_d = 1./(1 + exp(-cong_pl_d*vishid_1 - repmat(hidbiases_1,size(cong_pl_d,1),1)));
+rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
+% add biases
+ONES = ones(size(rbms_pass, 1), 1);  
+rbms_pass = [rbms_pass ONES];
+% Compute prediction:
+pred = rbms_pass*weights;
+softmax_pred = softmax(dlarray(pred','CB'));
+pred = extractdata(softmax_pred)';
+% [a,b] =max(pred,[],2); --- % a has also  values  > 1 ---- 
+% i.e. a is unnormalized
+[~, max_act] = max(pred,[],2); % max_act are indices of dim2 in pred of the highest value
+[r1,~] = find(cong_pl_t'); % find which columns (rows in transpose) are 1
+[r2,~] = find(cong_pl_s'); % find which columns (rows in transpose) are 1
+acc_l = (max_act == r1);
+acc_s = (max_act == r2);
+accuracy_l = mean(acc_l);
+accuracy_s = mean(acc_s);
+fprintf(1,'\n Prediction / Assesment of the Congruency Effect\n');
+fprintf(1,'\n ------- Case : Congruent ------- \n');
+fprintf(1,'\n ------- Target : Pseudo Letter ------- \n');
+fprintf(1,'\n If Decision based on letter? \n Accuracy = %d\n ',accuracy_l);
+fprintf(1,'\n If Decision based on shape? \n Accuracy = %d\n ',accuracy_s);
+
+Shape_decisionAcc(2) = accuracy_s;
+Letter_decisionAcc(2) = accuracy_l;
+
+%%%% Extended ASSESMENT
+max_cr = [];max_el = [];max_he = [];max_re = [];max_sq = [];max_tr = [];
+pred_cr = [];pred_el = [];pred_he = [];pred_re = [];pred_sq = [];pred_tr = [];
+for i=1:size(max_act,1)
+    idx_l = find(cong_pl_s(i,:));
+    if idx_l == 1 
+        max_cr = [max_cr;max_act(i)];
+        pred_cr = [pred_cr;pred(i,:)];
+    elseif idx_l == 2
+        max_el= [max_el;max_act(i)];
+        pred_el = [pred_el;pred(i,:)];
+    elseif idx_l == 3
+        max_he= [max_he;max_act(i)];
+        pred_he = [pred_he;pred(i,:)];
+    elseif idx_l == 4
+        max_sq= [max_sq;max_act(i)];
+        pred_sq = [pred_sq;pred(i,:)];
+    elseif idx_l == 5
+        max_re= [max_re;max_act(i)];
+        pred_re = [pred_re;pred(i,:)];
+    elseif idx_l == 6
+        max_tr= [max_tr;max_act(i)];
+        pred_tr = [pred_tr;pred(i,:)];
     end
 end
-% General Predictions for letter
-pred = letter_cases*weights;
-[~, max_act] = max(pred,[],2); 
-[r1,~] = find(letter_t_l'); 
-[r2,~] = find(letter_t_s');
-acc_l = (max_act == r1);
-acc_s = (max_act == r2);
-accuracy_l = mean(acc_l);
-accuracy_s = mean(acc_s);
-fprintf(1,'\n ------- LETTERS ------- \n');
-fprintf(1,'\n All cases -- on geo-shape \n Accuracy= %d ',accuracy_s);
-fprintf(1,'\n If decision based on letter? \n Accuracy= %d\n ',accuracy_l);
-Combined(1) = accuracy_s;
-Combined_l(1) = accuracy_l;
-% Letter + Congruent
-pred = cong_cases*weights;
-[~, max_act] = max(pred,[],2); 
-[r1,~] = find(cong_tl'); 
-[r2,~] = find(cong_ts');
-acc_l = (max_act == r1);
-acc_s = (max_act == r2);
-accuracy_l_c = mean(acc_l);
-accuracy_s_c = mean(acc_s);
-fprintf(1,'\n Congruent Cases -- on geo-shape \n Accuracy= %d ',accuracy_s_c);
-fprintf(1,'\n If decision based on letter? \n Accuracy= %d\n ',accuracy_l_c);
-Congruent_Case(1) = accuracy_s_c;
-Congruent_Case_l(1) = accuracy_l_c;
-% Letter + Incongruent
-pred = incong_cases*weights;
-[~, max_act] = max(pred,[],2); 
-[r1,~] = find(incong_tl'); 
-[r2,~] = find(incong_ts');
-acc_l = (max_act == r1);
-acc_s = (max_act == r2);
-accuracy_l = mean(acc_l);
-accuracy_s = mean(acc_s);
-fprintf(1,'\n Incongruent Cases -- on geo-shape \n Accuracy= %d ',accuracy_s);
-fprintf(1,'\n If decision based on letter? \n Accuracy= %d\n ',accuracy_l);
-Incongruent_Case(1) = accuracy_s;
-Incongruent_Case_l(1) = accuracy_l;
-diff_ce = accuracy_s_c*100 - accuracy_s * 100;
-fprintf(1,'\n\n Congruency effect for letters of magnitude: %d\n ',diff_ce);
-CE(1) = diff_ce;
-CE_l(1) = accuracy_l_c *100 - accuracy_l*100;
+mode_cr = mode(max_cr);std_cr = std(max_cr);prD_cr =  mean(pred_cr,1);
+mode_el = mode(max_el);std_el = std(max_el);prD_el =  mean(pred_el,1);
+mode_he = mode(max_he);std_he = std(max_he);prD_he =  mean(pred_he,1);
+mode_re = mode(max_re);std_re = std(max_re);prD_re =  mean(pred_re,1);
+mode_sq = mode(max_sq);std_sq = std(max_sq);prD_sq =  mean(pred_sq,1);
+mode_tr = mode(max_tr);std_tr = std(max_tr);prD_tr =  mean(pred_tr,1);
+r1 = ones(size(rbms_pass,1)/6,1);r2 = ones(size(rbms_pass,1)/6,1)*2;r3 = ones(size(rbms_pass,1)/6,1)*3;
+r4 = ones(size(rbms_pass,1)/6,1)*4;r5 = ones(size(rbms_pass,1)/6,1)*5;r6 = ones(size(rbms_pass,1)/6,1)*6;
+acc1 = (max_cr == r1);% cross, ---- T
+acc2 = (max_el == r2);% elipse ---- U
+acc3 = (max_he == r3);% hexagon ---- X
+acc4 = (max_re == r4);% rectangle ---- H
+acc5 = (max_sq == r5); % square ---- M
+acc6 = (max_tr == r6);% triangle ---- A
+acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
+acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
+% create Table for Letters:
+%Targets = ["pA" ; "pH"; "pM"; "pU"; "pT"; "pX"];
+Targets = ["Cross/pT" ; "Elipse/pU"; "Hexa/pX"; "Rect/pH"; "Square/pM"; "Tria/pA"];
+Mode = [mode_cr;mode_el;mode_he;mode_re;mode_sq;mode_tr];
+Std = [std_cr;std_el;std_he;std_re;std_sq;std_tr];
+Acc = [acc1;acc2;acc3;acc4;acc5;acc6];
+cpl_ce_details = table(Targets,Mode,Std,Acc);
+cpl_ce_pdr = [prD_cr;prD_el;prD_he;prD_re;prD_sq;prD_tr];
 
-%%%%%%%%%%% COMPUTE FOR PSEUDO LETTERS
-% divide data to congruent and incongruent for pseudoletters
-cong_cases = zeros(size(letter_cases,1)/2,size(letter_cases,2));
-incong_cases = zeros(size(letter_cases,1)/2,size(letter_cases,2));
-cong_ts = zeros(size(letter_cases,1)/2,size(letter_t_s,2));
-cong_tl= zeros(size(letter_cases,1)/2,size(letter_t_l,2));
-incong_ts= zeros(size(letter_cases,1)/2,size(letter_t_s,2));
-incong_tl= zeros(size(letter_cases,1)/2,size(letter_t_l,2));
-j1 = 1;j2 = 1;
-for i=1:size(ps_letter_cases,1)
-    idx_l = find(ps_letter_t_l(i,:));
-    idx_s = find(ps_letter_t_s(i,:));
-    if idx_l == 1 && idx_s == 6 || idx_l == 2 && idx_s == 4 || idx_l == 3 && idx_s == 5 || ...
-            idx_l == 4 && idx_s == 1 || idx_l == 5 && idx_s == 2 || idx_l == 6 && idx_s == 3 || ...
-                idx_l == 7 && idx_s == 6 || idx_l == 8 && idx_s == 4 || idx_l == 9 && idx_s == 5 || ...
-                    idx_l == 10 && idx_s == 1 || idx_l == 11 && idx_s == 2 || idx_l == 12 && idx_s == 3 
-        cong_cases(j1,:) = ps_letter_cases(i,:);
-        cong_ts(j1,:) = ps_letter_t_s(i,:);
-        cong_tl(j1,:) = ps_letter_t_l(i,:);
-        j1 = j1 +1;
-    else
-        incong_cases(j2,:) = ps_letter_cases(i,:);
-        incong_ts(j2,:) = ps_letter_t_s(i,:);
-        incong_tl(j2,:) = ps_letter_t_l(i,:);
-        j2 = j2 +1 ; 
+%% EVAL - Letter Incongruent
+% pass data throught RBMs:
+hid_out_1_d = 1./(1 + exp(-inc_l_d*vishid_1 - repmat(hidbiases_1,size(inc_l_d,1),1)));
+rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
+% add biases
+ONES = ones(size(rbms_pass, 1), 1);  
+rbms_pass = [rbms_pass ONES];
+% Compute prediction:
+pred = rbms_pass*weights;
+softmax_pred = softmax(dlarray(pred','CB'));
+pred = extractdata(softmax_pred)';
+% [a,b] =max(pred,[],2); --- % a has also  values  > 1 ---- 
+% i.e. a is unnormalized
+[~, max_act] = max(pred,[],2); % max_act are indices of dim2 in pred of the highest value
+[r1,~] = find(inc_l_t'); % find which columns (rows in transpose) are 1
+[r2,~] = find(inc_l_s'); % find which columns (rows in transpose) are 1
+acc_l = (max_act == r1);
+acc_s = (max_act == r2);
+accuracy_l = mean(acc_l);
+accuracy_s = mean(acc_s);
+fprintf(1,'\n Prediction / Assesment of the Congruency Effect\n');
+fprintf(1,'\n ------- Case : Incongruent ------- \n');
+fprintf(1,'\n ------- Target : Letter ------- \n');
+fprintf(1,'\n If Decision based on letter? \n Accuracy = %d\n ',accuracy_l);
+fprintf(1,'\n If Decision based on shape? \n Accuracy = %d\n ',accuracy_s);
+
+Shape_decisionAcc(3) = accuracy_s;
+Letter_decisionAcc(3) = accuracy_l;
+
+%%%% Extended ASSESMENT
+max_cr = [];max_el = [];max_he = [];max_re = [];max_sq = [];max_tr = [];
+pred_cr = [];pred_el = [];pred_he = [];pred_re = [];pred_sq = [];pred_tr = [];
+for i=1:size(max_act,1)
+    idx_l = find(inc_l_s(i,:));
+    if idx_l == 1 
+        max_cr = [max_cr;max_act(i)];
+        pred_cr = [pred_cr;pred(i,:)];
+    elseif idx_l == 2
+        max_el= [max_el;max_act(i)];
+        pred_el = [pred_el;pred(i,:)];
+    elseif idx_l == 3
+        max_he= [max_he;max_act(i)];
+        pred_he = [pred_he;pred(i,:)];
+    elseif idx_l == 4
+        max_sq= [max_sq;max_act(i)];
+        pred_sq = [pred_sq;pred(i,:)];
+    elseif idx_l == 5
+        max_re= [max_re;max_act(i)];
+        pred_re = [pred_re;pred(i,:)];
+    elseif idx_l == 6
+        max_tr= [max_tr;max_act(i)];
+        pred_tr = [pred_tr;pred(i,:)];
     end
 end
-% General Predictions for pseudoletters
-pred = ps_letter_cases*weights;
-[~, max_act] = max(pred,[],2); 
-[r1,~] = find(ps_letter_t_l'); 
-[r2,~] = find(ps_letter_t_s');
+mode_cr = mode(max_cr);std_cr = std(max_cr);prD_cr =  mean(pred_cr,1);
+mode_el = mode(max_el);std_el = std(max_el);prD_el =  mean(pred_el,1);
+mode_he = mode(max_he);std_he = std(max_he);prD_he =  mean(pred_he,1);
+mode_re = mode(max_re);std_re = std(max_re);prD_re =  mean(pred_re,1);
+mode_sq = mode(max_sq);std_sq = std(max_sq);prD_sq =  mean(pred_sq,1);
+mode_tr = mode(max_tr);std_tr = std(max_tr);prD_tr =  mean(pred_tr,1);
+r1 = ones(size(rbms_pass,1)/6,1);r2 = ones(size(rbms_pass,1)/6,1)*2;r3 = ones(size(rbms_pass,1)/6,1)*3;
+r4 = ones(size(rbms_pass,1)/6,1)*4;r5 = ones(size(rbms_pass,1)/6,1)*5;r6 = ones(size(rbms_pass,1)/6,1)*6;
+acc1 = (max_cr == r1);% cross, ---- T
+acc2 = (max_el == r2);% elipse ---- U
+acc3 = (max_he == r3);% hexagon ---- X
+acc4 = (max_re == r4);% rectangle ---- H
+acc5 = (max_sq == r5); % square ---- M
+acc6 = (max_tr == r6);% triangle ---- A
+acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
+acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
+% create Table for Letters:
+Targets = ["Cross/T" ; "Elipse/U"; "Hexa/X"; "Rect/H"; "Square/M"; "Tria/A"];
+Mode = [mode_cr;mode_el;mode_he;mode_re;mode_sq;mode_tr];
+Std = [std_cr;std_el;std_he;std_re;std_sq;std_tr];
+Acc = [acc1;acc2;acc3;acc4;acc5;acc6];
+incl_ce_details = table(Targets,Mode,Std,Acc);
+incl_ce_pdr = [prD_cr;prD_el;prD_he;prD_re;prD_sq;prD_tr];
+
+%% EVAL - Pseudo-Letter Incongruent
+% pass data throught RBMs:
+hid_out_1_d = 1./(1 + exp(-inc_pl_d*vishid_1 - repmat(hidbiases_1,size(inc_pl_d,1),1)));
+rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
+% add biases
+ONES = ones(size(rbms_pass, 1), 1);  
+rbms_pass = [rbms_pass ONES];
+% Compute prediction:
+pred = rbms_pass*weights;
+softmax_pred = softmax(dlarray(pred','CB'));
+pred = extractdata(softmax_pred)';
+% [a,b] =max(pred,[],2); --- % a has also  values  > 1 ---- 
+% i.e. a is unnormalized
+[~, max_act] = max(pred,[],2); % max_act are indices of dim2 in pred of the highest value
+[r1,~] = find(inc_pl_t'); % find which columns (rows in transpose) are 1
+[r2,~] = find(inc_pl_s'); % find which columns (rows in transpose) are 1
 acc_l = (max_act == r1);
 acc_s = (max_act == r2);
 accuracy_l = mean(acc_l);
 accuracy_s = mean(acc_s);
-fprintf(1,'\n ------- PSEUDOLETTERS ------- \n ');
-fprintf(1,'\n All cases -- on geo-shape \n Accuracy= %d ',accuracy_s);
-Combined(2) = accuracy_s;
-fprintf(1,'\n If decision based on pseudoletter? \n Accuracy= %d\n ',accuracy_l);
-Combined_l(2) = accuracy_l;
-% pseudoletter + Congruent
-pred = cong_cases*weights;
-[~, max_act] = max(pred,[],2); 
-[r1,~] = find(cong_tl'); 
-[r2,~] = find(cong_ts');
-acc_l = (max_act == r1);
-acc_s = (max_act == r2);
-accuracy_l_c = mean(acc_l);
-accuracy_s_c = mean(acc_s);
-fprintf(1,'\n Congruent Cases -- on geo-shape \n Accuracy= %d ',accuracy_s_c);
-Congruent_Case(2) = accuracy_s_c;
-fprintf(1,'\n If decision based on pseudoletter? \n Accuracy= %d\n ',accuracy_l_c);
-Congruent_Case_l(2) = accuracy_l_c;
-% pseudoletter + Incongruent
-pred = incong_cases*weights;
-[~, max_act] = max(pred,[],2); 
-[r1,~] = find(incong_tl'); 
-[r2,~] = find(incong_ts');
-acc_l = (max_act == r1);
-acc_s = (max_act == r2);
-accuracy_l = mean(acc_l);
-accuracy_s = mean(acc_s);
-fprintf(1,'\n Incongruent Cases -- on geo-shape \n Accuracy= %d ',accuracy_s);
-Incongruent_Case(2) = accuracy_s;
-Incongruent_Case_l(2) = accuracy_l;
-fprintf(1,'\n If decision based on pseudoletter? \n Accuracy= %d\n ',accuracy_l);
-diff_ce = accuracy_s_c*100 - accuracy_s * 100;
-fprintf(1,'\n\n Congruency effect for pseudoletters of magnitude: %d\n ',diff_ce);
-CE(2) = diff_ce;
-CE_l(2) = accuracy_l_c*100 - accuracy_l; % @todo *100
-Accuracy_Measurements_shape = table(Targets,Congruent_Case,Incongruent_Case,Combined);
-Accuracy_Measurements_letter = table(Targets,Congruent_Case_l,Incongruent_Case_l,Combined_l);
-CE_Measurements = table(Targets,CE);
-CE_letter = table(Targets,CE_l);
+fprintf(1,'\n Prediction / Assesment of the Congruency Effect\n');
+fprintf(1,'\n ------- Case : Incongruent ------- \n');
+fprintf(1,'\n ------- Target : Pseudo Letter ------- \n');
+fprintf(1,'\n If Decision based on letter? \n Accuracy = %d\n ',accuracy_l);
+fprintf(1,'\n If Decision based on shape? \n Accuracy = %d\n ',accuracy_s);
 
-filename = "plots_results/CE_pred" + "_" + clean_date + "_" + int2str(c(4)) + "h" + int2str(c(5))+"m";
-save(filename,'Class_table','Accuracy_Measurements_shape','Accuracy_Measurements_letter' ...
-    ,'CE_Measurements', 'CE_letter','final_epoch');
+Shape_decisionAcc(4) = accuracy_s;
+Letter_decisionAcc(4) = accuracy_l;
 
+%%%% Extended ASSESMENT
+max_cr = [];max_el = [];max_he = [];max_re = [];max_sq = [];max_tr = [];
+pred_cr = [];pred_el = [];pred_he = [];pred_re = [];pred_sq = [];pred_tr = [];
+for i=1:size(max_act,1)
+    idx_l = find(inc_pl_s(i,:));
+    if idx_l == 1 
+        max_cr = [max_cr;max_act(i)];
+        pred_cr = [pred_cr;pred(i,:)];
+    elseif idx_l == 2
+        max_el= [max_el;max_act(i)];
+        pred_el = [pred_el;pred(i,:)];
+    elseif idx_l == 3
+        max_he= [max_he;max_act(i)];
+        pred_he = [pred_he;pred(i,:)];
+    elseif idx_l == 4
+        max_sq= [max_sq;max_act(i)];
+        pred_sq = [pred_sq;pred(i,:)];
+    elseif idx_l == 5
+        max_re= [max_re;max_act(i)];
+        pred_re = [pred_re;pred(i,:)];
+    elseif idx_l == 6
+        max_tr= [max_tr;max_act(i)];
+        pred_tr = [pred_tr;pred(i,:)];
+    end
+end
+mode_cr = mode(max_cr);std_cr = std(max_cr);prD_cr =  mean(pred_cr,1);
+mode_el = mode(max_el);std_el = std(max_el);prD_el =  mean(pred_el,1);
+mode_he = mode(max_he);std_he = std(max_he);prD_he =  mean(pred_he,1);
+mode_re = mode(max_re);std_re = std(max_re);prD_re =  mean(pred_re,1);
+mode_sq = mode(max_sq);std_sq = std(max_sq);prD_sq =  mean(pred_sq,1);
+mode_tr = mode(max_tr);std_tr = std(max_tr);prD_tr =  mean(pred_tr,1);
+r1 = ones(size(rbms_pass,1)/6,1);r2 = ones(size(rbms_pass,1)/6,1)*2;r3 = ones(size(rbms_pass,1)/6,1)*3;
+r4 = ones(size(rbms_pass,1)/6,1)*4;r5 = ones(size(rbms_pass,1)/6,1)*5;r6 = ones(size(rbms_pass,1)/6,1)*6;
+acc1 = (max_cr == r1);% cross, ---- T
+acc2 = (max_el == r2);% elipse ---- U
+acc3 = (max_he == r3);% hexagon ---- X
+acc4 = (max_re == r4);% rectangle ---- H
+acc5 = (max_sq == r5); % square ---- M
+acc6 = (max_tr == r6);% triangle ---- A
+acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
+acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
+% create Table for Letters:
+Targets = ["Cross/pT" ; "Elipse/pU"; "Hexa/pX"; "Rect/pH"; "Square/pM"; "Tria/pA"];
+Mode = [mode_cr;mode_el;mode_he;mode_re;mode_sq;mode_tr];
+Std = [std_cr;std_el;std_he;std_re;std_sq;std_tr];
+Acc = [acc1;acc2;acc3;acc4;acc5;acc6];
+incpl_ce_details = table(Targets,Mode,Std,Acc);
+incpl_ce_pdr = [prD_cr;prD_el;prD_he;prD_re;prD_sq;prD_tr];
 
+%% store the evaluation data
+Targets = ["Cong_Letter" ; "Cong_Ps-Letter"; "Inc_Letter";"Inc_Ps-Letter"];
+CE_eval.overall = table(Targets,Shape_decisionAcc,Letter_decisionAcc);
+CE_eval.CEs_Letter = Shape_decisionAcc(1)*100 - Shape_decisionAcc(3)*100;
+CE_eval.CEs_psLetter = Shape_decisionAcc(2)*100 - Shape_decisionAcc(4)*100;
+
+details.cong_l = cl_ce_details;
+details.cong_pl = cpl_ce_details;
+details.inc_l = incl_ce_details;
+details.inc_pl = incpl_ce_details;
+% for pdf:
+% rows = targets (A,H,M,...) && columns = possible classes
+details.pdr_cong_l = cl_ce_pdr;
+details.pdr_cong_pl = cpl_ce_pdr;
+details.pdr_inc_l = incl_ce_pdr;
+details.pdr_inc_pl = incpl_ce_pdr;
+
+CE_eval.detail = details;
+
+%%% not relevant as far as I understood:
+% CEl_Letter = Letter_decisionAcc(1)*100 - Letter_decisionAcc(3)*100;
+% CEl_psLetter = Letter_decisionAcc(2)*100 - Letter_decisionAcc(4)*100;
 

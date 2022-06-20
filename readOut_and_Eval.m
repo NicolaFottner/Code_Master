@@ -98,10 +98,9 @@ end
 class_specific_output; %compute details of the output and saves them
 
 %% Perform Assesment: Classifaction as Shape Id.
-% pred_ce_effect;
 
 Letter_Assesment;
-
+pred_ce_effect;
 
 properties.dropout = dropout;
 properties.dropout_p1 = p_layer1;
@@ -137,7 +136,9 @@ if length(min_str) == 1
     min_str = ['0' min_str(1)];
 end
 filename = "Evals/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "H2"+ int2str(numhid2)+ "_H3"+ int2str(numhid3);
-save(filename,'properties','Classifier','Classifier_Details','Id_BasedOnGeoS','histograms','Overfitting','reco_error');
+save(filename,'properties','Classifier','Classifier_Details','Id_BasedOnGeoS','histograms', ...
+    'CE_eval','Overfitting','reco_error');
+
 
 %% Plot receptive fields
 % create DN struct for facilitating later "plotting the receptive fields"
@@ -175,9 +176,11 @@ else
 end
 
 %plot_L1(DN,1000);
-if ii == 1 && numhid3 == 0
-    plot_L2(DN,numhid2,final_epoch);
-elseif ii == 1 && numhid3 ~= 0
-    plot_L2(DN,numhid2,final_epoch);
-    plot_L3(DN,numhid3,final_epoch_3);
-end
+
+ 
+% if ii == 1 && numhid3 == 0
+%     plot_L2(DN,numhid2,final_epoch);
+% elseif ii == 1 && numhid3 ~= 0
+%     plot_L2(DN,numhid2,final_epoch);
+%     plot_L3(DN,numhid3,final_epoch_3);
+% end
