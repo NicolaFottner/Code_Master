@@ -75,6 +75,7 @@ g_pass_subtrain = 1./(1 + exp(-g_train_flat*vishid_1 - repmat(hidbiases_1,size(g
   vishid     = 0.01*randn(g_numdims, numhid2);
   hidbiases  = zeros(1,numhid2);
   visbiases  = zeros(1,g_numdims);
+  % no need the following right?
   poshidprobs = zeros(g_numcases,numhid2); 
   posprods    = zeros(g_numdims,numhid2);
   neghidprobs = zeros(g_numcases,numhid2); 
@@ -82,7 +83,8 @@ g_pass_subtrain = 1./(1 + exp(-g_train_flat*vishid_1 - repmat(hidbiases_1,size(g
   vishidinc  = zeros(g_numdims,numhid2);
   hidbiasinc = zeros(1,numhid2);
   visbiasinc = zeros(1,g_numdims);
-  batchposhidprobs_2=zeros(g_numcases,numhid2,g_numbatches);
+  %
+  batchposhidprobs_2 = zeros(g_numcases,numhid2,g_numbatches);
 end
 % to save/assess reconstruction error
 full_rec_err_g=zeros(maxepoch, g_numbatches);
