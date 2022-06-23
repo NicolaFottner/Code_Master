@@ -39,7 +39,7 @@ load t_model DN
 vishid_1 = DN.L{1,1}.vishid;
 hidbiases_1 = DN.L{1,1}.hidbiases;
 clear DN
-load rbm2_16J11h39.mat vishid_2 hidbiases_2
+load g_rbm_2.mat vishid_2 hidbiases_2
 
 %%% Create variables for Table -- visualization purpose
 % table with accuracy values for shape

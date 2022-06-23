@@ -34,7 +34,7 @@ target_s= double(target_s);
 %% Prep Computation
 weights = W2;
 
-% pass shapedata throught RBMs:
+% pass shapedata throught RBM^s:
 hid_out_1_s = 1./(1 + exp(-s_data*vishid_1 - repmat(hidbiases_1,size(s_data,1),1)));
 rbms_pass_s = 1./(1 + exp(-hid_out_1_s*vishid_2 - repmat(hidbiases_2,size(hid_out_1_s,1),1)));
 if numhid3 ~= 0
