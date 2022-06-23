@@ -17,20 +17,9 @@
 %%%% INFO outputed files: // for each single "model simulation/run"
 % ./g_rbm_2.mat & ./g_rbm_3.mat
 % ./err_rbm_2.mat & ./err_rbm_3.mat
-% ./data_plotting/histograms.pdf:         histogram graphicfile
-% ./data_plotting/overfitting.pdf:        overfitting graphicfile
-% ./data_plotting/reco_plotting.pdf:      recognition-error graphicfile
-% /plots_results/fig/..:                  "graphicfile of receptive fields"
-% /plots_results/classf_perf/..Train:           "data and performance on 3Lay training"
-% /plots_results/classf_perf/..detail_distr:    "graphicfile Pr.Distr. of each geo_s"
-% /plots_results/classf_perf/.. detail_acc:     "detailed data and performance of 3L"
-% /plots_results/Id_basedOnGeoS(6)/..L_PrD:     "graphicfile Pr.Distr"
-% /plots_results/Id_basedOnGeoS(6)/..pL_PrD:    "graphicfile Pr.Distr"
-% /plots_results/Id_basedOnGeoS(6)/..Eval_L&pL: "Letter classif./assesment"
-% ... for the simulation with a third rbm layer, see folder "/three
+% Evals/ --- file with everything - from overfitting measure to CE assesm.
 
 configurations;
-
 configurations_list = [];
 % elem.layer2=300;
 % elem.layer3= 0;
@@ -38,7 +27,7 @@ configurations_list = [];
 % elem.minibatchsize= 12;
 % configurations_list = [configurations_list;elem];
 
-elem.layer2=350;
+elem.layer2= 350;
 elem.layer3= 0;
 elem.dropout= 0;
 elem.minibatchsize= 24;
@@ -66,10 +55,11 @@ for z=1:size(configurations_list,1)
                 p_layer2 = 0.5;a3=a1;
             end 
         else
-            p_layer1 = NaN;
-            p_layer2 = NaN;
-            a1 = NaN;
+            p_layer1 = 1;
+            p_layer2 = 1;
+            a1 = 0;
         end
+        no_N_img = true;
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -86,7 +76,7 @@ for z=1:size(configurations_list,1)
         numdims = 1600;
         numbatches = 80000/160;
         numcases = DN.batchsize;
-              
+        
         fprintf(1,'Importing data: Geometric Shapes \n');
         import_shapes;
         fprintf(1,'Start Training. \n'); 
@@ -118,19 +108,15 @@ for z=1:size(configurations_list,1)
         rbm2.finalmomentum    = 0.9;
         rbm2.earlyStopping = true;
         restart=1;
-%         if dropout
-%             % @todo: DO I NEED THIS? can I just use p_layer2 = 1?
-%             rbm_2DropO;
-%         else
-%             rbm_2;
-%         end
-%         vishid_2=vishid; hidbiases_2=hidbiases; visbiases_2=visbiases; hid_out_2 = batchposhidprobs_2;
-        %save g_rbm_2 vishid_2 hidbiases_2 visbiases_2; % hid_out_2;
-        load rbm2_16J11h39.mat vishid_2 hidbiases_2 visbiases_2;
-        load rbm2_16J11h39_err.mat overfitting_g_2 full_rec_err_g
-        addpath("Evals/");
-        load 16Jun_11h39m_H2350_H30.mat properties;
-        final_epoch = properties.epoch2;
+        rbm_2DropO;
+        vishid_2=vishid; hidbiases_2=hidbiases; visbiases_2=visbiases; hid_out_2 = batchposhidprobs_2;
+%         save g_rbm_2 vishid_2 hidbiases_2 visbiases_2; % hid_out_2;
+% 
+%         load rbm2_16J11h39.mat vishid_2 hidbiases_2 visbiases_2;
+%         load rbm2_16J11h39_err.mat overfitting_g_2 full_rec_err_g
+%         addpath("Evals/");
+%         load 16Jun_11h39m_H2350_H30.mat properties;
+%         final_epoch = properties.epoch2;
 
         %% RBM 3 
         if numhid3 ~= 0
@@ -145,19 +131,18 @@ for z=1:size(configurations_list,1)
             rbm3.finalmomentum    = 0.9;
             rbm3.earlyStopping = true;
             restart=1;
-            if dropout
-                rbm_3DropO;
-            else
-                rbm_3;
-            end
+            rbm_3DropO;
             vishid_3=vishid; hidbiases_3=hidbiases; visbiases_3=visbiases; hid_out_3 = batchposhidprobs_2;
             save g_rbm_3 vishid_3 hidbiases_3 visbiases_3; % hid_out_3;
             %load g_rbm_3 vishid_3 hidbiases_3 visbiases_3 hid_out_3;
         end    
 
         %% Classifer and performance measurements
-        readOut_and_Eval;
-
+        if ~no_N_img % run like usual
+            readOut_and_Eval;   
+        else         % no first/natural layer
+            readOut_and_Eval_noN_img;
+        end
         %% restart the run:
         clearvars -except z configurations_list; 
         close all;

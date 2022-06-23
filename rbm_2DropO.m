@@ -46,13 +46,20 @@ if restart ==1
 
   final_epoch = 1;
 % pass the data of geo-shapes through pretrained rbm_1 to get respective hid_unit_1 activations 
-g_pass = zeros(g_numcases, numhid, g_numbatches);
-parfor batch = 1:g_numbatches
-    data = g_batchdata(:,:,batch);
-    % sigmoid_pass of dim: g_numcases x numhid
-    sigmoid_pass = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,g_numcases,1)));   
-    g_pass(:,:,batch) = sigmoid_pass;
-end
+if ~no_N_img
+    g_pass = zeros(g_numcases, numhid, g_numbatches);
+    parfor batch = 1:g_numbatches
+        data = g_batchdata(:,:,batch);
+        % sigmoid_pass of dim: g_numcases x numhid
+        sigmoid_pass = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,g_numcases,1)));   
+        g_pass(:,:,batch) = sigmoid_pass;
+    end
+    x=0;
+else % don't use the first layer
+    x=numhid;
+    g_pass = g_batchdata;
+    numhid = g_numdims;
+end 
 
 % For computing overfitting / used in early stoppin
 % "randomize", the validation set used in the computation 
@@ -67,8 +74,11 @@ g_train_flat = [];
 for i=1:size(r,2) % I prefer this reshape to ensure to keep the dimensionality right (for now)
     g_train_flat = [g_train_flat;g_train(:,:,i)];
 end
-g_pass_subtrain = 1./(1 + exp(-g_train_flat*vishid_1 - repmat(hidbiases_1,size(g_val_data_1,1),1)));  
-
+if ~no_N_img
+    g_pass_subtrain = 1./(1 + exp(-g_train_flat*vishid_1 - repmat(hidbiases_1,size(g_val_data_1,1),1)));  
+else
+    g_pass_subtrain = g_train_flat;
+end
 %% %%%%%%%%%%%%%% TRAIN RBM2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initializing parameters: 
   g_numdims = numhid;
@@ -84,9 +94,8 @@ g_pass_subtrain = 1./(1 + exp(-g_train_flat*vishid_1 - repmat(hidbiases_1,size(g
   visbiasinc = zeros(1,g_numdims);
   batchposhidprobs_2=zeros(g_numcases,numhid2,g_numbatches);
 end
-% to save/assess reconstruction error
+% to save/assess reconstruction error &  analyse overfitting
 full_rec_err_g=zeros(maxepoch, g_numbatches);
-% this is to analyse overfitting
 overfitting_g_2 = zeros(maxepoch,2);
 % for monitoring purpose
 deltas = zeros(maxepoch,1);
@@ -153,12 +162,16 @@ for epoch = epoch:maxepoch
     
     %g_pass_val is changed in each "overfitting-computation" // "randomized"
     v_perm = randi(3);
-    if v_perm==1
-        g_pass_val = 1./(1 + exp(-g_val_data_1*vishid_1 - repmat(hidbiases_1,size(g_val_data_1,1),1)));  
-    elseif v_perm == 2
+    if ~no_N_img
+        if v_perm==1
+            g_pass_val = 1./(1 + exp(-g_val_data_1*vishid_1 - repmat(hidbiases_1,size(g_val_data_1,1),1)));  
+        elseif v_perm == 2
             g_pass_val = 1./(1 + exp(-g_val_data_2*vishid_1 - repmat(hidbiases_1,size(g_val_data_2,1),1)));  
-    elseif v_perm == 3
+        elseif v_perm == 3
             g_pass_val = 1./(1 + exp(-g_val_data_3*vishid_1 - repmat(hidbiases_1,size(g_val_data_3,1),1)));  
+        end
+    else
+        g_pass_val = (v_perm==1) * g_val_data_1 + (v_perm==2) * g_val_data_2 + (v_perm==3) * g_val_data_3;
     end
     % compute overfitting measures:
 
@@ -195,7 +208,7 @@ for epoch = epoch:maxepoch
     vishid_cp = vishid;hidbiases_cp = hidbiases;visbiases_cp = visbiases;batchposhidprobs_2_cp = batchposhidprobs_2;
 end
 fprintf(1,'number of runned epoch = %d \r',epoch); 
-
+numhid = numhid * (~no_N_img) + (no_N_img) * x;
 % applying Dropout "weight scaling inference rule":
 vishid = vishid * p_layer1;
 save err_rbm_2 full_rec_err_g overfitting_g_2 deltas;

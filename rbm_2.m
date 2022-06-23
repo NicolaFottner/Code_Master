@@ -39,22 +39,26 @@ patience =  rbm2.patience;
 maxepoch = rbm2.maxepoch;
 [g_numcases g_numdims g_numbatches]=size(g_batchdata);
 
-
 if restart ==1
   restart=0;
   epoch=1;
-
   final_epoch = 1;
 % pass the data of geo-shapes through pretrained rbm_1 to get respective hid_unit_1 activations 
 g_pass = zeros(g_numcases, numhid, g_numbatches);
-parfor batch = 1:g_numbatches
-    data = g_batchdata(:,:,batch);
-    % sigmoid_pass of dim: g_numcases x numhid
-    sigmoid_pass = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,g_numcases,1)));   
-    g_pass(:,:,batch) = sigmoid_pass;
-end
+if no_N_img == false
+    parfor batch = 1:g_numbatches
+        data = g_batchdata(:,:,batch);
+        % sigmoid_pass of dim: g_numcases x numhid
+        sigmoid_pass = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,g_numcases,1)));   
+        g_pass(:,:,batch) = sigmoid_pass;
+    end
+else % don't use the first layer
+    g_pass = g_batchdata;
+    x = numhid;
+    numhid = g_numdims;
+end 
 
-% For computing overfitting / used in early stoppin
+% For computing overfitting / used in early stopping
 % "randomize", the validation set used in the computation 
 g_val_data_1 = g_val_data(1: size(g_val_data,1)/3,:);
 g_val_data_2 = g_val_data(1 + size(g_val_data,1)/3 :size(g_val_data,1)/3 * 2 ,:);
@@ -194,6 +198,7 @@ for epoch = epoch:maxepoch
     deltas(epoch,:)=abs(overfitting_g_2(epoch,1) - overfitting_g_2(epoch,2));
     vishid_cp = vishid;hidbiases_cp = hidbiases;visbiases_cp = visbiases;batchposhidprobs_2_cp = batchposhidprobs_2;
 end
+
 fprintf(1,'number of runned epoch = %d \r',epoch); 
 
 save err_rbm_2 full_rec_err_g overfitting_g_2 deltas;

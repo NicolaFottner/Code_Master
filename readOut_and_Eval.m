@@ -101,7 +101,6 @@ class_specific_output; %compute details of the output and saves them
 
 Letter_Assesment;
 pred_ce_effect;
-
 properties.dropout = dropout;
 properties.dropout_p1 = p_layer1;
 properties.dropout_cl = a1;
@@ -117,10 +116,11 @@ properties.numhid2 = numhid2;
 properties.numhid3 = numhid3;
 
 histo;
-Overfitting.layer2 = overfitting_g_2;
-if numhid3==0
+if numhid3 == 0
     reco_error = full_rec_err_g;
+    Overfitting = overfitting_g_2;
 else
+    Overfitting.layer2 = overfitting_g_2;
     Overfitting.layer3 = overfitting_g_3; 
     reco_error.layer2 = full_rec_err_g;
     reco_error.layer3 = full_rec_err_3;
