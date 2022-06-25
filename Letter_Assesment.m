@@ -12,6 +12,8 @@ end
 
 %load openCV_final_Shapes.mat data target_s %target_l is just their s-target
 load openCV_Shapes_xtra.mat data target_s
+%BALANCED ???
+
 
 s_data = zeros(size(data));
 for i=1:size(data,1)

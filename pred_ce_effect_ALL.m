@@ -64,9 +64,20 @@ pred = extractdata(softmax_pred)';
 [r1,~] = find(cong_l_t'); % find which columns (rows in transpose) are 1
 [r2,~] = find(cong_l_s'); % find which columns (rows in transpose) are 1
 acc_l = (max_act == r1);
+
+
+
+% this is what I need to output
 acc_s = (max_act == r2);
-accuracy_l = mean(acc_l);
-accuracy_s = mean(acc_s);
+% with respective information:
+% inner target: "A" for 1
+% contour: "Cross" for 1
+% etc ...
+
+
+
+
+
 fprintf(1,'\n Prediction / Assesment of the Congruency Effect\n');
 fprintf(1,'\n ------- Case : Congruent ------- \n');
 fprintf(1,'\n ------- Target : Letter ------- \n');

@@ -26,15 +26,11 @@ elem.layer3= 0;
 elem.dropout= 0;
 elem.minibatchsize= 12;
 configurations_list = [configurations_list;elem];
-%now without first layer:
-configurations_list = [configurations_list;elem];
 
 elem.layer2= 350;
 elem.layer3= 0;
 elem.dropout= 0;
 elem.minibatchsize= 24;
-configurations_list = [configurations_list;elem];
-%now without first layer:
 configurations_list = [configurations_list;elem];
 
 % and do all again with dropout 0.4
@@ -42,7 +38,7 @@ configurations_list = [configurations_list;elem];
 % from 12J: missing z=34 onwards
 
 for z=1:size(configurations_list,1)
-    for ii=1:10    %% --- 10
+    for ii=1:5    %% --- 10
         % initialize hyperparameters
         maxepoch=500; % 500
         geo_shape_class = 6; %problem of 6 class/shapes
@@ -63,11 +59,7 @@ for z=1:size(configurations_list,1)
             p_layer2 = 1;
             a1 = 0;
         end
-        if z == 2 ||z==4
-            no_N_img = true;
-        else
-            no_N_img = false;
-        end
+        no_N_img = false;
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         fprintf(1,'\n\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n\n');
@@ -118,7 +110,7 @@ for z=1:size(configurations_list,1)
         rbm_2DropO;
         vishid_2=vishid; hidbiases_2=hidbiases; visbiases_2=visbiases; hid_out_2 = batchposhidprobs_2;
         save g_rbm_2 vishid_2 hidbiases_2 visbiases_2; % hid_out_2;
-% 
+
 %         load rbm2_16J11h39.mat vishid_2 hidbiases_2 visbiases_2;
 %         load rbm2_16J11h39_err.mat overfitting_g_2 full_rec_err_g
 %         addpath("Evals/");

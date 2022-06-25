@@ -1,11 +1,11 @@
 %% export to excel spreadsheets
-addpath("Evals/mean/")
-sourceDir = 'Evals/mean/'; % already in 64x64 format
+addpath("Evals/25J_tania/")
+sourceDir = 'Evals/25J_tania/'; % already in 64x64 format
 loadData = dir([sourceDir '*.mat']);
 
 % strings(x,y), with x: number of architectures
 %                    y: number of cases within a architecture
-mean_list = strings(2,1);
+mean_list = strings(1,5);
 
 for i=1:size(loadData,1)
     load([loadData(i).name],"mean_properties");

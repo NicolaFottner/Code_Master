@@ -1,43 +1,40 @@
 % plot PDF from final/evaluation data
+% nothing to do with excel actually ...
 
 addpath("Evals/");
-
 % for 1300,900,500,300
-for i = 1:2
+for i = 1:1
     sourceDir = 'Evals/'; % already in 64x64 format
-    if i == 1
-        token = 'sim6_1300n';
-    elseif i == 2
-        token = 'sim6_1300_100n';
-    end
+    token = '16Jun_11h39m_H2350_H30';
     sourceDir = strcat(sourceDir,token);
     %loadData = dir([sourceDir '*.mat']);
-    load(sourceDir,"Id_BasedonS_PDFs");
-    pdfs = Id_BasedonS_PDFs.Models_Output_PDF;
+    load(sourceDir,"Id_BasedOnGeoS");
+    pdfs_l = Id_BasedOnGeoS.letter_pdr;
+    pdfs_pl = Id_BasedOnGeoS.pletter_pdr;
     f = figure;
     % for letter A:
     subplot(2,3,1);
-    bar(pdfs(1,:));
+    bar(pdfs_l(1,:));
     xlabel('Letter A');
     % for letter H:
     subplot(2,3,2);
-    bar(pdfs(2,:));
+    bar(pdfs_l(2,:));
     xlabel('Letter H');
     % for letter M:
     subplot(2,3,3);
-    bar(pdfs(3,:));
+    bar(pdfs_l(3,:));
     xlabel('Letter M');
     % for letter U:
     subplot(2,3,4);
-    bar(pdfs(4,:));
+    bar(pdfs_l(4,:));
     xlabel('Letter U');
     % for letter T:
     subplot(2,3,5);
-    bar(pdfs(5,:));
+    bar(pdfs_l(5,:));
     xlabel('Letter T');
     % for letter X:
     subplot(2,3,6);
-    bar(pdfs(6,:));
+    bar(pdfs_l(6,:));
     xlabel('Letter X');
     sgtitle("Models' Prediction/Prob Distr: ");
     
@@ -47,27 +44,27 @@ for i = 1:2
     f = figure;
     % for letter A:
     subplot(2,3,1);
-    bar(pdfs(7,:));
+    bar(pdfs_pl(1,:));
     xlabel('PseudoLetter A');
     % for letter H:
     subplot(2,3,2);
-    bar(pdfs(8,:));
+    bar(pdfs_pl(2,:));
     xlabel('PseudoLetter H');
     % for letter M:
     subplot(2,3,3);
-    bar(pdfs(9,:));
+    bar(pdfs_pl(3,:));
     xlabel('PseudoLetter M');
     % for letter U:
     subplot(2,3,4);
-    bar(pdfs(10,:));
+    bar(pdfs_pl(4,:));
     xlabel('PseudoLetter U');
     % for letter T:
     subplot(2,3,5);
-    bar(pdfs(11,:));
+    bar(pdfs_pl(5,:));
     xlabel('PseudoLetter T');
     % for letter X:
     subplot(2,3,6);
-    bar(pdfs(12,:));
+    bar(pdfs_pl(6,:));
     xlabel('PseudoLetter X');
     sgtitle("Models' Prediction/Prob Distr: ");
     file_namee = "Evals/plots/" + token + "_pseudoL_prD_"+ ".png";
