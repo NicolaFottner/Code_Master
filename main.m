@@ -157,5 +157,5 @@ if length(min_str) == 1
 end
 filename = "Evals/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "TF_matrix";
 save(filename,'matrix_1','matrix_1_pd','matrix_2','matrix_3_outer','matrix_3_inner');
-
+excel_TF_export;
 end
