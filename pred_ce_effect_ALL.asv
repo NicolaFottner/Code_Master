@@ -171,7 +171,7 @@ else
 end
 
 %% matrix 3 outer
-Acc_Cong = cat(1,acc_s_cong_l,acc_s_cong_pl);
+Acc_cong = cat(1,acc_s_cong_l,acc_s_cong_pl);
 Outer_Inc_Acc = cat(1,acc_s_inc_l,acc_s_inc_pl);
 
 % 1a = rect, 1b=elip, 2a=tria 2b=elip, 3a=hex, 3b=cros,4a=hex,4b=squ,
@@ -301,9 +301,9 @@ Shape = shape_int2str(stargets);
 
 
 if ii==1
-    matrix_3_outer = table(Subjects,Shape,Acc_Cong,Acc_inc_a,Acc_inc_b,a,b);
+    matrix_3_outer = table(Subjects,Shape,Acc_cong,Acc_inc_a,Acc_inc_b,a,b);
 else
-    m3 = table(Subjects,Letter,Acc_Cong,Acc_inc_a,Acc_inc_b,a,b);
+    m3 = table(Subjects,Letter,Acc_cong,Acc_inc_a,Acc_inc_b,a,b);
     matrix_3_outer = cat(1,matrix_3_outer,m3);
 end
 

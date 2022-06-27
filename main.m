@@ -26,12 +26,12 @@ elem.layer3= 0;
 elem.dropout= 0;
 elem.minibatchsize= 12;
 configurations_list = [configurations_list;elem];
-
-elem.layer2= 350;
-elem.layer3= 0;
-elem.dropout= 0;
-elem.minibatchsize= 24;
-configurations_list = [configurations_list;elem];
+% 
+% elem.layer2= 350;
+% elem.layer3= 0;
+% elem.dropout= 0;
+% elem.minibatchsize= 24;
+% configurations_list = [configurations_list;elem];
 
 % and do all again with dropout 0.4
 
@@ -143,7 +143,19 @@ for z=1:size(configurations_list,1)
             readOut_and_Eval_noN_img;
         end
         %% restart the run:
-        clearvars -except z configurations_list; 
+        clearvars -except z configurations_list matrix_1 matrix_1_pd matrix_2 matrix_3_outer matrix_3_inner; 
         close all;
-    end    
+    end
+dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date without "-YYYY"
+hour_str = int2str(c(4));
+min_str = int2str(c(5));
+if length(hour_str) == 1
+    hour_str = ['0' hour_str(1)];
+end
+if length(min_str) == 1
+    min_str = ['0' min_str(1)];
+end
+filename = "Evals/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "TF_matrix";
+save(filename,'matrix_1','matrix_1_pd','matrix_2','matrix_3_outer','matrix_3_inner');
+
 end

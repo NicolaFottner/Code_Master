@@ -100,7 +100,9 @@ class_specific_output; %compute details of the output and saves them
 %% Perform Assesment: Classifaction as Shape Id.
 
 Letter_Assesment;
+% to get all the matrix data for the stat analysis
 pred_ce_effect;
+pred_ce_effect_ALL;
 properties.dropout = dropout;
 properties.dropout_p1 = p_layer1;
 properties.dropout_cl = a1;
