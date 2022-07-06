@@ -24,8 +24,11 @@ clear data; clear target_s
 
 % load dataset for the 6 letters
 %load openCV_final_letters.mat data target_s target_l;
-load openCV_letters_tF.mat data target_s target_l;
 %load openCV_letters_xtra.mat data target_s target_l;
+
+
+%load openCV_letters_tF.mat data target_s target_l;
+load openCV_letterPOS3.mat data target_s target_l;
 
 
 d_double = zeros(size(data));
@@ -142,6 +145,7 @@ clear data;
 %load openCV_final_pletters.mat data target_l target_s
 load openCV_pletters_tF.mat data target_s target_l;
 
+
 d_double = zeros(size(data));
 for i=1:size(data,1)
     d_double(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
@@ -243,7 +247,9 @@ elseif ii == 5
     subj_str = "Subject 5 ";
 end
 Accuracy = cat(1,acc_l,acc_pl);
-Targets = cat(1,target_l_save,target_l);
+str_target_l = letter_int2str(target_l_save);
+str_target_pl = psletter_int2str(target_l);
+Targets = cat(1,str_target_l,str_target_pl);
 Subjects = repmat(subj_str,size(Accuracy,1),1);
 
 space_holder = repmat("-----",size(Accuracy,1),1);
@@ -256,7 +262,6 @@ rectangle = cat(1,pred1(:,4),pred3(:,4));
 square = cat(1,pred1(:,5),pred3(:,5));
 triangle = cat(1,pred1(:,6),pred3(:,6));
 
-Targets = letter_int2str(Targets);
 if ii == 1 
     matrix_2 = table(Subjects,Targets,Accuracy,space_holder,cross,elipse,hexa,rectangle, ...
         square,triangle);
@@ -286,5 +291,25 @@ function [str_letter] = letter_int2str(letter_id)
         end
     end
 end
+
+function [str_letter] = psletter_int2str(letter_id)
+    str_letter = strings(size(letter_id,1),1);
+    for i=1:size(letter_id,1)
+        if find(letter_id(i,:))  == 1
+            str_letter(i) = "psA";
+        elseif find(letter_id(i,:))  == 2
+            str_letter(i) = "psH";
+        elseif find(letter_id(i,:))  == 3
+            str_letter(i) = "psM";
+        elseif find(letter_id(i,:))  == 4 
+            str_letter(i) = "psT";
+        elseif find(letter_id(i,:))  == 5
+            str_letter(i) = "psU";
+        elseif find(letter_id(i,:))  == 6
+            str_letter(i) = "psX";
+        end
+    end
+end
+
 
 

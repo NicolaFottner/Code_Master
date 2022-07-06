@@ -2,13 +2,16 @@
 % 2. create "mini-batches"
 % equivalent to the concatenation of the methods "converter.m" and "make_batches.m" from the original code
 
-load openCV_final_Shapes.mat data;
+%load openCV_final_Shapes.mat data;
+addpath data/new04Jl/
+load new04Jl/openCV_shapePOS3.mat
 %load openCV_Shapes_xtra_balanced.mat data;
 
 shapedata = zeros(size(data));
 for i=1:size(data,1)
     shapedata(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
 end
+target_s = double(target_s);
 % imshow(reshape(shapedata(45,:),[40 40 1])');
 % imshow(reshape(data(45,:),[40 40 1])');
 clear data;
@@ -23,18 +26,28 @@ numbatches=g_totnum/g_batchsize;
 g_batchdata = zeros(g_batchsize, numdims, numbatches);
 g_batchtargets = zeros(g_batchsize, num_classes, numbatches);
 
-class1_data = shapedata(3004:4002,:);
-class2_data = shapedata(4003:5001,:);
-class3_data = shapedata(7:1005,:);
-class4_data = shapedata(1006:2004,:);
-class5_data = shapedata(5002:6000,:);
-class6_data = shapedata(2005:3003,:);
-class1_data = [class1_data ; shapedata(4,:)];
-class2_data = [class2_data ; shapedata(5,:)];
-class3_data = [class3_data ; shapedata(1,:)];
-class4_data = [class4_data ; shapedata(2,:)];
-class5_data = [class5_data ; shapedata(6,:)];
-class6_data = [class6_data ; shapedata(3,:)];
+class1_data = [];class2_data = [];class3_data = [];
+class4_data = [];class5_data = [];class6_data = [];
+for i=1:size(shapedata,1)
+    if find(target_s(i,:)) == 1
+        class1_data = [class1_data;shapedata(i,:)];
+    end
+    if find(target_s(i,:)) == 2
+        class2_data = [class2_data;shapedata(i,:)];
+    end
+    if find(target_s(i,:)) == 3
+        class3_data = [class3_data;shapedata(i,:)];
+    end
+    if find(target_s(i,:)) == 4
+        class4_data = [class4_data;shapedata(i,:)];
+    end
+    if find(target_s(i,:)) == 5
+        class5_data = [class2_data;shapedata(i,:)];
+    end
+    if find(target_s(i,:)) == 6
+        class6_data = [class6_data;shapedata(i,:)];
+    end
+end
 g_class_size=g_totnum/6;
 class_b_M_init = zeros(g_batchsize,numdims);
 targets_M_init = zeros(g_batchsize,6);

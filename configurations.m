@@ -2,7 +2,7 @@
 
 % as of 01.06:
 
-layer2 = [450,400,350,300,250,200,180,150,120,100,50];
+layer2 = [1000,900,500,400,350,300,200,150,50];
 layer3=[];
 configurations_list = [];
 %c_list_size = size(layer2,1) * size(layer3,1) * 2 * 2;

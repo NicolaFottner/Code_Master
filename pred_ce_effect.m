@@ -1,6 +1,9 @@
 
 weights = W2;
-load openCV_CE_data.mat 
+load openCV_CE_data.mat cong_pl_d cong_pl_t cong_pl_s inc_pl_d inc_pl_t inc_pl_s 
+
+load openCV_newL_CE.mat cong_l_d cong_l_t cong_l_s inc_l_d inc_l_t inc_l_s 
+
 %% Prep and convert openCV_CE_data from uint8 to double:
 shapedata = zeros(size(cong_l_d));
 for i=1:size(cong_l_d,1)

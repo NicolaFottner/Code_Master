@@ -20,12 +20,12 @@
 % Evals/ --- file with everything - from overfitting measure to CE assesm.
 
 configurations;
-configurations_list = [];
-elem.layer2=300;
-elem.layer3= 0;
-elem.dropout= 0;
-elem.minibatchsize= 12;
-configurations_list = [configurations_list;elem];
+% configurations_list = [];
+% elem.layer2=300;
+% elem.layer3= 0;
+% elem.dropout= 0;
+% elem.minibatchsize= 12;
+% configurations_list = [configurations_list;elem];
 % 
 % elem.layer2= 350;
 % elem.layer3= 0;
@@ -38,7 +38,7 @@ configurations_list = [configurations_list;elem];
 % from 12J: missing z=34 onwards
 
 for z=1:size(configurations_list,1)
-    for ii=1:5    %% --- 10
+    for ii=1:3    %% --- 10
         % initialize hyperparameters
         maxepoch=500; % 500
         geo_shape_class = 6; %problem of 6 class/shapes
@@ -155,7 +155,7 @@ end
 if length(min_str) == 1
     min_str = ['0' min_str(1)];
 end
-filename = "Evals/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "TF_matrix";
-save(filename,'matrix_1','matrix_1_pd','matrix_2','matrix_3_outer','matrix_3_inner');
-excel_TF_export;
+% filename = "Evals/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "TF_matrix";
+% save(filename,'matrix_1','matrix_1_pd','matrix_2','matrix_3_outer','matrix_3_inner');
+%excel_TF_export;
 end

@@ -1,7 +1,10 @@
 
 weights = W2;
-addpath("data/");
-load openCV_CE_data.mat 
+addpath("data/new04Jl/");
+%load openCV_CE_data.mat 
+load openCV_CE_data.mat cong_pl_d cong_pl_t cong_pl_s inc_pl_d inc_pl_t inc_pl_s 
+load openCV_newL_CE.mat cong_l_d cong_l_t cong_l_s inc_l_d inc_l_t inc_l_s 
+
 %% Prep and convert openCV_CE_data from uint8 to double:
 shapedata = zeros(size(cong_l_d));
 for i=1:size(cong_l_d,1)
@@ -126,9 +129,13 @@ accs_i = cat(1,acc_s_cong_l_inner,acc_s_cong_pl_inner);
 accs_i = cat(1,accs_i,acc_s_inc_l_inner);
 accs_i = cat(1,accs_i,acc_s_inc_pl_inner);
 %inner-nature:
-l_targets = cat(1,cong_l_t,cong_pl_t);
-l_targets = cat(1,l_targets,inc_l_t);
-l_targets = cat(1,l_targets,inc_pl_t);
+prep_l =  letter_int2str(cong_l_t);
+prep_l1 = psletter_int2str(cong_pl_t);
+prep_l2 = letter_int2str(inc_l_t);
+prep_l3 = psletter_int2str(inc_pl_t);
+Letter = cat(1,prep_l,prep_l1);
+Letter = cat(1,Letter,prep_l2);
+Letter = cat(1,Letter,prep_l3);
 %outer:
 s_targets = cat(1,cong_l_s,cong_pl_s);
 s_targets = cat(1,s_targets,inc_l_s);
@@ -156,8 +163,6 @@ trian = cat(1,pred_cl(:,6),pred_cpl(:,6));
 trian = cat(1,trian,pred_il(:,6));
 trian = cat(1,trian,pred_ipl(:,6));
 %
-Letter = letter_int2str(l_targets);
-
 Contour = shape_int2str(s_targets);
 accs = int2str(accs);
 accs_i = int2str(accs_i);
@@ -292,8 +297,21 @@ b3 = repmat("T",100,1);
 b4= repmat("U",100,1);
 b5= repmat("X",100,1);
 b6= repmat("U",100,1);
-a = [a1;a2;a3;a4;a5;a6;a1;a2;a3;a4;a5;a6];
-b = [b1;b2;b3;b4;b5;b6;b1;b2;b3;b4;b5;b6];
+
+pa1 = repmat("pM",100,1);
+pa2 = repmat("pA",100,1);
+pa3 = repmat("pM",100,1);
+pa4= repmat("pA",100,1);
+pa5= repmat("pT",100,1);
+pa6= repmat("pH",100,1);
+pb1 = repmat("pX",100,1);
+pb2 = repmat("pH",100,1);
+pb3 = repmat("pT",100,1);
+pb4= repmat("pU",100,1);
+pb5= repmat("pX",100,1);
+pb6= repmat("pU",100,1);
+a = [a1;a2;a3;a4;a5;a6;pa1;pa2;pa3;pa4;pa5;pa6];
+b = [b1;b2;b3;b4;b5;b6;pb1;pb2;pb3;pb4;pb5;pb6];
 
 Acc_inc_a = [letter_inc_a;psletter_inc_a];
 Acc_inc_b= [letter_inc_b;psletter_inc_b];
@@ -315,7 +333,10 @@ end
 %% matrix 3 inner
 Cong_Acc = cat(1,acc_s_cong_l_inner,acc_s_cong_pl_inner);
 Inner_Inc_Acc = cat(1,acc_s_inc_l_inner,acc_s_inc_pl_inner);
-ltargets = cat(1,cong_l_t,cong_pl_t);
+str_target_l = letter_int2str(cong_l_t);
+str_target_pl = psletter_int2str(cong_pl_t);
+Letter = cat(1,str_target_l,str_target_pl);
+
 
 % 1a = rect, 1b=elip, 2a=tria 2b=elip, 3a=hex, 3b=cros,4a=hex,4b=squ,
 % 5a = rec 5b= trian,6a=cross, 6b= squa
@@ -438,7 +459,6 @@ b = [b1;b2;b3;b4;b5;b6;b1;b2;b3;b4;b5;b6];
 Acc_inc_a = [letter_inc_a;psletter_inc_a];
 Acc_inc_b= [letter_inc_b;psletter_inc_b];
 Subjects = repmat(subj_str,size(Acc_inc_a,1),1);
-Letter = letter_int2str(ltargets);
 
 if ii==1
     matrix_3_inner = table(Subjects,Letter,Cong_Acc,Acc_inc_a,Acc_inc_b,a,b);
@@ -505,4 +525,23 @@ function [str_shape] = shape_int2str(shape_id)
         end
     end
 end
+function [str_letter] = psletter_int2str(letter_id)
+    str_letter = strings(size(letter_id,1),1);
+    for i=1:size(letter_id,1)
+        if find(letter_id(i,:))  == 1
+            str_letter(i) = "psA";
+        elseif find(letter_id(i,:))  == 2
+            str_letter(i) = "psH";
+        elseif find(letter_id(i,:))  == 3
+            str_letter(i) = "psM";
+        elseif find(letter_id(i,:))  == 4 
+            str_letter(i) = "psT";
+        elseif find(letter_id(i,:))  == 5
+            str_letter(i) = "psU";
+        elseif find(letter_id(i,:))  == 6
+            str_letter(i) = "psX";
+        end
+    end
+end
+
 
