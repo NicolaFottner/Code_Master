@@ -20,6 +20,7 @@
 % Evals/ --- file with everything - from overfitting measure to CE assesm.
 
 configurations;
+configurations_list(1:3,:)= [];
 % configurations_list = [];
 % elem.layer2=300;
 % elem.layer3= 0;
