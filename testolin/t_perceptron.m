@@ -7,8 +7,9 @@
 % University of Padova
 % ************************************************************************
 
-function [weights, tr_accuracy, te_accuracy,tr_loss,te_loss] = t_perceptron(tr_patterns, tr_labels, te_patterns, te_labels)
+function [weights, tr_accuracy, te_accuracy,tr_loss,te_loss] = t_perceptron(a, tr_patterns, tr_labels, te_patterns, te_labels)
 
+%% prepare learning
 te_accuracy = 0;
 tr_accuracy = 0;
 
@@ -16,11 +17,27 @@ tr_accuracy = 0;
 ONES = ones(size(tr_patterns, 1), 1);  
 tr_patterns = [tr_patterns ONES];
 
-% train with pseudo-inverse
-weights = tr_patterns\tr_labels;
-%weights = (tr_labels'*pinv(tr_patterns'))';
+if a == 0 
+    weights = tr_patterns\tr_labels;
+else 
+    % to apply the weight decay only on weights!, make bias term in eye = 0
+    eye_m = eye(size(tr_patterns,2));
+    eye_m(size(tr_patterns,2),size(tr_patterns,2)) = 0; 
+    % perform learning
+    A = tr_patterns' * tr_patterns + a * eye_m;
+    B = tr_patterns';
+    weights = A\B  * tr_labels;
+end
+% carefull, inversion numerically unstable, see murphy p369
 
-% training accuracy
+%@todo: check if:
+% inv(tr_patterns' * tr_patterns + a * eye) * tr_patterns' * tr_labels
+% ===
+% tr_patterns\tr_labels
+% OR 
+% (tr_labels'*pinv(tr_patterns'))';
+
+%% Get accuracies
 pred = tr_patterns*weights;
 softmax_pred = softmax(dlarray(pred','CB'));
 tr_loss = extractdata(crossentropy(softmax_pred,tr_labels'));

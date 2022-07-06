@@ -15,7 +15,8 @@
 % tensorflow uses adam as a algorithm instead of 'scg'
 
 
-clear net;
+function [weights, tr_accuracy, te_accuracy,tr_loss,te_loss] = t_perceptron(a, tr_patterns, tr_labels, te_patterns, te_labels)
+
 
 % diverand function might be of interest
 
