@@ -7,16 +7,19 @@
 % University of Padova
 % ************************************************************************
 
-function [weights, tr_accuracy, te_accuracy,tr_loss,te_loss] = t_perceptron(a,p,data,targets)
+function [weights, tr_accuracy, te_accuracy,tr_loss,te_loss] = t_perceptron(a,p,data,labels)
 
 %% prepare learning
 %%% divide data up
 index = floor(size(targets,1)*p); % p = percentage of test data
-tr_patterns = data(index+1 : size(data,1) , :);
-te_patterns = data(1:index, :);
-tr_labels = targets(index+1 : size(data,1) , :);
-te_labels =  targets(1:index,:);
+test_l =  targets(1:index,:);
+train_l = targets(index+1 : size(data,1) , :);
 
+train_d_1 = data(index+1 : size(data,1) , :);
+test_d_1 = data(1:index, :);
+
+
+tr_patterns, tr_labels, te_patterns, te_labels
 
 %% prepare learning
 te_accuracy = 0;
