@@ -1,11 +1,11 @@
 %% export to excel spreadsheets
-addpath("Evals/25J_tania/")
-sourceDir = 'Evals/25J_tania/'; % already in 64x64 format
+addpath("Evals/mean/7Jl_Pos/")
+sourceDir = 'Evals/mean/7Jl_Pos/'; % already in 64x64 format
 loadData = dir([sourceDir '*.mat']);
 
-% strings(x,y), with x: number of architectures
-%                    y: number of cases within a architecture
-mean_list = strings(1,5);
+% strings(x,y), with x: number of architectures (only numHid)
+%                    y: number of cases with D-&-Mini_b within a architecture
+mean_list = strings(8,6);
 
 for i=1:size(loadData,1)
     load([loadData(i).name],"mean_properties");
@@ -335,7 +335,7 @@ Id_BasedonS_Details =C;
 
 
 %% writeOut
-filename = "excel_files/12J_sim5.xlsx";
+filename = "excel_files/7Jl_sim5.xlsx";
 writecell(Test_Error,filename,'Sheet','Test_Error');
 writecell(Classifier_details,filename,'Sheet','Classifier_details');
 writecell(Id_BasedOnShape,filename,'Sheet','Id_BasedOnShape');
@@ -347,8 +347,10 @@ writecell(Id_BasedonS_Details,filename,'Sheet','Id_BasedonS_Details');
 %% GET THE RELEVANT DATA
 
 % CASE: Id Based on Shape --- Details
-letter_case = zeros(54,6);
-pletter_case = zeros(54,6);
+% (x,y) with x: num_architectures x num_cases per architecture
+%            y: number of targets (here: 6 shapes)
+letter_case = zeros(48,6);
+pletter_case = zeros(48,6);
 
 for i=1:size(mean_list,1)
 
@@ -373,24 +375,46 @@ for i=1:size(mean_list,1)
 
 end
 
-l_file_names =[];
-p_file_names =[];
-b_file_names =[];
+aal_file_names =[];
+aap_file_names =[];
+aab_file_names =[];
+aac_file_names = [];
+aaal_file_names =[];
+aaap_file_names =[];
 for i=1:size(letter_case,1)
     cond1 = letter_case(i,:) > 0.5;
     cond2 = pletter_case(i,:) > 0.5;
     idx1= floor((i-1)/6)+1;
     idx2 = mod(i,6) * (mod(i,6)~=0) + (mod(i,6)+6) * (mod(i,6)==0);
-    if sum(cond1) >= 3 && sum(cond2) >= 3
-        b_file_names = [b_file_names;mean_list(idx1,idx2)];
+    if sum(cond1) >= 3&& sum(cond2) >= 3
+        aab_file_names = [aab_file_names;mean_list(idx1,idx2)];
+    elseif sum(cond1) >=2 && sum(cond2) >= 2
+    aac_file_names = [aac_file_names;mean_list(idx1,idx2)];
     elseif sum(cond1) >= 3
-        l_file_names = [l_file_names;mean_list(idx1,idx2)];
+        aal_file_names = [aal_file_names;mean_list(idx1,idx2)];
     elseif sum(cond2) >= 3
-        p_file_names = [p_file_names;mean_list(idx1,idx2)];
+        aap_file_names = [aap_file_names;mean_list(idx1,idx2)];
+    elseif sum(cond1) >= 2
+        aaal_file_names = [aaal_file_names;mean_list(idx1,idx2)];
+    elseif sum(cond2) >= 2
+        aaap_file_names = [aaap_file_names;mean_list(idx1,idx2)];
     end
 end
-for i=1:size(b_file_names)
-    fprintf("\nBest Model: " + b_file_names(i));
+for i=1:size(aab_file_names)
+    fprintf("\nBest '>0.5' in 3: ALL:   " + aab_file_names(i));
 end
-
-
+for i=1:size(aac_file_names)
+    fprintf("\nBest '>0.5' in 2: ALL:   " + aac_file_names(i));
+end
+for i=1:size(aal_file_names)
+    fprintf("\nBest '>0.5' in 3: LETTER:   " + aal_file_names(i));
+end
+for i=1:size(aap_file_names)
+    fprintf("\nBest '>0.5' in 3: PS-L   " + aap_file_names(i));
+end
+for i=1:size(aaal_file_names)
+    fprintf("\nBest '>0.5' in 2: LETTER:   " + aaal_file_names(i));
+end
+for i=1:size(aaap_file_names)
+    fprintf("\nBest '>0.5' in 2: PS-L   " + aaap_file_names(i));
+end

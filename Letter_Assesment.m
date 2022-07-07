@@ -28,7 +28,7 @@ clear data; clear target_s
 
 
 %load openCV_letters_tF.mat data target_s target_l;
-load openCV_letterPOS3.mat data target_s target_l;
+load openCV_letterPOS1.mat data target_s target_l;
 
 
 d_double = zeros(size(data));

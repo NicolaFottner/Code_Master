@@ -20,21 +20,22 @@
 % Evals/ --- file with everything - from overfitting measure to CE assesm.
 
 configurations;
+
+
+% RUN WITH:
+% SHAPE_POS3
+% LETTER_POS1
+% newCE_data_(pos1)
+
 % configurations_list = [];
 % elem.layer2=300;
 % elem.layer3= 0;
 % elem.dropout= 0;
 % elem.minibatchsize= 12;
 % configurations_list = [configurations_list;elem];
-% 
-% elem.layer2= 350;
-% elem.layer3= 0;
-% elem.dropout= 0;
-% elem.minibatchsize= 24;
-% configurations_list = [configurations_list;elem];
 
 for z=1:size(configurations_list,1)
-    for ii=1:1    %% --- 10
+    for ii=1:3    %% --- 10
         % initialize hyperparameters
         maxepoch=500; % 500
         geo_shape_class = 6; %problem of 6 class/shapes
@@ -73,10 +74,16 @@ for z=1:size(configurations_list,1)
         numcases = DN.batchsize;
         
         fprintf(1,'Importing data: Geometric Shapes \n');
-        import_shapes;
+        
+        if g_batchsize == 6
+            load batchdata_m6.mat
+        elseif g_batchsize == 12
+            load batchdata_m12.mat
+        elseif g_batchsize == 24
+            load batchdata_m24.mat
+        end
         fprintf(1,'Start Training. \n'); 
         fprintf(1,'Number Epochs: %3i \n', maxepoch);
-        
         % data for training rbm2:
         [g_numcases g_numdims g_numbatches]=size(g_batchdata);
         % create file to access info from outside

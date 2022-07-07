@@ -1,22 +1,14 @@
 function [] = scan_evals(sourceDir)
 
 %%% with sourceDir == cell
-list_sourceDir = strings(5,length(sourceDir{1,1}));
+num_sim = 3; % num of max sim 
+list_sourceDir = strings(num_sim,length(sourceDir{1,1}));
 for i=1:size(sourceDir,1)
     elem = sourceDir(1);
     elem = elem{1};
     list_sourceDir(i) = convertCharsToStrings(elem);
 end
 sourceDir = list_sourceDir;
-
-
-%%% old code:
-% s= strings(5,size(sourceDir(1).name,2));
-% for i=1:5
-%     s(i) = convertCharsToStrings(sourceDir(1).name);
-% end
-% sourceDir = s;
-
 
 %%%% Classifier
 te_acc = [];

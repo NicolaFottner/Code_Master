@@ -54,13 +54,6 @@ fprintf(1,'\n Train accuracy =  %d\n',tr_acc2);
 fprintf(1,'\n Test accuracy =  %d\n',te_acc2);
 fprintf(1,'\n Train Loss =  %d\n',tr_loss2);
 fprintf(1,'\n Test Loss =  %d\n',te_loss2);
-if numhid3 ~= 0
-    fprintf(1,'\n Linear Classifier of "rbm3 output" =\n');
-    fprintf(1,'\n Train accuracy =  %d\n',tr_acc3);
-    fprintf(1,'\n Test accuracy =  %d\n',te_acc3);
-    fprintf(1,'\n Train Loss =  %d\n',tr_loss3);
-    fprintf(1,'\n Test Loss =  %d\n',te_loss3);
-end
 
 if numhid3 == 0
     X = ["Final_layer";"From_RBM1";"Epochs"];
@@ -71,6 +64,11 @@ if numhid3 == 0
     Epoch = [NaN;NaN;final_epoch];
     Classifier = table(X,tr_acc,te_acc,tr_loss,te_loss,Epoch);
 else   
+    fprintf(1,'\n Linear Classifier of "rbm3 output" =\n');
+    fprintf(1,'\n Train accuracy =  %d\n',tr_acc3);
+    fprintf(1,'\n Test accuracy =  %d\n',te_acc3);
+    fprintf(1,'\n Train Loss =  %d\n',tr_loss3);
+    fprintf(1,'\n Test Loss =  %d\n',te_loss3);
     X = ["Final_layer";"From_RBM2";"From_RBM1";"Epochs"];
     tr_acc = [tr_acc3;tr_acc2;tr_acc1;NaN];
     te_acc = [te_acc3;te_acc2;te_acc1;NaN];
@@ -92,12 +90,7 @@ properties.dropout_p1 = p_layer1;
 properties.dropout_cl = a1;
 properties.minibatchsize = g_batchsize;
 properties.epoch2 = final_epoch;
-properties.epoch3 = 0;
 
-if numhid3~= 0
-    properties.epoch3 = final_epoch_3;
-    properties.dropout_p2 = p_layer2;
-end
 properties.numhid2 = numhid2;
 properties.numhid3 = numhid3;
 
@@ -106,6 +99,8 @@ if numhid3 == 0
     reco_error = full_rec_err_g;
     Overfitting = overfitting_g_2;
 else
+    properties.epoch3 = final_epoch_3;
+    properties.dropout_p2 = p_layer2;
     Overfitting.layer2 = overfitting_g_2;
     Overfitting.layer3 = overfitting_g_3; 
     reco_error.layer2 = full_rec_err_g;
