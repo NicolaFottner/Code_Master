@@ -17,9 +17,11 @@ dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date w
 %% Create train and test set for perceptron:
 
 addpath("data/new04Jl/")
-load 50_50_trainData.mat
-g_pass = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,size(data,1),1)));
-hid_out_2 = 1./(1 + exp(-g_pass*vishid_2 - repmat(hidbiases_2,size(data,1),1)));
+load 50_50_TrainTestData
+g_pass_train = 1./(1 + exp(-trainData*vishid_1 - repmat(hidbiases_1,size(trainData,1),1)));
+g_pass_test = 1./(1 + exp(-testData*vishid_1 - repmat(hidbiases_1,size(testData,1),1)));
+hid_out_2_train = 1./(1 + exp(-g_pass_train*vishid_2 - repmat(hidbiases_2,size(g_pass_train,1),1)));
+hid_out_2_test = 1./(1 + exp(-g_pass_test*vishid_2 - repmat(hidbiases_2,size(g_pass_test,1),1)));
 
 %%%
 least_square = true;
@@ -27,12 +29,22 @@ least_square = true;
 
 if least_square == true
     %% if classifier = multivariate least square regression
-    [W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = perceptron(a1,p,g_pass,targets);
-    [W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = perceptron(a2,p,hid_out_2,target);
+    p = 0.2;% train / test -- dataDivision
+    [W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = perceptron(a1,p,cat(1,g_pass_train,g_pass_test),cat(1,train_t,test_t));
+    [W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = perceptron(a2,p,cat(1,hid_out_2_train,hid_out_2_test),cat(1,train_t,test_t));
 else
     %% íf MLP
-    [W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = mlp(g_pass,p,targets);
-    [W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = mlp(hid_out_2,p,targets);
+    
+    % DataDivision for now:
+    % as defineed in 50_50_TrainTestData
+    % 80% training
+    % 20% test
+    %%%% BUT as defined MLP
+    % 0.8*0.1 = 8% for validation
+    %  ==> 72% for Training
+
+    [net1, tr_acc1, te_acc1,tr_loss1,te_loss1] = MLP(g_pass_train,train_t);
+    [net, tr_acc2, te_acc2,tr_loss2,te_loss2] = MLP(hid_out_2_train,train_t);
 
 end
 

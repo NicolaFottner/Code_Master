@@ -15,26 +15,23 @@
 % tensorflow uses adam as a algorithm instead of 'scg'
 
 
-%function [weights, tr_accuracy, te_accuracy,tr_loss,te_loss] = mlp(pattners,p,targets)
+function [net, tr_accuracy, te_accuracy,tr_loss,te_loss] = MLP(data,p,targets)
 
-% NO DROPOUT for now
+% index = floor(size(targets,1)*p); % p = percentage of test data
+% tr_patterns = data(index+1 : size(data,1) , :);
+te_patterns = data(1:index, :);
+tr_labels = targets(index+1 : size(data,1) , :);
+te_labels =  targets(1:index,:);
 
-%%%
+addpath("data/new04Jl/")
+load 50_50_TrainTestData.mat
+g_pass = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,size(data,1),1)));
+hid_out_2 = 1./(1 + exp(-g_pass*vishid_2 - repmat(hidbiases_2,size(data,1),1)));
+
 p = 0.2;
-%%%
+index = floor(size(targets,1)*p); % p = percentage of test data
+tr_patterns = data(index+1 : size(data,1) , :);
 
-geo_shape_class = 6;
-g_batchsize = 12;
-import_shapes;
-g_batchdata = reshape(permute(g_batchdata,[1,3,2]),[size(g_batchdata,1)*size(g_batchdata,3),size(g_batchdata,2)]);
-g_batchtargets = reshape(permute(g_batchtargets,[1,3,2]),[size(g_batchtargets,1)*size(g_batchtargets,3),size(g_batchtargets,2)]);
-load t_model DN
-vishid_1 = DN.L{1,1}.vishid;
-hidbiases_1 = DN.L{1,1}.hidbiases;
-clear DN
-load rbm2_16J11h39.mat hidbiases_2 vishid_2
-g_pass = 1./(1 + exp(-g_batchdata*vishid_1 - repmat(hidbiases_1,size(g_batchtargets,1),1)));
-hid_out_2 = 1./(1 + exp(-g_pass*vishid_2 - repmat(hidbiases_2,size(g_batchtargets,1),1)));
 
 units = 256;
 net = patternnet(units,'trainscg','crossentropy'); % GradDesc: 'traingd'
@@ -53,9 +50,9 @@ view(net)
 net.trainParam.showCommandLine =true;
 
 % train the net
-net = train(net,hid_out_2',g_batchtargets');
+net = train(net,hid_out_2',targets');
 
-
+[Y,scores] = predict(net,hid_out_2);
 
 %net = train(net,cl_data',cl_target');
 % eval net --- train and test data the same @todo: check if ok

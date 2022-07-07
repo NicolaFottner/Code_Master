@@ -15,27 +15,35 @@
 % tensorflow uses adam as a algorithm instead of 'scg'
 
 
-function [weights, tr_accuracy, te_accuracy,tr_loss,te_loss] = t_perceptron(a, tr_patterns, tr_labels, te_patterns, te_labels)
+%function [weights, tr_accuracy, te_accuracy,tr_loss,te_loss] = mlp(data,p,targets)
 
+addpath("data/new04Jl/")
+load 50_50_trainData.mat
+g_pass = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,size(data,1),1)));
+hid_out_2 = 1./(1 + exp(-g_pass*vishid_2 - repmat(hidbiases_2,size(data,1),1)));
 
-% diverand function might be of interest
-
-g_pass_class =g_pass;
-cl_data = 1./(1 + exp(-g_pass_class*vishid_2 - repmat(hidbiases_2,size(g_test_data,1),1)));
-cl_target = g_test_target;
-net = patternnet(256,'trainscg','crossentropy');
-net.layers{1}.transferFcn = 'softmax';
-%net.trainParam.showWindow = false;
-net.trainParam.showCommandLine =true;
-
-net.divideFcn = 'dividerand'; % @todo : remember: this divides data randomly
+units = 256;
+net = patternnet(units,'trainscg','crossentropy'); % GradDesc: 'traingd'
+net.divideFcn = 'dividerand'; % partition indices randomly
 net.divideParam.trainRatio = 0.7;
 net.divideParam.valRatio = 0.15;
 net.divideParam.testRatio = 0.15;
+net.layers{1}.transferFcn = 'poslin'; %% 'help nntransfer' -- to list alternatives
+net.trainParam.epoch = 50;
 
+% default values of stopping criteria:
+% net.trainParam.min_grad = 1e-5 // Minimum Gradient Magnitude        
+% net.trainParam.max_fail = 6 // patience
 
-% train net
-net = train(net,cl_data',cl_target');
+view(net)
+net.trainParam.showCommandLine =true;
+
+% train the net
+net = train(net,hid_out_2',targets');
+
+[Y,scores] = predict(net,hid_out_2)
+
+%net = train(net,cl_data',cl_target');
 % eval net --- train and test data the same @todo: check if ok
 
 
@@ -47,4 +55,4 @@ net = train(net,cl_data',cl_target');
 
 %perf_values_b(b) = perform(net,train_d_2,test_d_2);
 
-
+%end
