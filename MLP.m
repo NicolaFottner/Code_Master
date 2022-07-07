@@ -15,7 +15,7 @@
 % tensorflow uses adam as a algorithm instead of 'scg'
 
 
-%function [weights, tr_accuracy, te_accuracy,tr_loss,te_loss] = mlp(units, tr_patterns, tr_labels, te_patterns, te_labels)
+%function [weights, tr_accuracy, te_accuracy,tr_loss,te_loss] = mlp(pattners,targets)
 
 % NO DROPOUT for now
 
