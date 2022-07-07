@@ -27,19 +27,12 @@ least_square = true;
 
 if least_square == true
     %% if classifier = multivariate least square regression
-    index = floor(size(targets,1)*0.2); % 80% for train 20% for test of "g_test_data"
-    test_l =  targets(1:index,:);
-    train_l = targets(index+1 : size(g_pass,1) , :);
-    train_d_1 = g_pass(index+1 : size(g_pass,1) , :);
-    test_d_1 = g_pass(1:index, :);
-    train_d_2 =hid_out_2(index+1 : size(hid_out_2,1) , :);
-    test_d_2= hid_out_2(1:index, :);
-    [W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = perceptron(a1,train_d_1,train_l,test_d_1,test_l);
-    [W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = perceptron(a2,train_d_2,train_l,test_d_2,test_l);
+    [W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = perceptron(a1,p,g_pass,targets);
+    [W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = perceptron(a2,p,hid_out_2,target);
 else
-
-    [W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = mlp(g_pass,targets);
-    [W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = mlp(hid_out_2,targets);
+    %% íf MLP
+    [W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = mlp(g_pass,p,targets);
+    [W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = mlp(hid_out_2,p,targets);
 
 end
 

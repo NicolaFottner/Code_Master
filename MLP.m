@@ -15,9 +15,13 @@
 % tensorflow uses adam as a algorithm instead of 'scg'
 
 
-%function [weights, tr_accuracy, te_accuracy,tr_loss,te_loss] = mlp(pattners,targets)
+%function [weights, tr_accuracy, te_accuracy,tr_loss,te_loss] = mlp(pattners,p,targets)
 
 % NO DROPOUT for now
+
+%%%
+p = 0.2;
+%%%
 
 geo_shape_class = 6;
 g_batchsize = 12;
