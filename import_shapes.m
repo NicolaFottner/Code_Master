@@ -46,7 +46,7 @@ for i=1:size(shapedata,1)
         class4_data = [class4_data;shapedata(i,:)];
     end
     if find(target_s(i,:)) == 5
-        class5_data = [class2_data;shapedata(i,:)];
+        class5_data = [class5_data;shapedata(i,:)];
     end
     if find(target_s(i,:)) == 6
         class6_data = [class6_data;shapedata(i,:)];

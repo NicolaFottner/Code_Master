@@ -27,12 +27,12 @@ configurations;
 % LETTER_POS1
 % newCE_data_(pos1)
 
-% configurations_list = [];
-% elem.layer2=300;
-% elem.layer3= 0;
-% elem.dropout= 0;
-% elem.minibatchsize= 12;
-% configurations_list = [configurations_list;elem];
+configurations_list = [];
+elem.layer2=300;
+elem.layer3= 0;
+elem.dropout= 0;
+elem.minibatchsize= 12;
+configurations_list = [configurations_list;elem];
 
 for z=1:size(configurations_list,1)
     for ii=1:3    %% --- 10
