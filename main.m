@@ -20,7 +20,6 @@
 % Evals/ --- file with everything - from overfitting measure to CE assesm.
 
 configurations;
-configurations_list(1:3,:)= [];
 % configurations_list = [];
 % elem.layer2=300;
 % elem.layer3= 0;
@@ -34,12 +33,8 @@ configurations_list(1:3,:)= [];
 % elem.minibatchsize= 24;
 % configurations_list = [configurations_list;elem];
 
-% and do all again with dropout 0.4
-
-% from 12J: missing z=34 onwards
-
 for z=1:size(configurations_list,1)
-    for ii=1:3    %% --- 10
+    for ii=1:1    %% --- 10
         % initialize hyperparameters
         maxepoch=500; % 500
         geo_shape_class = 6; %problem of 6 class/shapes
@@ -58,7 +53,7 @@ for z=1:size(configurations_list,1)
         else
             p_layer1 = 1;
             p_layer2 = 1;
-            a1 = 0;
+            a1 = 0;a2=0;a3=0;
         end
         no_N_img = false;
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

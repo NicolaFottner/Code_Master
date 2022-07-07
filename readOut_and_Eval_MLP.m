@@ -11,13 +11,14 @@
 
 dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date without "-YYYY"
 
+% g_numcases, g_numdim,g_numbatch
+
+
 %% Create train and test set for perceptron:
-g_batchdata_f = [];g_batchtargets_f= [];
-for i=1:size(g_batchtargets,3)  % I prefer to use a loop over "reshape" for now
-    g_batchdata_f = [g_batchdata_f; g_batchdata(:,:,i)];
-    g_batchtargets_f = [g_batchtargets_f; g_batchtargets(:,:,i)];
-end
-g_batchdata = g_batchdata_f;g_batchtargets = g_batchtargets_f;
+
+g_batchdata = reshape(permute(g_batchdata,[1,3,2]),[size(g_batchdata,1)*size(g_batchdata,3),size(g_batchdata,2)]);
+g_batchtargets = reshape(permute(g_batchtargets,[1,3,2]),[size(g_batchtargets,1)*size(g_batchtargets,3),size(g_batchtargets,2)]);
+
 g_pass = 1./(1 + exp(-g_batchdata*vishid_1 - repmat(hidbiases_1,size(g_batchtargets,1),1)));
 hid_out_2 = 1./(1 + exp(-g_pass*vishid_2 - repmat(hidbiases_2,size(g_batchtargets,1),1)));
 index =floor(size(g_batchtargets,1)*0.2); % 80% for train 20% for test of "g_test_data"
@@ -35,10 +36,10 @@ if numhid3~=0
 end
 
 %% Classifier Layer: Train and Test 
-[W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = t_perceptron(a1,train_d_1,train_l,test_d_1,test_l);
-[W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = t_perceptron(a2,train_d_2,train_l,test_d_2,test_l);
+[W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = mlp(a1,train_d_1,train_l,test_d_1,test_l);
+[W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = mlp(a2,train_d_2,train_l,test_d_2,test_l);
 if numhid3 ~= 0
-    [W2, tr_acc3, te_acc3,tr_loss3,te_loss3] = t_perceptron(a3,train_d_3,train_l,test_d_3,test_l);
+    [W2, tr_acc3, te_acc3,tr_loss3,te_loss3] = mlp(a3,train_d_3,train_l,test_d_3,test_l);
 end
 
 
