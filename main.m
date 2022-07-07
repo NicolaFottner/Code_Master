@@ -20,7 +20,7 @@
 % Evals/ --- file with everything - from overfitting measure to CE assesm.
 
 configurations;
-
+configurations_list(1:3,:) = [];
 
 % RUN WITH:
 % SHAPE_POS3
@@ -65,6 +65,7 @@ for z=1:size(configurations_list,1)
         addpath("testolin/")
         addpath("data_plotting/")
         addpath("data")
+        addpath("data/new04Jl/")
 
         %% Import Data from testolin
         fprintf(1,'Importing first layer from Testolin:\n');
