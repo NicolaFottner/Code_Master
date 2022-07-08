@@ -54,6 +54,7 @@ class5_data(1:minus,:)=[];
 class6_data(1:minus,:)=[];
 
 % train targets
+%%% 'ind2vec' would be cleaner here
 targets1 = repmat([0 0 0 0 0 0 1 0 0 0 0 0],size(class1_data,1)*(1-div_prop),1);
 targets2 = repmat([0 0 0 0 0 0 0 1 0 0 0 0],size(class1_data,1)*(1-div_prop),1);
 targets3 = repmat([0 0 0 0 0 0 0 0 1 0 0 0],size(class1_data,1)*(1-div_prop),1);
