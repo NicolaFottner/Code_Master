@@ -2,14 +2,16 @@
 % geometrical couter part -- congruent shape
 
 dd = strsplit(date,'-');c = clock;clean_date = strcat(dd(1),dd(2)); %without "-YYYY"
+
 if numhid3 == 0
     strh3 ="";
 else
     strh3 = "three/";
 end
-%%%%%%% load dataset for the 6 shapes
+% load dataset for the 6 shapes
+
 %load openCV_final_Shapes.mat data target_s %target_l is just their s-target
-% before: xtra, one
+% load openCV_Shapes_xtra.mat data target_s
 load openCV_shapePOS3.mat data target_s
 
 s_data = zeros(size(data));
@@ -22,8 +24,11 @@ clear data; clear target_s
 % load dataset for the 6 letters
 %load openCV_final_letters.mat data target_s target_l;
 %load openCV_letters_xtra.mat data target_s target_l;
-% load openCV_letters_tF.mat data target_s target_l;
+
+
+%load openCV_letters_tF.mat data target_s target_l;
 load openCV_letterPOS1.mat data target_s target_l;
+
 
 d_double = zeros(size(data));
 for i=1:size(data,1)
@@ -33,7 +38,6 @@ clear data; data = d_double;
 target_s= double(target_s);
 target_l_save = target_l;
 %% Prep Computation
-weights = W2;
 
 % pass shapedata throught RBM^s:
 hid_out_1_s = 1./(1 + exp(-s_data*vishid_1 - repmat(hidbiases_1,size(s_data,1),1)));
@@ -41,22 +45,22 @@ rbms_pass_s = 1./(1 + exp(-hid_out_1_s*vishid_2 - repmat(hidbiases_2,size(hid_ou
 if numhid3 ~= 0
     rbms_pass_s = 1./(1 + exp(-rbms_pass_s*vishid_3 - repmat(hidbiases_3,size(rbms_pass_s,1),1)));
 end
-% add biases
-ONES = ones(size(rbms_pass_s, 1), 1);  
-rbms_pass_s = [rbms_pass_s ONES];
-
 % pass letterdata throught RBMs:
 hid_out_1_l = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,size(data,1),1)));
 rbms_pass_l = 1./(1 + exp(-hid_out_1_l*vishid_2 - repmat(hidbiases_2,size(hid_out_1_l,1),1)));
 if numhid3 ~= 0
     rbms_pass_l = 1./(1 + exp(-rbms_pass_l*vishid_3 - repmat(hidbiases_3,size(rbms_pass_l,1),1)));
 end
-% add biases
-ONES = ones(size(rbms_pass_l, 1), 1);  
-rbms_pass_l = [rbms_pass_l ONES];
+
 %% General Assesment
 %%%%%
 pred1 = rbms_pass_l*weights;
+
+%pred1 = net2(rbms_pass_l',);
+
+
+
+
 softmax_pred1 = softmax(dlarray(pred1','CB'));
 pred1 = extractdata(softmax_pred1)';
 [~, max_act_l] = max(pred1,[],2);

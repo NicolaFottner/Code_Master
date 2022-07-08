@@ -15,6 +15,7 @@ dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date w
 
 %%%
 addpath("testolin/")
+addpath("eval_methods/")
 load testolin/old_t_model.mat
 vishid_1 = DN.L{1,1}.vishid;
 hidbiases_1 = DN.L{1,1}.hidbiases;
@@ -105,16 +106,19 @@ else
     Epoch = [NaN;NaN;NaN;final_epoch];          
     Classifier = table(X,tr_acc,te_acc,tr_loss,te_loss,Epoch);
 end
-class_specific_output; %compute details of the output and saves them
 
-%% Perform Assesment: Classifaction as Shape Id.
-
+%% Perform Assesment: Classifier Details & Classifaction as Shape Id.
+% this is needed for the following funciton, "making it all easier"
+hid_out_2 = cat(1,rbm2_pass_train,rbm2_pass_test);
+g_batchtargets = cat(1,train_t,test_t);
 if least_square
+    class_specific_output; %compute details of the output and saves them
     Letter_Assesment;
     % to get all the matrix data for the stat analysis
     pred_ce_effect;
     pred_ce_effect_ALL;
 else
+    class_specific_output_MLP;
     Letter_Assesment_MLP;
     pred_ce_effect_MLP;
     pred_ce_effect_ALL_MLP;
