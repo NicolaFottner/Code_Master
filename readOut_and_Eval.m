@@ -1,13 +1,14 @@
 % Code does the following
 % 1. Compute supervised read-out with perceptron
 %       a. Prepare geo-shape Data for perceptron
-%       b. Traing and evaluation perceptron
-% 2. Compute performance measures 
+%       b. Train and evaluation perceptron
+% 2. Compute performance measures
 %       a. all the data from training and testing
-%       b. 
-%       b. Plotting of Receptive fields of rbm 1 and rbm2
-%       b. call methods to make more measures:
-%          overfitting, reco-error, histograms 
+%       b. compute, "identification based on letters' shape" 
+%       c. compute, "congruency effect" save in .mat file
+%       d. compute, "congruency effect" (for each model instance) save in excel file
+%       e. compute and store reco-error, histograms, overfitting, ...
+%       f. Plotting of Receptive fields of rbm 1 and rbm2
 
 dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date without "-YYYY"
 
@@ -26,7 +27,11 @@ hid_out_2 = 1./(1 + exp(-g_pass*vishid_2 - repmat(hidbiases_2,size(g_batchtarget
 % test_d_2= hid_out_2(1:index, :);
 
 %% Classifier Layer: Train and Test 
-p=0.2;
+
+%%%
+p=0.2; % for perceptron, percentage of test data
+%%%
+
 [W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = t_perceptron(a1,p,g_pass,g_batchtargets);
 [W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = t_perceptron(a2,p,hid_out_2,g_batchtargets);
 if numhid3 ~= 0
@@ -78,11 +83,7 @@ class_specific_output; %compute details of the output and saves them
 Letter_Assesment;
 % to get all the matrix data for the stat analysis
 pred_ce_effect;
-
-
 pred_ce_effect_ALL;
-
-
 % storing sim_data
 properties.dropout = dropout;
 properties.dropout_p1 = p_layer1;

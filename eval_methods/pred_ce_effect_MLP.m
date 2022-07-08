@@ -1,7 +1,7 @@
+% compute the Congruency effect and store result in a struct to be further
+% store in a mat file for that specific simulation
 
-weights = W2;
 load openCV_CE_data.mat cong_pl_d cong_pl_t cong_pl_s inc_pl_d inc_pl_t inc_pl_s 
-
 load openCV_newL_CE.mat cong_l_d cong_l_t cong_l_s inc_l_d inc_l_t inc_l_s 
 
 %% Prep and convert openCV_CE_data from uint8 to double:
@@ -54,15 +54,12 @@ Letter_decisionAcc = zeros(4,1);
 % pass data throught RBMs:
 hid_out_1_d = 1./(1 + exp(-cong_l_d*vishid_1 - repmat(hidbiases_1,size(cong_l_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
-% add biases
-ONES = ones(size(rbms_pass, 1), 1);  
-rbms_pass = [rbms_pass ONES];
 % Compute prediction:
-pred = rbms_pass*weights;
+
+pred = net2(rbms_pass');
+pred = pred';
 % [a,b] =max(pred,[],2); --- % a has also  values  > 1 ---- 
-% i.e. a is unnormalized
-softmax_pred = softmax(dlarray(pred','CB'));
-pred = extractdata(softmax_pred)';
+% i.e. a is unnormalized;
 [~, max_act] = max(pred,[],2); % max_act are indices of dim2 in pred of the highest value
 [r1,~] = find(cong_l_t'); % find which columns (rows in transpose) are 1
 [r2,~] = find(cong_l_s'); % find which columns (rows in transpose) are 1
@@ -136,13 +133,9 @@ cl_ce_pdr = [prD_tr;prD_re;prD_sq;prD_el;prD_cr;prD_he];
 % pass data throught RBMs:
 hid_out_1_d = 1./(1 + exp(-cong_pl_d*vishid_1 - repmat(hidbiases_1,size(cong_pl_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
-% add biases
-ONES = ones(size(rbms_pass, 1), 1);  
-rbms_pass = [rbms_pass ONES];
 % Compute prediction:
-pred = rbms_pass*weights;
-softmax_pred = softmax(dlarray(pred','CB'));
-pred = extractdata(softmax_pred)';
+pred = net2(rbms_pass');
+pred = pred';
 % [a,b] =max(pred,[],2); --- % a has also  values  > 1 ---- 
 % i.e. a is unnormalized
 [~, max_act] = max(pred,[],2); % max_act are indices of dim2 in pred of the highest value
@@ -216,13 +209,8 @@ cpl_ce_pdr = [prD_tr;prD_re;prD_sq;prD_el;prD_cr;prD_he];
 % pass data throught RBMs:
 hid_out_1_d = 1./(1 + exp(-inc_l_d*vishid_1 - repmat(hidbiases_1,size(inc_l_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
-% add biases
-ONES = ones(size(rbms_pass, 1), 1);  
-rbms_pass = [rbms_pass ONES];
-% Compute prediction:
-pred = rbms_pass*weights;
-softmax_pred = softmax(dlarray(pred','CB'));
-pred = extractdata(softmax_pred)';
+pred = net2(rbms_pass');
+pred = pred';
 % [a,b] =max(pred,[],2); --- % a has also  values  > 1 ---- 
 % i.e. a is unnormalized
 [~, max_act] = max(pred,[],2); % max_act are indices of dim2 in pred of the highest value
@@ -384,13 +372,8 @@ inc_l_pdr_detailed = [pred_tr_h;pred_tr_u;pred_re_a;pred_re_u;pred_sq_t;pred_sq_
 % pass data throught RBMs:
 hid_out_1_d = 1./(1 + exp(-inc_pl_d*vishid_1 - repmat(hidbiases_1,size(inc_pl_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
-% add biases
-ONES = ones(size(rbms_pass, 1), 1);  
-rbms_pass = [rbms_pass ONES];
-% Compute prediction:
-pred = rbms_pass*weights;
-softmax_pred = softmax(dlarray(pred','CB'));
-pred = extractdata(softmax_pred)';
+pred = net2(rbms_pass');
+pred = pred';
 % [a,b] =max(pred,[],2); --- % a has also  values  > 1 ---- 
 % i.e. a is unnormalized
 [~, max_act] = max(pred,[],2); % max_act are indices of dim2 in pred of the highest value

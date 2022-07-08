@@ -61,7 +61,7 @@ else % don't use the first layer
     numhid = g_numdims;
 end 
 
-% For computing overfitting / used in early stoppin
+% For computing overfitting / used in early stopping
 % "randomize", the validation set used in the computation 
 g_val_data_1 = g_val_data(1: size(g_val_data,1)/3,:);
 g_val_data_2 = g_val_data(1 + size(g_val_data,1)/3 :size(g_val_data,1)/3 * 2 ,:);

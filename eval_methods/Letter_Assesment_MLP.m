@@ -54,32 +54,19 @@ end
 
 %% General Assesment
 %%%%%
-pred1 = rbms_pass_l*weights;
-
-%pred1 = net2(rbms_pass_l',);
-
-
-
-
-softmax_pred1 = softmax(dlarray(pred1','CB'));
-pred1 = extractdata(softmax_pred1)';
+pred1 = net2(rbms_pass_l');
+pred1 = pred1';
 [~, max_act_l] = max(pred1,[],2);
 [r1,~] = find(target_s');
 acc_l = (max_act_l == r1);
 accuracy_l = mean(acc_l);
-%loss?
-l_loss = extractdata(crossentropy(softmax_pred1,target_s'));
-
 %%%%%
-pred2 = rbms_pass_s*weights;
-softmax_pred2 = softmax(dlarray(pred2','CB'));
-pred2 = extractdata(softmax_pred2)';
+pred2 = net2(rbms_pass_l');
+pred2 = pred2';
 [~, max_act_s] = max(pred2,[],2);
 [r2,~] = find(s_target'); 
 acmax_cs = (max_act_s == r2);
 accuracy_s = mean(acmax_cs);
-%loss?
-s_loss = extractdata(crossentropy(softmax_pred2,s_target'));
 
 fprintf(1,'\n Identification of main geometrical shapes');
 fprintf(1,'\n Accuracy = %d ',accuracy_s);
@@ -156,20 +143,13 @@ rbms_pass_pl = 1./(1 + exp(-hid_out_1_pl*vishid_2 - repmat(hidbiases_2,size(hid_
 if numhid3 ~= 0
     rbms_pass_pl = 1./(1 + exp(-rbms_pass_pl*vishid_3 - repmat(hidbiases_3,size(rbms_pass_pl,1),1)));
 end
-% add biases
-ONES = ones(size(rbms_pass_pl, 1), 1);  
-rbms_pass_pl = [rbms_pass_pl ONES];
-
 %%%%%
-pred3 = rbms_pass_pl*weights;
-softmax_pred3 = softmax(dlarray(pred3','CB'));
-pred3 = extractdata(softmax_pred3)';
+pred3 = net2(rbms_pass_pl');
+pred3 = pred3';
 [~, max_act_pl] = max(pred3,[],2);
 [r3,~] = find(target_ps');
 acc_pl = (max_act_pl == r3);
 accuracy_pl = mean(acc_pl);
-%loss?
-l_loss = extractdata(crossentropy(softmax_pred3,target_ps'));
 fprintf(1,'\n Identification of PSEUDO-Letter based on their respetive geometrical shape');
 fprintf(1,'\n Accuracy = %d ',accuracy_pl);
 

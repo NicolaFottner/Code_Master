@@ -1,5 +1,5 @@
-
-weights = W2;
+% compute the Congruency effect and stores result in matrix for 
+% further (statistical analysis) on excel or similar
 addpath("data/new04Jl/");
 %load openCV_CE_data.mat 
 load openCV_CE_data.mat cong_pl_d cong_pl_t cong_pl_s inc_pl_d inc_pl_t inc_pl_s 
@@ -49,12 +49,10 @@ load g_rbm_2.mat vishid_2 hidbiases_2
 %% EVAL - Letter congruent
 hid_out_1_d = 1./(1 + exp(-cong_l_d*vishid_1 - repmat(hidbiases_1,size(cong_l_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
-ONES = ones(size(rbms_pass, 1), 1); 
 rbms_pass = [rbms_pass ONES]; 
 % Compute prediction:
-pred_cl = rbms_pass*weights;
-softmax_pred_cl = softmax(dlarray(pred_cl','CB'));
-pred_cl = extractdata(softmax_pred_cl)';
+pred_cl = net2(rbms_pass');
+pred_cl = pred_cl';
 [~, max_act] = max(pred_cl,[],2); 
 [r2,~] = find(cong_l_s');
 acc_s_cong_l = (max_act == r2);
@@ -66,11 +64,8 @@ acc_s_cong_l_inner = (max_act == r1);
 %% EVAL - Pseudo Letter congruent
 hid_out_1_d = 1./(1 + exp(-cong_pl_d*vishid_1 - repmat(hidbiases_1,size(cong_pl_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
-ONES = ones(size(rbms_pass, 1), 1);  
-rbms_pass = [rbms_pass ONES];
-pred_cpl = rbms_pass*weights;
-softmax_pred_cpl = softmax(dlarray(pred_cpl','CB'));
-pred_cpl = extractdata(softmax_pred_cpl)';
+pred_cpl = net2(rbms_pass');
+pred_cpl = pred_cpl';
 [~, max_act] = max(pred_cpl,[],2); 
 [r2,~] = find(cong_pl_s'); 
 acc_s_cong_pl = (max_act == r2);
@@ -81,11 +76,8 @@ acc_s_cong_pl_inner = (max_act == r1);
 %% EVAL - Letter Incongruent
 hid_out_1_d = 1./(1 + exp(-inc_l_d*vishid_1 - repmat(hidbiases_1,size(inc_l_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
-ONES = ones(size(rbms_pass, 1), 1);  
-rbms_pass = [rbms_pass ONES];
-pred_il = rbms_pass*weights;
-softmax_pred_il = softmax(dlarray(pred_il','CB'));
-pred_il = extractdata(softmax_pred_il)';
+pred_il = net2(rbms_pass');
+pred_il = pred_il';
 [~, max_act] = max(pred_il,[],2); 
 [r2,~] = find(inc_l_s'); 
 acc_s_inc_l = (max_act == r2);
@@ -95,11 +87,8 @@ acc_s_inc_l_inner = (max_act == r1);
 %% EVAL - Pseudo-Letter Incongruent
 hid_out_1_d = 1./(1 + exp(-inc_pl_d*vishid_1 - repmat(hidbiases_1,size(inc_pl_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
-ONES = ones(size(rbms_pass, 1), 1);  
-rbms_pass = [rbms_pass ONES];
-pred_ipl = rbms_pass*weights;
-softmax_pred_ipl = softmax(dlarray(pred_ipl','CB'));
-pred_ipl = extractdata(softmax_pred_ipl)';
+pred_ipl = net2(rbms_pass');
+pred_ipl = pred_ipl';
 [~, max_act] = max(pred_ipl,[],2); 
 [r2,~] = find(inc_pl_s'); 
 acc_s_inc_pl = (max_act == r2);
