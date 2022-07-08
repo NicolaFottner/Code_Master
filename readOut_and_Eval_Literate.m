@@ -12,24 +12,38 @@
 dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date without "-YYYY"
 
 %% Create train and test set for perceptron:
+
+%%%
+addpath("testolin/")
+load testolin/old_t_model.mat
+vishid_1 = DN.L{1,1}.vishid;
+hidbiases_1 = DN.L{1,1}.hidbiases;
+visbiases_1 = DN.L{1,1}.visbiases;
+clear DN
+load g_rbm_2.mat
+%%%
 addpath("data/new04Jl/")
 load 50_50_TrainTestData
-g_pass_train = 1./(1 + exp(-trainData*vishid_1 - repmat(hidbiases_1,size(trainData,1),1)));
-g_pass_test = 1./(1 + exp(-testData*vishid_1 - repmat(hidbiases_1,size(testData,1),1)));
-hid_out_2_train = 1./(1 + exp(-g_pass_train*vishid_2 - repmat(hidbiases_2,size(g_pass_train,1),1)));
-hid_out_2_test = 1./(1 + exp(-g_pass_test*vishid_2 - repmat(hidbiases_2,size(g_pass_test,1),1)));
+rbm1_pass_train = 1./(1 + exp(-trainData*vishid_1 - repmat(hidbiases_1,size(trainData,1),1)));
+rbm1_pass_test = 1./(1 + exp(-testData*vishid_1 - repmat(hidbiases_1,size(testData,1),1)));
+rbm2_pass_train = 1./(1 + exp(-rbm1_pass_train*vishid_2 - repmat(hidbiases_2,size(rbm1_pass_train,1),1)));
+rbm2_pass_test = 1./(1 + exp(-rbm1_pass_test*vishid_2 - repmat(hidbiases_2,size(rbm1_pass_test,1),1)));
 %%%
-least_square = true;
+least_square = false;
 %%%
 p = 0.2;
 if least_square == true
     %% if classifier = multivariate least square regression
     p = 0.2;% train / test -- dataDivision
-    [W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = perceptron(a1,p,cat(1,g_pass_train,g_pass_test),cat(1,train_t,test_t));
-    [W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = perceptron(a2,p,cat(1,hid_out_2_train,hid_out_2_test),cat(1,train_t,test_t));
+    [W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = perceptron(a1,p,cat(1,rbm1_pass_train,rbm1_pass_test),cat(1,train_t,test_t));
+    [W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = perceptron(a2,p,cat(1,rbm2_pass_train,rbm2_pass_test),cat(1,train_t,test_t));
 else
     %% íf MLP
     
+    %%%
+    units = 256; % number of units in hidden layer of MLP
+    %%%
+
     % DataDivision for now:
     % as defineed in 50_50_TrainTestData
     % 80% training
@@ -38,9 +52,23 @@ else
     % 0.8*0.1 = 8% for validation
     %  ==> 72% for Training
 
-    [net1, tr_acc1, te_acc1,tr_loss1,te_loss1] = MLP(g_pass_train,train_t);
-    [net, tr_acc2, te_acc2,tr_loss2,te_loss2] = MLP(hid_out_2_train,train_t);
+    [net1, tr_acc1, tr_loss1, trainPerf1, valPerf1] = MLP(units,rbm1_pass_train,train_t);
+    [net, tr_acc2, tr_loss2, trainPerf2, valPerf2] = MLP(units,rbm2_pass_train,train_t);
+            
+    %%% Eval MLPs on TestData
+    testPred_1 = net1(rbm1_pass_test');
+    softmax_pred = softmax(dlarray(testPred_1,'CB'));
+    te_loss1 = extractdata(crossentropy(softmax_pred,test_t'));
+    tind = vec2ind(test_t');
+    yind = vec2ind(testPred_1);
+    te_acc1 = 1 - sum(tind ~= yind)/numel(tind);
 
+    testPred_2 = net(rbm2_pass_test');
+    softmax_pred = softmax(dlarray(testPred_2,'CB'));
+    te_loss2 = extractdata(crossentropy(softmax_pred,test_t'));
+    tind = vec2ind(test_t');
+    yind = vec2ind(testPred_2);
+    te_acc2 = 1 - sum(tind ~= yind)/numel(tind);
 end
 
 %%  Plot and Save performance measurements:
@@ -81,10 +109,17 @@ class_specific_output; %compute details of the output and saves them
 
 %% Perform Assesment: Classifaction as Shape Id.
 
-Letter_Assesment;
-% to get all the matrix data for the stat analysis
-pred_ce_effect;
-pred_ce_effect_ALL;
+if least_square
+    Letter_Assesment;
+    % to get all the matrix data for the stat analysis
+    pred_ce_effect;
+    pred_ce_effect_ALL;
+else
+    Letter_Assesment_MLP;
+    pred_ce_effect_MLP;
+    pred_ce_effect_ALL_MLP;
+end
+
 properties.dropout = dropout;
 properties.dropout_p1 = p_layer1;
 properties.dropout_cl = a1;

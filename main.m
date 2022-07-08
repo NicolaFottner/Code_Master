@@ -93,9 +93,9 @@ for z=1:size(configurations_list,1)
 
         %% RBM 1 / fetching it from Testolin
         %%%% first rbm layer
-        vishid_1 = double(DN.L{1,1}.vishid);
-        hidbiases_1 = double(DN.L{1,1}.hidbiases);
-        visbiases_1 = double(DN.L{1,1}.visbiases);
+        vishid_1 = DN.L{1,1}.vishid;
+        hidbiases_1 = DN.L{1,1}.hidbiases;
+        visbiases_1 = DN.L{1,1}.visbiases;
         clear DN
         
         %% RBM 2
