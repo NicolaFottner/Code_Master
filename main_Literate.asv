@@ -33,12 +33,12 @@ configurations;
 % how to implement the 2 phases?
 
 % load Illiterate model/participant
-    addpath("illiterate_models/");
-    sourceDir = 'illiterate_models/';
-    loadData = dir([sourceDir '*.mat']);
+addpath("illiterate_models/");
+sourceDir = 'illiterate_models/';
+loadData = dir([sourceDir '*.mat']);
 
 for i = 1 : 5 % run over the "5 participants"
-    loadData([loadData(1).name],"properties");
+    load([loadData(1).name]);
 
     %%%
    %        TODO
@@ -98,6 +98,10 @@ for i = 1 : 5 % run over the "5 participants"
 
 
         % Prepare Data for (transfer) training rbm2:
+
+        
+        
+
         [g_numcases g_numdims g_numbatches]=size(g_batchdata);
         % create file to access info from outside
         save info maxepoch numdims numhid numhid2 numbatches numcases g_numbatches g_numcases
