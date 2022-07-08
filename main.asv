@@ -146,9 +146,7 @@ for z=1:size(configurations_list,1)
         else         % no first/natural layer
             readOut_and_Eval_noN_img;
         end
-        %% restart the run:
-        clearvars -except z configurations_list matrix_1 matrix_1_pd matrix_2 matrix_3_outer matrix_3_inner; 
-        close all;
+        
     
         %%% save network for the training phase
         dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date without "-YYYY"
@@ -164,6 +162,9 @@ for z=1:size(configurations_list,1)
         model_name = "Evals/" + clean_date + "_" + hour_str + "h" + min_str + "m_" + "illit_n" + int2str(ii);
         save(model_name,'vishid_2 ','hidbiases_2', 'visbiases_2', 'W2');
 
+        %% restart the run:
+        clearvars -except z ii configurations_list matrix_1 matrix_1_pd matrix_2 matrix_3_outer matrix_3_inner; 
+        close all;
     end
 
 filename = "Evals/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "TF_matrix";
