@@ -17,41 +17,38 @@ dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date w
 %% Create train and test set for perceptron:
 
 addpath("data/new04Jl/")
+load 50_50_TrainTestData
+g_pass_train = 1./(1 + exp(-trainData*vishid_1 - repmat(hidbiases_1,size(trainData,1),1)));
+g_pass_test = 1./(1 + exp(-testData*vishid_1 - repmat(hidbiases_1,size(testData,1),1)));
+hid_out_2_train = 1./(1 + exp(-g_pass_train*vishid_2 - repmat(hidbiases_2,size(g_pass_train,1),1)));
+hid_out_2_test = 1./(1 + exp(-g_pass_test*vishid_2 - repmat(hidbiases_2,size(g_pass_test,1),1)));
 
-
-
-load open_CV_trainData12_dbl.mat data target_l target_pos
-
-load openCV_shapePOS3.mat data target_s
-shapedata = zeros(size(data));
-for i=1:size(data,1)
-    shapedata(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
-end
-target_s = double(target_s);
-
-
-save open_CV_trainData12_dbl
-
-g_pass = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,size(data,1),1)));
-hid_out_2 = 1./(1 + exp(-g_pass*vishid_2 - repmat(hidbiases_2,size(data,1),1)));
-
+%%%
 least_square = true;
+%%%
 
 if least_square == true
     %% if classifier = multivariate least square regression
-    index = floor(size(target_l,1)*0.2); % 80% for train 20% for test of "g_test_data"
-    test_l =  target_l(1:index,:);
-    train_l = target_l(index+1 : size(g_pass,1) , :);
-    train_d_1 = g_pass(index+1 : size(g_pass,1) , :);
-    test_d_1 = g_pass(1:index, :);
-    train_d_2 =hid_out_2(index+1 : size(hid_out_2,1) , :);
-    test_d_2= hid_out_2(1:index, :);
-    [W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = perceptron(a1,train_d_1,train_l,test_d_1,test_l);
-    [W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = perceptron(a2,train_d_2,train_l,test_d_2,test_l);
+    [W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = perceptron(a1,p,cat(2,g_pass_train,g_pass_test),cat(2,train_t,test_t));
+    [W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = perceptron(a2,p,cat(2,hid_out_2_train,hid_out_2_test),target);
 else
+    %% íf MLP
+    load 50_50_TrainTestData
+    g_pass_train = 1./(1 + exp(-trainData*vishid_1 - repmat(hidbiases_1,size(trainData,1),1)));
+    g_pass_test = 1./(1 + exp(-testData*vishid_1 - repmat(hidbiases_1,size(testData,1),1)));
+    hid_out_2_train = 1./(1 + exp(-g_pass_train*vishid_2 - repmat(hidbiases_2,size(g_pass_train,1),1)));
+    hid_out_2_test = 1./(1 + exp(-g_pass_test*vishid_2 - repmat(hidbiases_2,size(g_pass_test,1),1)));
+    
+    % DataDivision for now:
+    % as defineed in 50_50_TrainTestData
+    % 80% training
+    % 20% test
+    %%%% BUT as defined MLP
+    % 0.8*0.1 = 8% for validation
+    %  ==> 72% for Training
 
-    [W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = mlp(g_pass,target_l);
-    [W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = mlp(hid_out_2,target_l);
+    [net1, tr_acc1, te_acc1,tr_loss1,te_loss1] = MLP(g_pass_train,train_t);
+    [net, tr_acc2, te_acc2,tr_loss2,te_loss2] = MLP(hid_out_2_train,train_t);
 
 end
 
