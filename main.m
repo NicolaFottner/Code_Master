@@ -35,7 +35,7 @@ elem.minibatchsize= 24;
 configurations_list = [configurations_list;elem];
 
 for z=1:size(configurations_list,1)
-    for ii=1:5    %% --- 10
+    for ii=1:5    %% --- 5
         % initialize hyperparameters
         maxepoch=500; % 500
         geo_shape_class = 6; %problem of 6 class/shapes
@@ -67,6 +67,7 @@ for z=1:size(configurations_list,1)
         addpath("data")
         addpath("data/new04Jl/")
         addpath("eval_methods/")
+        addpath("scanning&Exel/")
 
         %% Import Data from testolin
         fprintf(1,'Importing first layer from Testolin:\n');
@@ -148,7 +149,6 @@ for z=1:size(configurations_list,1)
             readOut_and_Eval_noN_img;
         end
         
-    
         %%% save network for the training phase
         dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date without "-YYYY"
         hour_str = int2str(c(4));
@@ -160,8 +160,8 @@ for z=1:size(configurations_list,1)
             min_str = ['0' min_str(1)];
         end
             
-        model_name = "Evals/" + clean_date + "_" + hour_str + "h" + min_str + "m_" + "illit_n" + int2str(ii);
-        save(model_name,'vishid_2','hidbiases_2', 'visbiases_2', 'W2');
+        model_name = "illiterate_models/" + clean_date + "_" + hour_str + "h" + min_str + "m_" + "illit_n" + int2str(ii);
+        save(model_name,'vishid_2','hidbiases_2', 'visbiases_2', 'W2','properties');
 
         %% restart the run:
         clearvars -except z ii configurations_list matrix_1 matrix_1_pd matrix_2 matrix_3_outer matrix_3_inner; 
@@ -176,7 +176,7 @@ end
 if length(min_str) == 1
     min_str = ['0' min_str(1)];
 end
-filename = "Evals/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "TF_matrix";
+filename = "illiterate_models/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "TF_matrix";
 save(filename,'matrix_1','matrix_1_pd','matrix_2','matrix_3_outer','matrix_3_inner');
 excel_TF_export;
 end
