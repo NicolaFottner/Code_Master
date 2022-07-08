@@ -66,6 +66,7 @@ for z=1:size(configurations_list,1)
         addpath("data_plotting/")
         addpath("data")
         addpath("data/new04Jl/")
+        addpath("eval_methods/")
 
         %% Import Data from testolin
         fprintf(1,'Importing first layer from Testolin:\n');
@@ -111,7 +112,7 @@ for z=1:size(configurations_list,1)
         rbm2.finalmomentum    = 0.9;
         rbm2.earlyStopping = true;
         restart=1;
-        rbm_2DropO;
+        rbm_2;
         vishid_2=vishid; hidbiases_2=hidbiases; visbiases_2=visbiases; hid_out_2 = batchposhidprobs_2;
         save g_rbm_2 vishid_2 hidbiases_2 visbiases_2; % hid_out_2;
 
@@ -134,7 +135,7 @@ for z=1:size(configurations_list,1)
             rbm3.finalmomentum    = 0.9;
             rbm3.earlyStopping = true;
             restart=1;
-            rbm_3DropO;
+            rbm_3;
             vishid_3=vishid; hidbiases_3=hidbiases; visbiases_3=visbiases; hid_out_3 = batchposhidprobs_2;
             save g_rbm_3 vishid_3 hidbiases_3 visbiases_3; % hid_out_3;
             %load g_rbm_3 vishid_3 hidbiases_3 visbiases_3 hid_out_3;

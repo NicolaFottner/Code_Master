@@ -39,11 +39,11 @@ patience =  rbm2.patience;
 maxepoch = rbm2.maxepoch;
 [g_numcases g_numdims g_numbatches]=size(g_batchdata);
 
-if restart ==1,
+if restart ==1
   restart=0;
   epoch=1;
-  
-final_epoch_3 = 1;
+
+  final_epoch_3 = 1;
 %% For overfitting computation
 % For computing overfitting / used in early stopping
 % "randomize", the validation set used in the computation 
@@ -100,53 +100,57 @@ wait = 0;
 
 %% Start Training
 for epoch = epoch:maxepoch
- fprintf(1,'epoch %d\r',epoch); 
- errsum2=0;
- errvec2=[];
-
- for batch = 1:g_numbatches
- fprintf(1,'epoch %d batch %d\r',epoch,batch); 
-
+    fprintf(1,'epoch %d\r',epoch); 
+    errsum2=0;
+    errvec2=[];
+    
+    for batch = 1:g_numbatches
+        fprintf(1,'epoch %d batch %d\r',epoch,batch); 
+        
 %%%%%%%%% START POSITIVE PHASE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  data = hid_out_2(:,:,batch); 
-  poshidprobs = 1./(1 + exp(-data*vishid - repmat(hidbiases,g_numcases,1)));   
-  batchposhidprobs_2(:,:,batch)=poshidprobs;
-  posprods    = data' * poshidprobs; 
-  poshidact   = sum(poshidprobs);
-  posvisact = sum(data);
-
+        data = hid_out_2(:,:,batch);
+        % apply dropout
+        r1 = (rand(g_numcases,numhid2)<=p_layer2);
+        data = data .* r1; 
+        poshidprobs = 1./(1 + exp(-data*vishid - repmat(hidbiases,g_numcases,1)));   
+        batchposhidprobs_2(:,:,batch)=poshidprobs;
+        posprods    = data' * poshidprobs; 
+        poshidact   = sum(poshidprobs);
+        posvisact = sum(data);
+        
 %%%%%%%%% END OF POSITIVE PHASE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  poshidstates = poshidprobs > rand(g_numcases,numhid3);
-
+        poshidstates = poshidprobs > rand(g_numcases,numhid3);
+        
 %%%%%%%%% START NEGATIVE PHASE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  negdata = 1./(1 + exp(-poshidstates*vishid' - repmat(visbiases,g_numcases,1)));
-  neghidprobs = 1./(1 + exp(-negdata*vishid - repmat(hidbiases,g_numcases,1)));  
-  negprods  = negdata'*neghidprobs;
-  neghidact = sum(neghidprobs);
-  negvisact = sum(negdata); 
-
+        negdata = 1./(1 + exp(-poshidstates*vishid' - repmat(visbiases,g_numcases,1)));
+        negdata = negdata .* r1; % dropout
+        neghidprobs = 1./(1 + exp(-negdata*vishid - repmat(hidbiases,g_numcases,1)));  
+        negprods  = negdata'*neghidprobs;
+        neghidact = sum(neghidprobs);
+        negvisact = sum(negdata); 
+        
 %%%%%%%%% END OF NEGATIVE PHASE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  err= sum(sum( (data-negdata).^2 ));
-  errsum2 = err + errsum2;
-  errvec2 =[errvec2;err];
-
-   if epoch>5,
-     momentum=finalmomentum;
-   else
-     momentum=initialmomentum;
-   end;
-
+        err= sum(sum( (data-negdata).^2 ));
+        errsum2 = err + errsum2;
+        errvec2 =[errvec2;err];
+        
+        if epoch>5,
+         momentum=finalmomentum;
+        else
+         momentum=initialmomentum;
+        end;
+        
 %%%%%%%%% UPDATE WEIGHTS AND BIASES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-    vishidinc = momentum*vishidinc + ...
-                epsilonw*( (posprods-negprods)/g_numcases - weightcost*vishid);
-    visbiasinc = momentum*visbiasinc + (epsilonvb/g_numcases)*(posvisact-negvisact);
-    hidbiasinc = momentum*hidbiasinc + (epsilonhb/g_numcases)*(poshidact-neghidact);
-
-    vishid = vishid + vishidinc;
-    visbiases = visbiases + visbiasinc;
-    hidbiases = hidbiases + hidbiasinc;
+        vishidinc = momentum*vishidinc + ...
+                    epsilonw*( (posprods-negprods)/g_numcases - weightcost*vishid);
+        visbiasinc = momentum*visbiasinc + (epsilonvb/g_numcases)*(posvisact-negvisact);
+        hidbiasinc = momentum*hidbiasinc + (epsilonhb/g_numcases)*(poshidact-neghidact);
+        
+        vishid = vishid + vishidinc;
+        visbiases = visbiases + visbiasinc;
+        hidbiases = hidbiases + hidbiasinc;
 %%%%%%%%%%%%%%%% END OF UPDATES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-   end 
+    end 
 
 fprintf(1, 'epoch %4i error %6.1f  \n', epoch, errsum2); 
 full_rec_err_3(epoch,:) = errvec2;
@@ -185,5 +189,7 @@ vishid_cp = vishid;hidbiases_cp = hidbiases;visbiases_cp = visbiases;batchposhid
 end
 fprintf(1,'number of runned epoch = %d \r',final_epoch_3); 
 
+% applying Dropout "weight scaling inference rule":
+vishid = vishid * p_layer2;
 save err_rbm_3 full_rec_err_3 overfitting_g_3 deltas final_epoch_3;
 
