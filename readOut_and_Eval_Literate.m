@@ -11,20 +11,15 @@
 
 dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date without "-YYYY"
 
-% g_numcases, g_numdim,g_numbatch
-
-
 %% Create train and test set for perceptron:
-
 addpath("data/new04Jl/")
 load 50_50_trainData.mat
 g_pass = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,size(data,1),1)));
 hid_out_2 = 1./(1 + exp(-g_pass*vishid_2 - repmat(hidbiases_2,size(data,1),1)));
-
 %%%
 least_square = true;
 %%%
-
+p = 0.2;
 if least_square == true
     %% if classifier = multivariate least square regression
     [W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = perceptron(a1,p,g_pass,targets);

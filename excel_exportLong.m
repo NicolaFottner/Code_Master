@@ -1,11 +1,11 @@
 %% export to excel spreadsheets
-addpath("Evals/mean/7Jl_Pos/")
-sourceDir = 'Evals/mean/7Jl_Pos/'; % already in 64x64 format
+addpath("Evals/mean/8Jl/")
+sourceDir = 'Evals/mean/8Jl/'; % already in 64x64 format
 loadData = dir([sourceDir '*.mat']);
 
 % strings(x,y), with x: number of architectures (only numHid)
 %                    y: number of cases with D-&-Mini_b within a architecture
-mean_list = strings(8,6);
+mean_list = strings(5,6);
 
 for i=1:size(loadData,1)
     load([loadData(i).name],"mean_properties");
@@ -335,7 +335,7 @@ Id_BasedonS_Details =C;
 
 
 %% writeOut
-filename = "excel_files/7Jl_sim5.xlsx";
+filename = "excel_files/8Jl_sim5.xlsx";
 writecell(Test_Error,filename,'Sheet','Test_Error');
 writecell(Classifier_details,filename,'Sheet','Classifier_details');
 writecell(Id_BasedOnShape,filename,'Sheet','Id_BasedOnShape');
@@ -347,10 +347,10 @@ writecell(Id_BasedonS_Details,filename,'Sheet','Id_BasedonS_Details');
 %% GET THE RELEVANT DATA
 
 % CASE: Id Based on Shape --- Details
-% (x,y) with x: num_architectures x num_cases per architecture
+% (x,y) with x: num_architectures * num_cases per architecture
 %            y: number of targets (here: 6 shapes)
-letter_case = zeros(48,6);
-pletter_case = zeros(48,6);
+letter_case = zeros(30,6);
+pletter_case = zeros(30,6);
 
 for i=1:size(mean_list,1)
 

@@ -9,7 +9,7 @@ load new04Jl/openCV_shapePOS3.mat
 
 %problem of 6 class/shapes
 geo_shape_class = 6;
-g_batchsize = 6;
+g_batchsize = 24;
 
 shapedata = zeros(size(data));
 for i=1:size(data,1)
@@ -96,6 +96,6 @@ g_val_data = v_d;g_val_target = v_t;
 g_batchdata = g_batchdata(:,:, 1:(numbatches-val_idx));
 g_batchtargets = g_batchtargets(:,:, 1:(numbatches-val_idx));
 
-save batchdata_m6 g_batchtargets g_batchdata g_val_data g_val_target
+save batchdata_m24 g_batchtargets g_batchdata g_val_data g_val_target
 
 clear shapedata targets;

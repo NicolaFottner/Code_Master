@@ -1,11 +1,15 @@
 % class_specific_output; computed on the test set
 dd = strsplit(date,'-');clean_date = strcat(dd(1),dd(2)); %without "-YY
 weightsx = W2;
+index = floor(size(g_batchtargets,1)*p); % p = percentage of test data
+test_l =  g_batchtargets(1:index,:);
+
 if numhid3 == 0
-    eval_data = test_d_2;
+    eval_data = hid_out_2(1:index, :);
     str_hid3 = "";
 else
-    eval_data = test_d_3;
+    index = floor(size(g_batchtargets,1)*p); % p = percentage of test data
+    eval_data = g_pass(1:index, :);
     str_hid3 = "three/";
 end
 ONES = ones(size(eval_data, 1), 1);
