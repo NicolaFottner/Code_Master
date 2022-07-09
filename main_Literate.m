@@ -90,7 +90,7 @@ for i = 1 : 5 % run over the "5 participants"
 
         % Prepare Data for (transfer) training rbm2:
 
-        
+    %   load ...
         
 
         [g_numcases g_numdims g_numbatches]=size(g_batchdata);
@@ -107,6 +107,7 @@ for i = 1 : 5 % run over the "5 participants"
         
         %% RBM 2
         %%%%% second rbm layer
+        
 
 
         %%% INIT THE PARAMS FROM THE ILLITERATE MODEL
