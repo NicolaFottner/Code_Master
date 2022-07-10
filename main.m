@@ -20,6 +20,7 @@
 % Evals/ --- file with everything - from overfitting measure to CE assesm.
 
 configurations;
+literate = false; % this is for the illiterate model 
 
 % RUN WITH:
 % SHAPE_POS3
@@ -164,7 +165,7 @@ for z=1:size(configurations_list,1)
         save(model_name,'vishid_2','hidbiases_2', 'visbiases_2', 'W2','properties');
 
         %% restart the run:
-        clearvars -except z ii configurations_list matrix_1 matrix_1_pd matrix_2 matrix_3_outer matrix_3_inner; 
+        clearvars -except z ii configurations_list matrix_1 matrix_1_pd matrix_2 matrix_3_outer matrix_3_inner literate; 
         close all;
     end
 dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date without "-YYYY"

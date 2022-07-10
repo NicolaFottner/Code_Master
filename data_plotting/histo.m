@@ -45,8 +45,11 @@ rbm1_bv =visbiases_1';
 % xlabel('RBM1 VisBiases'),ylabel('Pr/Frequency')
 
 %%%%%%%%%%%%%%%%%% for rbm 2 %%%%%%%%%%%%%%%%%%%%%%%%
-
-load g_rbm_2.mat vishid_2 hidbiases_2 visbiases_2;
+if literate
+    load l_rbm_2.mat vishid_2 hidbiases_2 visbiases_2;
+else
+    load g_rbm_2.mat vishid_2 hidbiases_2 visbiases_2;
+end
 %%% for weights
 row_w =size(vishid_2,1);
 col_w = size(vishid_2,2);

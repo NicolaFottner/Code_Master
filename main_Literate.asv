@@ -38,13 +38,11 @@ sourceDir = 'illiterate_models/';
 loadData = dir([sourceDir '*.mat']);
 
 for i = 1 : 5 % run over the "5 participants"
-    load([loadData(1).name]);
-
-    %%%
-   %        TODO
-    %%%
-
-
+    load([loadData(1).name],'hidbiases_2','properties','visbiases_2','vishid_2','W2');
+    numhid = 1000;
+    numhid2 = properties.numhid2;
+    dropout = properties.dropoutM;
+    batchsize = properties.minibatchsize;
     for z=1:2 % initialize hyperparameters
         if z ==1 
             least_square = true;
@@ -52,16 +50,9 @@ for i = 1 : 5 % run over the "5 participants"
             least_square = false;
         end
         maxepoch=500; % 500
-
-        numhid = 1000;
-        numhid2 = configurations_list(z).layer2;
-        numhid3 = configurations_list(z).layer3;
-        dropout = configurations_list(z).dropout;
-        g_batchsize = configurations_list(z).minibatchsize;
-
         if dropout
-            p_layer1 = 0.5;
-            a1=1;a2=a1; %see fast dropout 2013 paper: a = (1-p) / p
+            p_layer1 = properties.dropout_p1;
+            a1=(1-p_layer1)/p_layer1;a2=a1; %see fast dropout 2013 paper: a = (1-p) / p
             p_layer2 = NaN;
             if numhid3 ~= 0
                 p_layer2 = 0.5;a3=a1;
@@ -90,21 +81,26 @@ for i = 1 : 5 % run over the "5 participants"
         numbatches = 80000/160;
         numcases = DN.batchsize;
         
-        fprintf(1,'Importing data: Letter Strings \n');
-        load data/new04Jl/50_50_TrainTestData.mat
-       
+        fprintf(1,'Importing data: GeoShape + Letters \n');
+        
+        import_literateRBM2;
         fprintf(1,'Start Training. \n'); 
         fprintf(1,'Number Epochs: %3i \n', maxepoch);
 
 
         % Prepare Data for (transfer) training rbm2:
 
-        
-        
+        if batchsize == 12
+            load g&L_batchdata_m12.mat
+        elseif batchsize == 24
+            load g&L_batchdata_m24.mat
+        elseif batchsize == 36
+            load g&L_batchdata_m36.mat
+        end
 
-        [g_numcases g_numdims g_numbatches]=size(g_batchdata);
+        [numcases numdims numbatches]=size(batchdata);
         % create file to access info from outside
-        save info maxepoch numdims numhid numhid2 numbatches numcases g_numbatches g_numcases
+        save lit_info maxepoch numdims numhid numhid2 numbatches numcases numbatches numcases
         %%% @todo use the above line in the "plotting methods" for modularity
         
         %% RBM 1 / fetching it from Testolin
@@ -116,6 +112,14 @@ for i = 1 : 5 % run over the "5 participants"
         
         %% RBM 2
         %%%%% second rbm layer
+
+
+        %%% INIT THE PARAMS FROM THE ILLITERATE MODEL
+
+        %%% INCLUDE A VERSION WITH THE PARAMs, for comparison ("restart=1")
+
+
+
         fprintf(1,'\nTraining Layer 2 with RBM: %d-%d \n',numhid,numhid2);
         rbm2.maxepoch = maxepoch;
         rbm2.epsilonw      = 0.01;   % Learning rate for weights 

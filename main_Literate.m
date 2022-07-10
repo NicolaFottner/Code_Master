@@ -36,13 +36,14 @@ configurations;
 addpath("illiterate_models/");
 sourceDir = 'illiterate_models/';
 loadData = dir([sourceDir '*.mat']);
+literate = true; % for data plotting methods
 
 for i = 1 : 5 % run over the "5 participants"
     load([loadData(1).name],'hidbiases_2','properties','visbiases_2','vishid_2','W2');
     numhid = 1000;
     numhid2 = properties.numhid2;
     dropout = properties.dropoutM;
-    g_batchsize = properties.minibatchsize;
+    batchsize = properties.minibatchsize;
     for z=1:2 % initialize hyperparameters
         if z ==1 
             least_square = true;
@@ -90,9 +91,14 @@ for i = 1 : 5 % run over the "5 participants"
 
         % Prepare Data for (transfer) training rbm2:
 
-        
-        
-
+        if batchsize == 12
+            load g&L_batchdata_m12.mat
+        elseif batchsize == 24
+            load g&L_batchdata_m24.mat
+        elseif batchsize == 36
+            load g&L_batchdata_m36.mat
+        end
+        g_batchdata = batchdata;
         [g_numcases g_numdims g_numbatches]=size(g_batchdata);
         % create file to access info from outside
         save info maxepoch numdims numhid numhid2 numbatches numcases g_numbatches g_numcases
@@ -128,7 +134,7 @@ for i = 1 : 5 % run over the "5 participants"
         restart=1;
         rbm_2;
         vishid_2=vishid; hidbiases_2=hidbiases; visbiases_2=visbiases; hid_out_2 = batchposhidprobs_2;
-        save g_rbm_2 vishid_2 hidbiases_2 visbiases_2; % hid_out_2;
+        save l_rbm_2 vishid_2 hidbiases_2 visbiases_2; % hid_out_2;
         
         %         load rbm2_16J11h39.mat vishid_2 hidbiases_2 visbiases_2;
         %         load rbm2_16J11h39_err.mat overfitting_g_2 full_rec_err_g
@@ -136,31 +142,10 @@ for i = 1 : 5 % run over the "5 participants"
         %         load 16Jun_11h39m_H2350_H30.mat properties;
         %         final_epoch = properties.epoch2;
         
-        %% RBM 3 
-        if numhid3 ~= 0
-            fprintf(1,'\nPretraining Layer 3 with RBM: %d-%d-%d \n',numhid,numhid2,numhid3);                
-            rbm3.maxepoch = maxepoch;
-            rbm3.epsilonw      = 0.01;   % Learning rate for weights 
-            rbm3.epsilonvb     = 0.01;   % Learning rate for biases of visible units 
-            rbm3.epsilonhb     = 0.01;   % Learning rate for biases of hidden units 
-            rbm3.weightcost  = 0.000004;   
-            rbm3.initialmomentum  = 0.5;
-            rbm3.patience = 3;
-            rbm3.finalmomentum    = 0.9;
-            rbm3.earlyStopping = true;
-            restart=1;
-            rbm_3;
-            vishid_3=vishid; hidbiases_3=hidbiases; visbiases_3=visbiases; hid_out_3 = batchposhidprobs_2;
-            save g_rbm_3 vishid_3 hidbiases_3 visbiases_3; % hid_out_3;
-            %load g_rbm_3 vishid_3 hidbiases_3 visbiases_3 hid_out_3;
-        end    
         
         %% Classifer and performance measurements
-        if ~no_N_img % run like usual
-            readOut_and_Eval;   
-        else         % no first/natural layer
-            readOut_and_Eval_noN_img;
-        end
+        readOut_and_Eval_Literate;
+
         %%% store data?, if z=1 -- LS, z=2 -- MLP
     end
     %%% ? store data before going to the next participant?
