@@ -156,13 +156,13 @@ Contour = shape_int2str(s_targets);
 accs = int2str(accs);
 accs_i = int2str(accs_i);
 if ii==1
-    matrix_1 = table(Subjects,Letter,Contour,accs,accs_i);
-    matrix_1_pd = table(Subjects,Letter,Contour,cross,elipse,hexa,rect,square,trian);
+    matrix_1_mlp = table(Subjects,Letter,Contour,accs,accs_i);
+    matrix_1__pd_mlp = table(Subjects,Letter,Contour,cross,elipse,hexa,rect,square,trian);
 else
     m = table(Subjects,Letter,Contour,accs,accs_i);
     m_p =  table(Subjects,Letter,Contour,cross,elipse,hexa,rect,square,trian);
-    matrix_1 = cat(1,matrix_1,m);
-    matrix_1_pd = cat(1,matrix_1_pd,m_p);
+    matrix_1_mlp = cat(1,matrix_1_mlp,m);
+    matrix_1__pd_mlp = cat(1,matrix_1__pd_mlp,m_p);
 end
 
 %% matrix 3 outer
@@ -312,10 +312,10 @@ Subjects = repmat(subj_str,size(Shape,1),1);
 
 
 if ii==1
-    matrix_3_outer = table(Subjects,Shape,Acc_Cong,Acc_inc_a,Acc_inc_b,a,b);
+    matrix_3_outer_mlp = table(Subjects,Shape,Acc_Cong,Acc_inc_a,Acc_inc_b,a,b);
 else
     m3 = table(Subjects,Shape,Acc_Cong,Acc_inc_a,Acc_inc_b,a,b);
-    matrix_3_outer = cat(1,matrix_3_outer,m3);
+    matrix_3_outer_mlp = cat(1,matrix_3_outer_mlp,m3);
 end
 
 
@@ -450,10 +450,10 @@ Acc_inc_b= [letter_inc_b;psletter_inc_b];
 Subjects = repmat(subj_str,size(Acc_inc_a,1),1);
 
 if ii==1
-    matrix_3_inner = table(Subjects,Letter,Cong_Acc,Acc_inc_a,Acc_inc_b,a,b);
+    matrix_3_inner_mlp = table(Subjects,Letter,Cong_Acc,Acc_inc_a,Acc_inc_b,a,b);
 else
     m3i = table(Subjects,Letter,Cong_Acc,Acc_inc_a,Acc_inc_b,a,b);
-    matrix_3_inner = cat(1,matrix_3_inner,m3i);
+    matrix_3_inner_mlp = cat(1,matrix_3_inner_mlp,m3i);
 end
 
 %% functions

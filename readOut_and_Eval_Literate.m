@@ -13,25 +13,12 @@ dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date w
 
 %% Create train and test set for perceptron:
 
-%%%
-addpath("testolin/")
-addpath("eval_methods/")
-load testolin/old_t_model.mat
-vishid_1 = DN.L{1,1}.vishid;
-hidbiases_1 = DN.L{1,1}.hidbiases;
-visbiases_1 = DN.L{1,1}.visbiases;
-clear DN
-load g_rbm_2.mat
-%%%
 addpath("data/new04Jl/")
 load 50_50_TrainTestData
 rbm1_pass_train = 1./(1 + exp(-trainData*vishid_1 - repmat(hidbiases_1,size(trainData,1),1)));
 rbm1_pass_test = 1./(1 + exp(-testData*vishid_1 - repmat(hidbiases_1,size(testData,1),1)));
 rbm2_pass_train = 1./(1 + exp(-rbm1_pass_train*vishid_2 - repmat(hidbiases_2,size(rbm1_pass_train,1),1)));
 rbm2_pass_test = 1./(1 + exp(-rbm1_pass_test*vishid_2 - repmat(hidbiases_2,size(rbm1_pass_test,1),1)));
-%%%
-least_square = false;
-%%%
 p = 0.2;
 if least_square == true
     %% if classifier = multivariate least square regression
@@ -155,10 +142,16 @@ end
 if length(min_str) == 1
     min_str = ['0' min_str(1)];
 end
-filename = "Evals/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "H2"+ int2str(numhid2)+ "_H3"+ int2str(numhid3);
-save(filename,'properties','Classifier','Classifier_Details','Id_BasedOnGeoS','histograms', ...
-    'CE_eval','Overfitting','reco_error');
-
+%%% save file
+if least_square
+    filename = "Evals/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "H2"+ int2str(numhid2)+ "_LS";
+    save(filename,'properties','Classifier','Classifier_Details','Id_BasedOnGeoS','histograms', ...
+        'CE_eval','Overfitting','reco_error');
+else
+    filename = "Evals/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "H2"+ int2str(numhid2)+ "_MLP";
+    save(filename,'properties','Classifier','Classifier_Details','Id_BasedOnGeoS','histograms', ...
+        'CE_eval','Overfitting','reco_error');
+end
 
 %% Plot receptive fields
 % create DN struct for facilitating later "plotting the receptive fields"
@@ -198,9 +191,9 @@ end
 %plot_L1(DN,1000);
 
  
-% if ii == 1 && numhid3 == 0
-%     plot_L2(DN,numhid2,final_epoch);
-% elseif ii == 1 && numhid3 ~= 0
-%     plot_L2(DN,numhid2,final_epoch);
-%     plot_L3(DN,numhid3,final_epoch_3);
-% end
+if ii == 1 && numhid3 == 0
+    plot_L2(DN,numhid2,final_epoch);
+elseif ii == 1 && numhid3 ~= 0
+    plot_L2(DN,numhid2,final_epoch);
+    plot_L3(DN,numhid3,final_epoch_3);
+end
