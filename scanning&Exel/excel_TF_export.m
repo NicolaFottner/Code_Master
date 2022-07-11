@@ -1,5 +1,5 @@
 
-if illiterate ||least_square
+if least_square
     filename = "excel_files/" +  "trialData." + "xlsx";
     writetable(matrix_1,filename,'WriteRowNames',true,'Sheet','Matrix_1')
     writetable(matrix_1_pd,filename,'WriteRowNames',true,'Sheet','Matrix_1pd')

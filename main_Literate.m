@@ -43,9 +43,11 @@ for ii = 1 : size(loadData,1) % default being the "5 participants"
     load([loadData(ii).name],'hidbiases_2','properties','visbiases_2','vishid_2','W2');
     numhid = 1000;
     numhid2 = properties.numhid2;
+    numhid3 = properties.numhid3;
     dropout = properties.dropout;
     batchsize = properties.minibatchsize;
-        
+    geo_shape_class = 12; % problem with 12 clases (..bad name)
+
     for z=1:2 % loop to test on both LS-regrs and MLP
         if z ==1 
             least_square = true;

@@ -23,8 +23,8 @@ p = 0.2;
 if least_square == true
     %% if classifier = multivariate least square regression
     p = 0.2;% train / test -- dataDivision
-    [W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = perceptron(a1,p,cat(1,rbm1_pass_train,rbm1_pass_test),cat(1,train_t,test_t));
-    [W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = perceptron(a2,p,cat(1,rbm2_pass_train,rbm2_pass_test),cat(1,train_t,test_t));
+    [W1, tr_acc1, te_acc1,tr_loss1,te_loss1] = t_perceptron(a1,p,cat(1,rbm1_pass_train,rbm1_pass_test),cat(1,train_t,test_t));
+    [W2, tr_acc2, te_acc2,tr_loss2,te_loss2] = t_perceptron(a2,p,cat(1,rbm2_pass_train,rbm2_pass_test),cat(1,train_t,test_t));
 else
     %% íf MLP
     

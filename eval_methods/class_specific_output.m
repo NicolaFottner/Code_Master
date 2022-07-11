@@ -92,7 +92,13 @@ if geo_shape_class == 6
     Classifier_Details = table(Output,Accuracy);
 
 else % when geo_class  == 12
-    %% In 12 class problem
+    %% In 12 class problem  --- Literate model
+
+    %%% pred 1 -> 6, for letter identities
+    %   1=A,2=H,3=M,4=U,5=T,6=X
+    %%% pred 7 -> 12, for shape identities
+    %   7=cross,8=elipse,9=hexa,10=rect,11=squr,12=triangle
+
     pred_1 = [];pred_2 = [];pred_3 = [];pred_4 = [];pred_5 = [];pred_6 = [];
     pred_7 = [];pred_8 = [];pred_9 = [];pred_10 = [];pred_11 = [];pred_12 = [];
     max_1 = [];max_2 = [];max_3 = [];max_4 = [];max_5 = [];max_6 = [];
@@ -140,68 +146,68 @@ else % when geo_class  == 12
     f = figure;
     %:
     subplot(4,3,1);
-    prD_pA =  mean(pred_1,1);
-    bar(prD_pA);
-    xlabel('Cross');
+    prD_A =  mean(pred_1,1);
+    bar(prD_A);
+    xlabel('A');
     %:
     subplot(4,3,2);
-    prD_pH =  mean(pred_2,1);
-    bar(prD_pH);
-    xlabel('Elipse');
+    prD_H =  mean(pred_2,1);
+    bar(prD_H);
+    xlabel('H');
     %:
     subplot(4,3,3);
-    prD_pM =  mean(pred_3,1);
-    bar(prD_pM);
-    xlabel('Hexagon');
+    prD_M =  mean(pred_3,1);
+    bar(prD_M);
+    xlabel('M');
     %:
     subplot(4,3,4);
-    prD_pU =  mean(pred_4,1);
-    bar(prD_pU);
-    xlabel('Rectangle');
+    prD_U =  mean(pred_4,1);
+    bar(prD_U);
+    xlabel('T');
     %:
     subplot(4,3,5);
-    prD_pT =  mean(pred_5,1);
-    bar(prD_pT);
-    xlabel('Square');
+    prD_T =  mean(pred_5,1);
+    bar(prD_T);
+    xlabel('U');
     %:
     subplot(4,3,6);
-    prD_pX =  mean(pred_6,1);
-    bar(prD_pX);
-    xlabel('Triangle');
+    prD_X =  mean(pred_6,1);
+    bar(prD_X);
+    xlabel('X');
     %:%%%%%%%%%%%:%%%%%%%%%%%:%%%%%%%%%%%:%%%%%%%%%%%:%%%%%%%%%%
     subplot(4,3,7);
     prD_7 =  mean(pred_7,1);
     bar(prD_7);
-    xlabel('Diamond');
+    xlabel('Cross');
     %:
     subplot(4,3,8);
     prD_8 =  mean(pred_8,1);
     bar(prD_8);
-    xlabel('Flowchart');
+    xlabel('Elipse');
     %:
     subplot(4,3,9);
     prD_9 =  mean(pred_9,1);
     bar(prD_9);
-    xlabel('Moon');
+    xlabel('Hexagon');
     %:
     subplot(4,3,10);
     prD_10 =  mean(pred_10,1);
     bar(prD_10);
-    xlabel('Pentagon');
+    xlabel('Rectangle');
     %:
     subplot(4,3,11);
     prD_11 =  mean(pred_11,1);
     bar(prD_11);
-    xlabel('Star');
+    xlabel('Square');
     %:
     subplot(4,3,12);
     prD_12 =  mean(pred_12,1);
     bar(prD_12);
-    xlabel('Trapezoid');
+    xlabel('Triangle');
 
     sgtitle("Day: " + clean_date + ", Models' Prediction/Prob Distr: ");
-%     file_name = "plots_results/classf_perf/details/"+ str_hid3  + clean_date + "_" + int2str(c(4)) + "h" + int2str(c(5))+"m_"+"detail_distr" + ".pdf";
-%     exportgraphics(f,file_name);
+    file_name = "Evals/fig/PDFs/"+ clean_date + "_" + int2str(c(4)) + "h" + int2str(c(5))+"m_"+"cl_detail_distr" + ".pdf";
+    exportgraphics(f,file_name);
     r1 = ones(size(test_l,1)/12,1);r2 = ones(size(test_l,1)/12,1)*2;r3 = ones(size(test_l,1)/12,1)*3;
     r4 = ones(size(test_l,1)/12,1)*4;r5 = ones(size(test_l,1)/12,1)*5;r6 = ones(size(test_l,1)/12,1)*6;
     r7 = ones(size(test_l,1)/12,1)*7;r8 = ones(size(test_l,1)/12,1)*8;r9 = ones(size(test_l,1)/12,1)*9;
@@ -217,21 +223,21 @@ else % when geo_class  == 12
 %     filename = "plots_results/classf_perf/details/"+ str_hid3  + clean_date + "_" + int2str(c(4)) + "h" + int2str(c(5))+"m_" + "detail_acc";
 %     save(filename,'acc1','acc2','acc3','acc4', 'acc5','acc6','acc7','acc8','acc9','acc10', 'acc11','acc12','numhid2','numhid3','final_epoch');
 
-    Output = ["1";"2";"3";"4";"5";"6";"7";"8";"9";"10";"11";"12"];
+    Output = ["A";"H";"M";"T";"U";"X";"Cross";"Elipse";"Hexagon";"Rectangle";"Square";"Triangle"];
     Accuracy = [acc1;acc2;acc3;acc4;acc5;acc6;acc7;acc8;acc9;acc10;acc11;acc12];
     Classifier_Details = table(Output,Accuracy);
 
     fprintf(1,'\n Its detailed classification: \n');
-    fprintf(1,'\n Cross =  %d\n',acc1);
-    fprintf(1,'\n Elipse =  %d\n',acc2);
-    fprintf(1,'\n Hexagon =  %d\n',acc3);
-    fprintf(1,'\n Rectangle =  %d\n',acc4);
-    fprintf(1,'\n Square =  %d\n',acc5);
-    fprintf(1,'\n Triangle =  %d\n\n',acc6);
-    fprintf(1,'\n Diamond =  %d\n',acc7);
-    fprintf(1,'\n Flowchart =  %d\n',acc8);
-    fprintf(1,'\n Moon =  %d\n',acc9);
-    fprintf(1,'\n Pentagon =  %d\n',acc10);
-    fprintf(1,'\n Star =  %d\n',acc11);
-    fprintf(1,'\n Trapezoid =  %d\n\n',acc12);
+    fprintf(1,'\n A =  %d\n',acc1);
+    fprintf(1,'\n H =  %d\n',acc2);
+    fprintf(1,'\n M =  %d\n',acc3);
+    fprintf(1,'\n T =  %d\n',acc4);
+    fprintf(1,'\n U =  %d\n',acc5);
+    fprintf(1,'\n X =  %d\n\n',acc6);
+    fprintf(1,'\n Cross =  %d\n',acc7);
+    fprintf(1,'\n Elipse =  %d\n',acc8);
+    fprintf(1,'\n Hexagon =  %d\n',acc9);
+    fprintf(1,'\n Rectangle =  %d\n',acc10);
+    fprintf(1,'\n Square =  %d\n',acc11);
+    fprintf(1,'\n Triangle =  %d\n\n',acc12);
 end

@@ -22,7 +22,7 @@ target_s = double(s_target_s);
 total_data = [sdata;ldata];
 
 % batchsize for training set
-batchsize = 12;
+batchsize = 48;
 % now create the batches
 totnum = size(total_data,1);
 fprintf(1, 'Size of the G&L Training Dataset= %d \n', totnum);
@@ -147,5 +147,5 @@ val_data = v_d;val_targets = v_t;
 batchdata = batchdata(:,:, 1:(numbatches-val_idx));
 batchtargets = batchtargets(:,:, 1:(numbatches-val_idx));
 
-save g&L_batchdata_m12 batchdata batchtargets val_data val_targets
+save g&L_batchdata_m48 batchdata batchtargets val_data val_targets
 

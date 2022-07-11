@@ -87,7 +87,7 @@ overfitting_g_2 = zeros(maxepoch,2);
 deltas = zeros(maxepoch,1);
 wait = 0;
 
-for epoch = epoch:maxepoch
+for epoch = 1:maxepoch
     fprintf(1,'epoch %d\r',epoch); 
     errsum2=0;
     errvec2=[];

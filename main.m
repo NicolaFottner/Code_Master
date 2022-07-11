@@ -21,6 +21,7 @@
 
 configurations;
 literate = false; % this is for the illiterate model 
+least_square = true;
 
 % RUN WITH:
 % SHAPE_POS3
@@ -36,9 +37,9 @@ elem.minibatchsize= 24;
 configurations_list = [configurations_list;elem];
 
 for z=1:size(configurations_list,1)
-    for ii=1:5    %% --- 5
+    for ii=1:1    %% --- 5
         % initialize hyperparameters
-        maxepoch=500; % 500
+        maxepoch=1; % 500
         geo_shape_class = 6; %problem of 6 class/shapes
         numhid2 = configurations_list(z).layer2;
         numhid3 = configurations_list(z).layer3;
@@ -165,7 +166,7 @@ for z=1:size(configurations_list,1)
         save(model_name,'vishid_2','hidbiases_2', 'visbiases_2', 'W2','properties');
 
         %% restart the run:
-        clearvars -except z ii configurations_list matrix_1 matrix_1_pd matrix_2 matrix_3_outer matrix_3_inner literate; 
+        clearvars -except z ii configurations_list matrix_1 matrix_1_pd matrix_2 least_square matrix_3_outer matrix_3_inner literate; 
         close all;
     end
 dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date without "-YYYY"
