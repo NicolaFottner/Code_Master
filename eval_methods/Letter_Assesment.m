@@ -8,250 +8,299 @@ else
     strh3 = "three/";
 end
 
-if ~literate
+%%%
+%%%
+%   Assesment changes for literate case 
+%   Literate case assesses id. based on letter identity 
+%                               != based on respective shape identity
+%
+%%%
+%%%
 
-    %% ILLITERATE MODEL (6 classes)
-    
-    %%%%%%% load dataset for the 6 shapes
-    %load openCV_final_Shapes.mat data target_s %target_l is just their s-target
-    % before: xtra, one
-    load openCV_shapePOS3.mat data target_s
-    
-    s_data = zeros(size(data));
-    for i=1:size(data,1)
-        s_data(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
-    end
-    s_target = double(target_s);
-    clear data; clear target_s
-    
-    % load dataset for the 6 letters
-    %load openCV_final_letters.mat data target_s target_l;
-    %load openCV_letters_xtra.mat data target_s target_l;
-    % load openCV_letters_tF.mat data target_s target_l;
-    load openCV_letterPOS1.mat data target_s target_l;
-    
-    d_double = zeros(size(data));
-    for i=1:size(data,1)
-        d_double(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
-    end
-    clear data; data = d_double;
-    target_s= double(target_s);
-    target_l_save = target_l;
-    %% Prep Computation
-    weights = W2;
-    
-    % pass shapedata throught RBM^s:
-    hid_out_1_s = 1./(1 + exp(-s_data*vishid_1 - repmat(hidbiases_1,size(s_data,1),1)));
-    rbms_pass_s = 1./(1 + exp(-hid_out_1_s*vishid_2 - repmat(hidbiases_2,size(hid_out_1_s,1),1)));
-    if numhid3 ~= 0
-        rbms_pass_s = 1./(1 + exp(-rbms_pass_s*vishid_3 - repmat(hidbiases_3,size(rbms_pass_s,1),1)));
-    end
-    % add biases
-    ONES = ones(size(rbms_pass_s, 1), 1);  
-    rbms_pass_s = [rbms_pass_s ONES];
-    
-    % pass letterdata throught RBMs:
-    hid_out_1_l = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,size(data,1),1)));
-    rbms_pass_l = 1./(1 + exp(-hid_out_1_l*vishid_2 - repmat(hidbiases_2,size(hid_out_1_l,1),1)));
-    if numhid3 ~= 0
-        rbms_pass_l = 1./(1 + exp(-rbms_pass_l*vishid_3 - repmat(hidbiases_3,size(rbms_pass_l,1),1)));
-    end
-    % add biases
-    ONES = ones(size(rbms_pass_l, 1), 1);  
-    rbms_pass_l = [rbms_pass_l ONES];
-    %% General Assesment
-    %%%%%
-    pred1 = rbms_pass_l*weights;
-    softmax_pred1 = softmax(dlarray(pred1','CB'));
-    pred1 = extractdata(softmax_pred1)';
-    [~, max_act_l] = max(pred1,[],2);
-    [r1,~] = find(target_s');
-    acc_l = (max_act_l == r1);
-    accuracy_l = mean(acc_l);
-    %loss?
-    l_loss = extractdata(crossentropy(softmax_pred1,target_s'));
-    
-    %%%%%
-    pred2 = rbms_pass_s*weights;
-    softmax_pred2 = softmax(dlarray(pred2','CB'));
-    pred2 = extractdata(softmax_pred2)';
-    [~, max_act_s] = max(pred2,[],2);
-    [r2,~] = find(s_target'); 
-    acmax_cs = (max_act_s == r2);
-    accuracy_s = mean(acmax_cs);
-    %loss?
-    s_loss = extractdata(crossentropy(softmax_pred2,s_target'));
-    
-    fprintf(1,'\n Identification of main geometrical shapes');
-    fprintf(1,'\n Accuracy = %d ',accuracy_s);
+%%%%%%% load dataset for the 6 shapes
+%load openCV_final_Shapes.mat data target_s %target_l is just their s-target
+
+load openCV_shapePOS3.mat data target_s
+s_data = zeros(size(data));
+for i=1:size(data,1)
+    s_data(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
+end
+s_target = double(target_s);
+clear data; clear target_s
+
+% load dataset for the 6 letters
+%load openCV_final_letters.mat data target_s target_l;
+%load openCV_letters_xtra.mat data target_s target_l;
+% load openCV_letters_tF.mat data target_s target_l;
+load openCV_letterPOS1.mat data target_s target_l;
+d_double = zeros(size(data));
+for i=1:size(data,1)
+    d_double(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
+end
+clear data; data = d_double;
+target_s= double(target_s);
+target_l = double(target_l);
+target_l_save = targel_l;
+if literate
+    z = zeros(size(s_target));
+    s_target = cat(2,z,s_target);
+    z = zeros(size(target_s));
+    target_s = cat(2,z,target_s);
+end 
+
+
+%% Prep Computation
+weights = W2;
+
+% pass shapedata throught RBM^s:
+hid_out_1_s = 1./(1 + exp(-s_data*vishid_1 - repmat(hidbiases_1,size(s_data,1),1)));
+rbms_pass_s = 1./(1 + exp(-hid_out_1_s*vishid_2 - repmat(hidbiases_2,size(hid_out_1_s,1),1)));
+if numhid3 ~= 0
+    rbms_pass_s = 1./(1 + exp(-rbms_pass_s*vishid_3 - repmat(hidbiases_3,size(rbms_pass_s,1),1)));
+end
+% add biases
+ONES = ones(size(rbms_pass_s, 1), 1);  
+rbms_pass_s = [rbms_pass_s ONES];
+
+% pass letterdata throught RBMs:
+hid_out_1_l = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,size(data,1),1)));
+rbms_pass_l = 1./(1 + exp(-hid_out_1_l*vishid_2 - repmat(hidbiases_2,size(hid_out_1_l,1),1)));
+if numhid3 ~= 0
+    rbms_pass_l = 1./(1 + exp(-rbms_pass_l*vishid_3 - repmat(hidbiases_3,size(rbms_pass_l,1),1)));
+end
+% add biases
+ONES = ones(size(rbms_pass_l, 1), 1);  
+rbms_pass_l = [rbms_pass_l ONES];
+%% General Assesment
+%%%%%
+pred1 = rbms_pass_l*weights;
+softmax_pred1 = softmax(dlarray(pred1','CB'));
+pred1 = extractdata(softmax_pred1)';
+[~, max_act_l] = max(pred1,[],2);
+if literate
+    [r1,~] = find(target_l_save'); 
+else
+    [r1,~] = find(target_s'); 
+end
+acc_l = (max_act_l == r1);
+accuracy_l = mean(acc_l);
+%loss?
+l_loss = extractdata(crossentropy(softmax_pred1,target_s'));
+
+%%%%%
+pred2 = rbms_pass_s*weights;
+softmax_pred2 = softmax(dlarray(pred2','CB'));
+pred2 = extractdata(softmax_pred2)';
+[~, max_act_s] = max(pred2,[],2);
+[r2,~] = find(s_target'); 
+acmax_cs = (max_act_s == r2);
+accuracy_s = mean(acmax_cs);
+%loss?
+s_loss = extractdata(crossentropy(softmax_pred2,s_target'));
+
+fprintf(1,'\n Identification of main geometrical shapes');
+fprintf(1,'\n Accuracy = %d ',accuracy_s);
+if literate 
+    fprintf(1,'\n Identification of Letter based on Letter Identity');
+else
     fprintf(1,'\n Identification of Letter based on their respetive geometrical shape');
-    fprintf(1,'\n Accuracy = %d ',accuracy_l);
-    
-    %%%% Extended ASSESMENT
-    %% Letters
-    %(assement of identification based on their "congruent"shape)
-    max_a = [];max_h = [];max_m = [];max_u = [];max_t = [];max_x = [];
-    pred_a = [];pred_h = [];pred_m = [];pred_u = [];pred_t = [];pred_x = [];
-    for i=1:size(max_act_l,1)
-        idx_l = find(target_l(i,:));
-        if idx_l == 1 
-            max_a = [max_a;max_act_l(i)];
-            pred_a = [pred_a;pred1(i,:)];
-        elseif idx_l == 2
-            max_h= [max_h;max_act_l(i)];
-            pred_h = [pred_h;pred1(i,:)];
-        elseif idx_l == 3
-            max_m= [max_m;max_act_l(i)];
-            pred_m = [pred_m;pred1(i,:)];
-        elseif idx_l == 4
-            max_t= [max_t;max_act_l(i)];
-            pred_t = [pred_t;pred1(i,:)];
-        elseif idx_l == 5
-            max_u= [max_u;max_act_l(i)];
-            pred_u = [pred_u;pred1(i,:)];
-        elseif idx_l == 6
-            max_x= [max_x;max_act_l(i)];
-            pred_x = [pred_x;pred1(i,:)];
-        end
+end
+fprintf(1,'\n Accuracy = %d ',accuracy_l);
+
+
+%%%% Extended ASSESMENT
+%% Letters
+% (assement of identification based on their "congruent"shape)
+max_a = [];max_h = [];max_m = [];max_u = [];max_t = [];max_x = [];
+pred_a = [];pred_h = [];pred_m = [];pred_u = [];pred_t = [];pred_x = [];
+for i=1:size(max_act_l,1)
+    idx_l = find(target_l(i,:));
+    if idx_l == 1 
+        max_a = [max_a;max_act_l(i)];
+        pred_a = [pred_a;pred1(i,:)];
+    elseif idx_l == 2
+        max_h= [max_h;max_act_l(i)];
+        pred_h = [pred_h;pred1(i,:)];
+    elseif idx_l == 3
+        max_m= [max_m;max_act_l(i)];
+        pred_m = [pred_m;pred1(i,:)];
+    elseif idx_l == 4
+        max_t= [max_t;max_act_l(i)];
+        pred_t = [pred_t;pred1(i,:)];
+    elseif idx_l == 5
+        max_u= [max_u;max_act_l(i)];
+        pred_u = [pred_u;pred1(i,:)];
+    elseif idx_l == 6
+        max_x= [max_x;max_act_l(i)];
+        pred_x = [pred_x;pred1(i,:)];
     end
-    
-    mode_A = mode(max_a);std_A = std(max_a);prD_A =  mean(pred_a,1);
-    mode_H = mode(max_h);std_H = std(max_h);prD_H =  mean(pred_h,1);
-    mode_M = mode(max_m);std_M = std(max_m);prD_M =  mean(pred_m,1);
-    mode_U = mode(max_u);std_U = std(max_u);prD_U =  mean(pred_u,1);
-    mode_T = mode(max_t);std_T = std(max_t);prD_T =  mean(pred_t,1);
-    mode_X = mode(max_x);std_X = std(max_x);prD_X =  mean(pred_x,1);
-    r1 = ones(size(rbms_pass_l,1)/6,1);r2 = ones(size(rbms_pass_l,1)/6,1)*2;r3 = ones(size(rbms_pass_l,1)/6,1)*3;
-    r4 = ones(size(rbms_pass_l,1)/6,1)*4;r5 = ones(size(rbms_pass_l,1)/6,1)*5;r6 = ones(size(rbms_pass_l,1)/6,1)*6;
+end
+
+mode_A = mode(max_a);std_A = std(max_a);prD_A =  mean(pred_a,1);
+mode_H = mode(max_h);std_H = std(max_h);prD_H =  mean(pred_h,1);
+mode_M = mode(max_m);std_M = std(max_m);prD_M =  mean(pred_m,1);
+mode_U = mode(max_u);std_U = std(max_u);prD_U =  mean(pred_u,1);
+mode_T = mode(max_t);std_T = std(max_t);prD_T =  mean(pred_t,1);
+mode_X = mode(max_x);std_X = std(max_x);prD_X =  mean(pred_x,1);
+r1 = ones(size(rbms_pass_l,1)/6,1);r2 = ones(size(rbms_pass_l,1)/6,1)*2;r3 = ones(size(rbms_pass_l,1)/6,1)*3;
+r4 = ones(size(rbms_pass_l,1)/6,1)*4;r5 = ones(size(rbms_pass_l,1)/6,1)*5;r6 = ones(size(rbms_pass_l,1)/6,1)*6;
+% carefull, here for some reason, t<->acc5 and u<->acc4, ... @todo fix it 
+if literate
+    acc1 = (max_a == r1);acc2 = (max_h == r2);acc3 = (max_m == r3);
+    acc4 = (max_u == r5);acc5 = (max_t == r4);acc6 = (max_x == r6);
+else
     acc1 = (max_a == r6);acc2 = (max_h == r4);acc3 = (max_m == r5);
     acc4 = (max_u == r2);acc5 = (max_t == r1);acc6 = (max_x == r3);
-    acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
-    acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
-    % create Table for Letters:
-    Targets = ["A" ; "H"; "M"; "U"; "T"; "X"];
-    Mode = [mode_A;mode_H;mode_M;mode_U;mode_T;mode_X];
-    Std = [std_A;std_H;std_M;std_U;std_T;std_X];
-    Acc = [acc1;acc2;acc3;acc4;acc5;acc6];
-    table_letter = table(Targets,Mode,Std,Acc);
-    letter_pdr = [prD_A;prD_H;prD_M;prD_U;prD_T;prD_X];
-    
-    clear data;
-    
-    %% PSEUDO-LETTERS
-    % import data   
-    %load openCV_pletters_xtra.mat data target_l target_s
-    
-    %load openCV_final_pletters.mat data target_l target_s
-    load openCV_pletters_tF.mat data target_s target_l;
-    
-    
-    d_double = zeros(size(data));
-    for i=1:size(data,1)
-        d_double(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
-    end
-    clear data; data = d_double;
-    target_ps = double(target_s);
-    % pass letterdata throught RBMs:
-    hid_out_1_pl = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,size(data,1),1)));
-    rbms_pass_pl = 1./(1 + exp(-hid_out_1_pl*vishid_2 - repmat(hidbiases_2,size(hid_out_1_pl,1),1)));
-    if numhid3 ~= 0
-        rbms_pass_pl = 1./(1 + exp(-rbms_pass_pl*vishid_3 - repmat(hidbiases_3,size(rbms_pass_pl,1),1)));
-    end
-    % add biases
-    ONES = ones(size(rbms_pass_pl, 1), 1);  
-    rbms_pass_pl = [rbms_pass_pl ONES];
-    
-    %%%%%
-    pred3 = rbms_pass_pl*weights;
-    softmax_pred3 = softmax(dlarray(pred3','CB'));
-    pred3 = extractdata(softmax_pred3)';
-    [~, max_act_pl] = max(pred3,[],2);
-    [r3,~] = find(target_ps');
-    acc_pl = (max_act_pl == r3);
-    accuracy_pl = mean(acc_pl);
-    %loss?
-    l_loss = extractdata(crossentropy(softmax_pred3,target_ps'));
+end
+acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
+acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
+% create Table for Letters:
+Targets = ["A" ; "H"; "M"; "U"; "T"; "X"];
+Mode = [mode_A;mode_H;mode_M;mode_U;mode_T;mode_X];
+Std = [std_A;std_H;std_M;std_U;std_T;std_X];
+Acc = [acc1;acc2;acc3;acc4;acc5;acc6];
+table_letter = table(Targets,Mode,Std,Acc);
+letter_pdr = [prD_A;prD_H;prD_M;prD_U;prD_T;prD_X];
+
+clear data;
+
+%% PSEUDO-LETTERS
+% import data   
+%load openCV_pletters_xtra.mat data target_l target_s
+
+%load openCV_final_pletters.mat data target_l target_s
+load openCV_pletters_tF.mat data target_s target_l;
+d_double = zeros(size(data));
+for i=1:size(data,1)
+    d_double(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
+end
+clear data; data = d_double;
+target_ps = double(target_s);
+target_l = double(target_l);
+if literate
+    z = zeros(size(target_ps));
+    target_ps = cat(2,z,target_ps);
+end 
+
+% pass letterdata throught RBMs:
+hid_out_1_pl = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,size(data,1),1)));
+rbms_pass_pl = 1./(1 + exp(-hid_out_1_pl*vishid_2 - repmat(hidbiases_2,size(hid_out_1_pl,1),1)));
+if numhid3 ~= 0
+    rbms_pass_pl = 1./(1 + exp(-rbms_pass_pl*vishid_3 - repmat(hidbiases_3,size(rbms_pass_pl,1),1)));
+end
+% add biases
+ONES = ones(size(rbms_pass_pl, 1), 1);  
+rbms_pass_pl = [rbms_pass_pl ONES];
+
+%%%%%
+pred3 = rbms_pass_pl*weights;
+softmax_pred3 = softmax(dlarray(pred3','CB'));
+pred3 = extractdata(softmax_pred3)';
+[~, max_act_pl] = max(pred3,[],2);
+if literate
+    [r3,~] = find(target_l'); 
+else
+    [r3,~] = find(target_ps'); 
+end
+acc_pl = (max_act_pl == r3);
+accuracy_pl = mean(acc_pl);
+%loss?
+l_loss = extractdata(crossentropy(softmax_pred3,target_ps'));
+if literate
+    fprintf(1,'\n Identification of PSEUDO-Letter based on their letter identity');
+else
     fprintf(1,'\n Identification of PSEUDO-Letter based on their respetive geometrical shape');
-    fprintf(1,'\n Accuracy = %d ',accuracy_pl);
-    
-    %%%% EXTENDED ASSESMENT
-    max_pa = [];max_ph = [];max_pm = [];max_pu = [];max_pt = [];max_px = [];
-    pred_pa = [];pred_ph = [];pred_pm = [];pred_pu = [];pred_pt = [];pred_px = [];
-    
-    for i=1:size(max_act_pl,1)
-        idx_l = find(target_l(i,:));
-        if idx_l == 1 
-            max_pa = [max_pa;max_act_pl(i)];
-            pred_pa = [pred_pa;pred3(i,:)];
-        elseif idx_l == 2
-            max_ph= [max_ph;max_act_pl(i)];
-            pred_ph = [pred_ph;pred3(i,:)];
-        elseif idx_l == 3
-            max_pm= [max_pm;max_act_pl(i)];
-            pred_pm = [pred_pm;pred3(i,:)];
-        elseif idx_l == 4
-            max_pt= [max_pt;max_act_pl(i)];
-            pred_pt = [pred_pt;pred3(i,:)];
-        elseif idx_l == 5
-            max_pu= [max_pu;max_act_pl(i)];
-            pred_pu = [pred_pu;pred3(i,:)];
-        elseif idx_l == 6
-            max_px= [max_px;max_act_pl(i)];
-            pred_px = [pred_px;pred3(i,:)];
-        end
+end
+fprintf(1,'\n Accuracy = %d ',accuracy_pl);
+
+%%%% EXTENDED ASSESMENT
+max_pa = [];max_ph = [];max_pm = [];max_pu = [];max_pt = [];max_px = [];
+pred_pa = [];pred_ph = [];pred_pm = [];pred_pu = [];pred_pt = [];pred_px = [];
+
+for i=1:size(max_act_pl,1)
+    idx_l = find(target_l(i,:));
+    if idx_l == 1 
+        max_pa = [max_pa;max_act_pl(i)];
+        pred_pa = [pred_pa;pred3(i,:)];
+    elseif idx_l == 2
+        max_ph= [max_ph;max_act_pl(i)];
+        pred_ph = [pred_ph;pred3(i,:)];
+    elseif idx_l == 3
+        max_pm= [max_pm;max_act_pl(i)];
+        pred_pm = [pred_pm;pred3(i,:)];
+    elseif idx_l == 4
+        max_pt= [max_pt;max_act_pl(i)];
+        pred_pt = [pred_pt;pred3(i,:)];
+    elseif idx_l == 5
+        max_pu= [max_pu;max_act_pl(i)];
+        pred_pu = [pred_pu;pred3(i,:)];
+    elseif idx_l == 6
+        max_px= [max_px;max_act_pl(i)];
+        pred_px = [pred_px;pred3(i,:)];
     end
-    mode_pA = mode(max_pa);std_pA = std(max_pa);prD_pA =  mean(pred_pa,1);
-    mode_pH = mode(max_ph);std_pH = std(max_ph);prD_pH =  mean(pred_ph,1);
-    mode_pM = mode(max_pm);std_pM = std(max_pm);prD_pM =  mean(pred_pm,1);
-    mode_pU = mode(max_pu);std_pU = std(max_pu);prD_pU =  mean(pred_pu,1);
-    mode_pT = mode(max_pt);std_pT = std(max_pt);prD_pT =  mean(pred_pt,1);
-    mode_pX = mode(max_px);std_pX = std(max_px);prD_pX =  mean(pred_px,1);
-    r1 = ones(size(rbms_pass_pl,1)/6,1);r2 = ones(size(rbms_pass_pl,1)/6,1)*2;r3 = ones(size(rbms_pass_pl,1)/6,1)*3;
-    r4 = ones(size(rbms_pass_pl,1)/6,1)*4;r5 = ones(size(rbms_pass_pl,1)/6,1)*5;r6 = ones(size(rbms_pass_pl,1)/6,1)*6;
+end
+mode_pA = mode(max_pa);std_pA = std(max_pa);prD_pA =  mean(pred_pa,1);
+mode_pH = mode(max_ph);std_pH = std(max_ph);prD_pH =  mean(pred_ph,1);
+mode_pM = mode(max_pm);std_pM = std(max_pm);prD_pM =  mean(pred_pm,1);
+mode_pU = mode(max_pu);std_pU = std(max_pu);prD_pU =  mean(pred_pu,1);
+mode_pT = mode(max_pt);std_pT = std(max_pt);prD_pT =  mean(pred_pt,1);
+mode_pX = mode(max_px);std_pX = std(max_px);prD_pX =  mean(pred_px,1);
+r1 = ones(size(rbms_pass_pl,1)/6,1);r2 = ones(size(rbms_pass_pl,1)/6,1)*2;r3 = ones(size(rbms_pass_pl,1)/6,1)*3;
+r4 = ones(size(rbms_pass_pl,1)/6,1)*4;r5 = ones(size(rbms_pass_pl,1)/6,1)*5;r6 = ones(size(rbms_pass_pl,1)/6,1)*6;
+
+if literate
+    acc1 = (max_pa == r1);acc2 = (max_ph == r2);acc3 = (max_pm == r3);
+    acc4 = (max_pu == r5);acc5 = (max_pt == r4);acc6 = (max_px == r6);
+else
     acc1 = (max_pa == r6);acc2 = (max_ph == r4);acc3 = (max_pm == r5);
     acc4 = (max_pu == r2);acc5 = (max_pt == r1);acc6 = (max_px == r3);
-    acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
-    acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
-    % create Table for Letters:
-    pTargets = ["pA" ; "pH"; "pM"; "pU"; "pT"; "pX"];
-    pMode = [mode_pA;mode_pH;mode_pM;mode_pU;mode_pT;mode_pX];
-    pStd = [std_pA;std_pH;std_pM;std_pU;std_pT;std_pX];
-    Acc = [acc1;acc2;acc3;acc4;acc5;acc6];
-    table_pletter = table(pTargets,pMode,pStd,Acc);
-    pletter_pdr = [prD_pA;prD_pH;prD_pM;prD_pU;prD_pT;prD_pX];
-    
-    %save the results/data
-    % filename = "plots_results/Id_basedOnGeoS6/" + clean_date + "_" + int2str(c(4)) + "h" + int2str(c(5))+"m_" + "Eval_L&pL";
-    % save(filename,'table_letter','table_pletter','letter_pdr','pletter_pdr','accuracy_s','accuracy_pl', 'accuracy_l','final_epoch');
-    
-    Id_BasedOnGeoS.table_letter = table_letter;
-    Id_BasedOnGeoS.table_pletter = table_pletter;
-    Id_BasedOnGeoS.letter_pdr = letter_pdr;
-    Id_BasedOnGeoS.pletter_pdr = pletter_pdr;
-    Id_BasedOnGeoS.accuracy_s = accuracy_s;
-    Id_BasedOnGeoS.accuracy_pl = accuracy_pl;
-    Id_BasedOnGeoS.accuracy_l = accuracy_l;
-    
-    %% Save Matrix for statistical analysis
-    
-    if ii == 1
-        subj_str = "Subject 1";
-    elseif ii == 2
-        subj_str = "Subject 2 ";
-    elseif ii == 3
-        subj_str = "Subject 3 ";
-    elseif ii == 4
-        subj_str = "Subject 4 ";
-    elseif ii == 5
-        subj_str = "Subject 5 ";
-    end
-    Accuracy = cat(1,acc_l,acc_pl);
-    str_target_l = letter_int2str(target_l_save);
-    str_target_pl = psletter_int2str(target_l);
-    Targets = cat(1,str_target_l,str_target_pl);
-    Subjects = repmat(subj_str,size(Accuracy,1),1);
-    
-    space_holder = repmat("-----",size(Accuracy,1),1);
+end
+
+
+acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
+acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
+% create Table for Letters:
+pTargets = ["pA" ; "pH"; "pM"; "pU"; "pT"; "pX"];
+pMode = [mode_pA;mode_pH;mode_pM;mode_pU;mode_pT;mode_pX];
+pStd = [std_pA;std_pH;std_pM;std_pU;std_pT;std_pX];
+Acc = [acc1;acc2;acc3;acc4;acc5;acc6];
+table_pletter = table(pTargets,pMode,pStd,Acc);
+pletter_pdr = [prD_pA;prD_pH;prD_pM;prD_pU;prD_pT;prD_pX];
+
+%save the results/data
+% filename = "plots_results/Id_basedOnGeoS6/" + clean_date + "_" + int2str(c(4)) + "h" + int2str(c(5))+"m_" + "Eval_L&pL";
+% save(filename,'table_letter','table_pletter','letter_pdr','pletter_pdr','accuracy_s','accuracy_pl', 'accuracy_l','final_epoch');
+
+Id_BasedOnGeoS.table_letter = table_letter;
+Id_BasedOnGeoS.table_pletter = table_pletter;
+Id_BasedOnGeoS.letter_pdr = letter_pdr;
+Id_BasedOnGeoS.pletter_pdr = pletter_pdr;
+Id_BasedOnGeoS.accuracy_s = accuracy_s;
+Id_BasedOnGeoS.accuracy_pl = accuracy_pl;
+Id_BasedOnGeoS.accuracy_l = accuracy_l;
+
+%% Save Matrix for statistical analysis
+
+if ii == 1
+    subj_str = "Subject 1";
+elseif ii == 2
+    subj_str = "Subject 2 ";
+elseif ii == 3
+    subj_str = "Subject 3 ";
+elseif ii == 4
+    subj_str = "Subject 4 ";
+elseif ii == 5
+    subj_str = "Subject 5 ";
+end
+Accuracy = cat(1,acc_l,acc_pl);
+str_target_l = letter_int2str(target_l_save);
+str_target_pl = psletter_int2str(target_l);
+Targets = cat(1,str_target_l,str_target_pl);
+Subjects = repmat(subj_str,size(Accuracy,1),1);
+
+space_holder = repmat("-----",size(Accuracy,1),1);
+
+if ~literate
     % letter   -- pred1
     % psletter -- pred3
     cross = cat(1,pred1(:,1),pred3(:,1));
@@ -260,227 +309,76 @@ if ~literate
     rectangle = cat(1,pred1(:,4),pred3(:,4));
     square = cat(1,pred1(:,5),pred3(:,5));
     triangle = cat(1,pred1(:,6),pred3(:,6));
-    
+
     if ii == 1 
-        matrix_2 = table(Subjects,Targets,Accuracy,space_holder,cross,elipse,hexa,rectangle, ...
-            square,triangle);
+    matrix_2 = table(Subjects,Targets,Accuracy,space_holder,cross,elipse,hexa,rectangle, ...
+        square,triangle);
     else
         m = table(Subjects,Targets,Accuracy,space_holder,cross,elipse,hexa,rectangle, ...
             square,triangle);
         matrix_2 = cat(1,matrix_2,m);
     end
+else
+    A = cat(1,pred1(:,1),pred3(:,1));
+    H= cat(1,pred1(:,2),pred3(:,2));
+    M= cat(1,pred1(:,3),pred3(:,3));
+    T= cat(1,pred1(:,4),pred3(:,4));
+    U= cat(1,pred1(:,5),pred3(:,5));
+    X= cat(1,pred1(:,6),pred3(:,6));
     
-    
-   
-else 
-    %% LITERATE MODEL (12 classes)
+    cross = cat(1,pred1(:,7),pred3(:,7));
+    elipse = cat(1,pred1(:,8),pred3(:,8));
+    hexa = cat(1,pred1(:,9),pred3(:,9));
+    rectangle = cat(1,pred1(:,10),pred3(:,10));
+    square = cat(1,pred1(:,11),pred3(:,11));
+    triangle = cat(1,pred1(:,12),pred3(:,12));
 
-    load openCV_shapePOS3.mat data target_s
-    s_data = zeros(size(data));
-    for i=1:size(data,1)
-        s_data(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
+    if ii == 1 
+    matrix_2 = table(Subjects,Targets,Accuracy,space_holder,A,H,M,U,T,X, ...
+        cross,elipse,hexa,rectangle,square,triangle);
+    else
+        m = table(Subjects,Targets,Accuracy,space_holder,A,H,M,U,T,X, ...
+            cross,elipse,hexa,rectangle,square,triangle);
+        matrix_2 = cat(1,matrix_2,m);
     end
-    s_target = double(target_s);
-    clear data; clear target_s
-    z = zeros(size(s_target));
-    s_target = cat(2,z,s_target);
-
-    load openCV_letterPOS1.mat data target_s target_l;
-    d_double = zeros(size(data));
-    for i=1:size(data,1)
-        d_double(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
-    end
-    clear data; data = d_double;
-    target_s= double(target_s);
-    target_l = double(target_l);
-    z = zeros(size(target_s));
-    target_s = cat(2,z,target_s);
-    target_l = cat(2,target_l,z);
-
-    %%% add the zeros to the targets:
-    weights = W2;
-    % pass shapedata throught RBM^s:
-    hid_out_1_s = 1./(1 + exp(-s_data*vishid_1 - repmat(hidbiases_1,size(s_data,1),1)));
-    rbms_pass_s = 1./(1 + exp(-hid_out_1_s*vishid_2 - repmat(hidbiases_2,size(hid_out_1_s,1),1)));
-    if numhid3 ~= 0
-        rbms_pass_s = 1./(1 + exp(-rbms_pass_s*vishid_3 - repmat(hidbiases_3,size(rbms_pass_s,1),1)));
-    end
-    % add biases
-    ONES = ones(size(rbms_pass_s, 1), 1);  
-    rbms_pass_s = [rbms_pass_s ONES];
-    
-    % pass letterdata throught RBMs:
-    hid_out_1_l = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,size(data,1),1)));
-    rbms_pass_l = 1./(1 + exp(-hid_out_1_l*vishid_2 - repmat(hidbiases_2,size(hid_out_1_l,1),1)));
-    if numhid3 ~= 0
-        rbms_pass_l = 1./(1 + exp(-rbms_pass_l*vishid_3 - repmat(hidbiases_3,size(rbms_pass_l,1),1)));
-    end
-    % add biases
-    ONES = ones(size(rbms_pass_l, 1), 1);  
-    rbms_pass_l = [rbms_pass_l ONES];
-         %% General Assesment
-    %%%%%
-    pred1 = rbms_pass_l*weights;
-    softmax_pred1 = softmax(dlarray(pred1','CB'));
-    pred1 = extractdata(softmax_pred1)';
-    [~, max_act_l] = max(pred1,[],2);
-    [r1,~] = find(target_s');
-    acc_l = (max_act_l == r1);
-    accuracy_l = mean(acc_l);
-    %loss?
-    l_loss = extractdata(crossentropy(softmax_pred1,target_s'));
-    
-    %%%%%
-    pred2 = rbms_pass_s*weights;
-    softmax_pred2 = softmax(dlarray(pred2','CB'));
-    pred2 = extractdata(softmax_pred2)';
-    [~, max_act_s] = max(pred2,[],2);
-    [r2,~] = find(s_target'); 
-    acmax_cs = (max_act_s == r2);
-    accuracy_s = mean(acmax_cs);
-    %loss?
-    s_loss = extractdata(crossentropy(softmax_pred2,s_target'));
-    
-    fprintf(1,'\n Identification of main geometrical shapes');
-    fprintf(1,'\n Accuracy = %d ',accuracy_s);
-    fprintf(1,'\n Identification of Letter based on their respetive geometrical shape');
-    fprintf(1,'\n Accuracy = %d ',accuracy_l);
-    
-    %%%% Extended ASSESMENT
-    %% Letters
-    %(assement of identification based on their "congruent"shape)
-    max_a = [];max_h = [];max_m = [];max_u = [];max_t = [];max_x = [];
-    pred_a = [];pred_h = [];pred_m = [];pred_u = [];pred_t = [];pred_x = [];
-%     max_cr = [];max_el = [];max_hex = [];max_rec = [];max_sq = [];max_tr = [];
-%     pred_cr = [];pred_el = [];pred_hex = [];pred_rec = [];pred_sq = [];pred_tr = [];
-    for i=1:size(max_act_l,1)
-        idx_l = find(target_l(i,:));
-        if idx_l == 1 
-            max_a = [max_a;max_act_l(i)];
-            pred_a = [pred_a;pred1(i,:)];
-        elseif idx_l == 2
-            max_h= [max_h;max_act_l(i)];
-            pred_h = [pred_h;pred1(i,:)];
-        elseif idx_l == 3
-            max_m= [max_m;max_act_l(i)];
-            pred_m = [pred_m;pred1(i,:)];
-        elseif idx_l == 4
-            max_t= [max_t;max_act_l(i)];
-            pred_t = [pred_t;pred1(i,:)];
-        elseif idx_l == 5
-            max_u= [max_u;max_act_l(i)];
-            pred_u = [pred_u;pred1(i,:)];
-        elseif idx_l == 6
-            max_x= [max_x;max_act_l(i)];
-            pred_x = [pred_x;pred1(i,:)];
-%         elseif idx_l == 7 
-%             max_cr = [max_cr;max_act_l(i)];
-%             pred_cr = [pred_cr;pred1(i,:)];
-%         elseif idx_l == 8
-%             max_el= [max_el;max_act_l(i)];
-%             pred_el = [pred_el;pred1(i,:)];
-%         elseif idx_l == 9
-%             max_hex= [max_hex;max_act_l(i)];
-%             pred_hex = [pred_hex;pred1(i,:)];
-%         elseif idx_l == 10
-%             max_rec= [max_rec;max_act_l(i)];
-%             pred_rec = [pred_rec;pred1(i,:)];
-%         elseif idx_l == 11
-%             max_sq= [max_sq;max_act_l(i)];
-%             pred_sq = [pred_sq;pred1(i,:)];
-%         elseif idx_l == 12
-%             max_tr= [max_tr;max_act_l(i)];
-%             pred_tr = [pred_tr;pred1(i,:)];
-        end
-    end
-    % letter-modes
-    mode_A = mode(max_a);std_A = std(max_a);prD_A =  mean(pred_a,1);
-    mode_H = mode(max_h);std_H = std(max_h);prD_H =  mean(pred_h,1);
-    mode_M = mode(max_m);std_M = std(max_m);prD_M =  mean(pred_m,1);
-    mode_U = mode(max_u);std_U = std(max_u);prD_U =  mean(pred_u,1);
-    mode_T = mode(max_t);std_T = std(max_t);prD_T =  mean(pred_t,1);
-    mode_X = mode(max_x);std_X = std(max_x);prD_X =  mean(pred_x,1);
-%     % shape-modes
-%     mode_cr = mode(max_cr);std_cr = std(max_cr);prD_cr =  mean(pred_cr,1);
-%     mode_el = mode(max_el);std_el = std(max_el);prD_el =  mean(pred_el,1);
-%     mode_hex = mode(max_hex);std_hex = std(max_hex);prD_hex =  mean(pred_hex,1);
-%     mode_rec = mode(max_rec);std_rec = std(max_rec);prD_rec =  mean(pred_rec,1);
-%     mode_sq = mode(max_sq);std_sq = std(max_sq);prD_sq =  mean(pred_sq,1);
-%     mode_tr = mode(max_tr);std_tr = std(max_tr);prD_tr =  mean(pred_tr,1);
-    % accuracies
-    r1 = ones(size(rbms_pass_l,1)/6,1);r2 = ones(size(rbms_pass_l,1)/6,1)*2;r3 = ones(size(rbms_pass_l,1)/6,1)*3;
-    r4 = ones(size(rbms_pass_l,1)/6,1)*4;r5 = ones(size(rbms_pass_l,1)/6,1)*5;r6 = ones(size(rbms_pass_l,1)/6,1)*6;
-    
-%     % unfinined
-%     r7 = ones(size(rbms_pass_l,1)/6,1);r8 = ones(size(rbms_pass_l,1)/6,1)*2;r9 = ones(size(rbms_pass_l,1)/6,1)*3;
-%     r10 = ones(size(rbms_pass_l,1)/6,1)*4;r11 = ones(size(rbms_pass_l,1)/6,1)*5;r12 = ones(size(rbms_pass_l,1)/6,1)*6;
-%     %
-    
-    acc1 = (max_a == r6);acc2 = (max_h == r4);acc3 = (max_m == r5);
-    acc4 = (max_u == r2);acc5 = (max_t == r1);acc6 = (max_x == r3);
-    acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
-    acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
-    % create Table for Letters:
-    Targets = ["A" ; "H"; "M"; "U"; "T"; "X"];
-    Mode = [mode_A;mode_H;mode_M;mode_U;mode_T;mode_X];
-    Std = [std_A;std_H;std_M;std_U;std_T;std_X];
-    Acc = [acc1;acc2;acc3;acc4;acc5;acc6];
-    table_letter = table(Targets,Mode,Std,Acc);
-    letter_pdr = [prD_A;prD_H;prD_M;prD_U;prD_T;prD_X];
-    
-    clear data;
-
-    load openCV_pletters_tF.mat data target_s target_l;
-    d_double = zeros(size(data));
-    for i=1:size(data,1)
-        d_double(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
-    end
-    clear data; data = d_double;
-    target_ps = double(target_s);
-    target_l_save = double(target_l);
-    z = zeros(size(target_s));
-    target_s = cat(2,z,target_s);
-    target_l_save = cat(2,target_l_save,z);
-
-
 end
 
+   
+function [str_letter] = letter_int2str(letter_id)
+    str_letter = strings(size(letter_id,1),1);
+    for i=1:size(letter_id,1)
+        if find(letter_id(i,:))  == 1
+            str_letter(i) = "A";
+        elseif find(letter_id(i,:))  == 2
+            str_letter(i) = "H";
+        elseif find(letter_id(i,:))  == 3
+            str_letter(i) = "M";
+        elseif find(letter_id(i,:))  == 4 
+            str_letter(i) = "T";
+        elseif find(letter_id(i,:))  == 5
+            str_letter(i) = "U";
+        elseif find(letter_id(i,:))  == 6
+            str_letter(i) = "X";
+        end
+    end
+end
 
-    function [str_letter] = letter_int2str(letter_id)
-        str_letter = strings(size(letter_id,1),1);
-        for i=1:size(letter_id,1)
-            if find(letter_id(i,:))  == 1
-                str_letter(i) = "A";
-            elseif find(letter_id(i,:))  == 2
-                str_letter(i) = "H";
-            elseif find(letter_id(i,:))  == 3
-                str_letter(i) = "M";
-            elseif find(letter_id(i,:))  == 4 
-                str_letter(i) = "T";
-            elseif find(letter_id(i,:))  == 5
-                str_letter(i) = "U";
-            elseif find(letter_id(i,:))  == 6
-                str_letter(i) = "X";
-            end
+function [str_letter] = psletter_int2str(letter_id)
+    str_letter = strings(size(letter_id,1),1);
+    for i=1:size(letter_id,1)
+        if find(letter_id(i,:))  == 1
+            str_letter(i) = "psA";
+        elseif find(letter_id(i,:))  == 2
+            str_letter(i) = "psH";
+        elseif find(letter_id(i,:))  == 3
+            str_letter(i) = "psM";
+        elseif find(letter_id(i,:))  == 4 
+            str_letter(i) = "psT";
+        elseif find(letter_id(i,:))  == 5
+            str_letter(i) = "psU";
+        elseif find(letter_id(i,:))  == 6
+            str_letter(i) = "psX";
         end
     end
-    
-    function [str_letter] = psletter_int2str(letter_id)
-        str_letter = strings(size(letter_id,1),1);
-        for i=1:size(letter_id,1)
-            if find(letter_id(i,:))  == 1
-                str_letter(i) = "psA";
-            elseif find(letter_id(i,:))  == 2
-                str_letter(i) = "psH";
-            elseif find(letter_id(i,:))  == 3
-                str_letter(i) = "psM";
-            elseif find(letter_id(i,:))  == 4 
-                str_letter(i) = "psT";
-            elseif find(letter_id(i,:))  == 5
-                str_letter(i) = "psU";
-            elseif find(letter_id(i,:))  == 6
-                str_letter(i) = "psX";
-            end
-        end
-    end
+end
 

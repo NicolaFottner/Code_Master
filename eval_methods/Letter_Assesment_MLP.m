@@ -1,44 +1,37 @@
-% Computing performance -- identification of letters based on their
-% geometrical couter part -- congruent shape
+%%%
+%%% 
+%   Assesment performance for literate case (quite redundant to test eval)
+%   Literate case assesses id. based on letter identity 
+%                               != based on respective shape identity
+%
+%%%
+%%%
 
+assert(literate);
 dd = strsplit(date,'-');c = clock;clean_date = strcat(dd(1),dd(2)); %without "-YYYY"
-
-if numhid3 == 0
-    strh3 ="";
-else
-    strh3 = "three/";
-end
-% load dataset for the 6 shapes
-
-%load openCV_final_Shapes.mat data target_s %target_l is just their s-target
-% load openCV_Shapes_xtra.mat data target_s
 load openCV_shapePOS3.mat data target_s
-
 s_data = zeros(size(data));
 for i=1:size(data,1)
     s_data(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
 end
 s_target = double(target_s);
 clear data; clear target_s
-
-% load dataset for the 6 letters
-%load openCV_final_letters.mat data target_s target_l;
-%load openCV_letters_xtra.mat data target_s target_l;
-
-
-%load openCV_letters_tF.mat data target_s target_l;
 load openCV_letterPOS1.mat data target_s target_l;
-
-
 d_double = zeros(size(data));
 for i=1:size(data,1)
     d_double(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
 end
 clear data; data = d_double;
 target_s= double(target_s);
-target_l_save = target_l;
-%% Prep Computation
+target_l = double(target_l);
+target_l_save = targel_l;
+z = zeros(size(s_target));
+s_target = cat(2,z,s_target);
+z = zeros(size(target_s));
+target_s = cat(2,z,target_s);
 
+
+%% Prep Computation
 % pass shapedata throught RBM^s:
 hid_out_1_s = 1./(1 + exp(-s_data*vishid_1 - repmat(hidbiases_1,size(s_data,1),1)));
 rbms_pass_s = 1./(1 + exp(-hid_out_1_s*vishid_2 - repmat(hidbiases_2,size(hid_out_1_s,1),1)));
@@ -51,18 +44,16 @@ rbms_pass_l = 1./(1 + exp(-hid_out_1_l*vishid_2 - repmat(hidbiases_2,size(hid_ou
 if numhid3 ~= 0
     rbms_pass_l = 1./(1 + exp(-rbms_pass_l*vishid_3 - repmat(hidbiases_3,size(rbms_pass_l,1),1)));
 end
-
 %% General Assesment
 %%%%%
 pred1 = net2(rbms_pass_l');
-pred1 = pred1';
 [~, max_act_l] = max(pred1,[],2);
-[r1,~] = find(target_s');
+[r1,~] = find(target_l_save'); 
 acc_l = (max_act_l == r1);
 accuracy_l = mean(acc_l);
+
 %%%%%
-pred2 = net2(rbms_pass_l');
-pred2 = pred2';
+pred2 = net2(rbms_pass_s');
 [~, max_act_s] = max(pred2,[],2);
 [r2,~] = find(s_target'); 
 acmax_cs = (max_act_s == r2);
@@ -70,12 +61,13 @@ accuracy_s = mean(acmax_cs);
 
 fprintf(1,'\n Identification of main geometrical shapes');
 fprintf(1,'\n Accuracy = %d ',accuracy_s);
-fprintf(1,'\n Identification of Letter based on their respetive geometrical shape');
+fprintf(1,'\n Identification of Letter based on Letter Identity');
 fprintf(1,'\n Accuracy = %d ',accuracy_l);
+
 
 %%%% Extended ASSESMENT
 %% Letters
-%(assement of identification based on their "congruent"shape)
+% (assement of identification based on their "congruent"shape)
 max_a = [];max_h = [];max_m = [];max_u = [];max_t = [];max_x = [];
 pred_a = [];pred_h = [];pred_m = [];pred_u = [];pred_t = [];pred_x = [];
 for i=1:size(max_act_l,1)
@@ -109,8 +101,9 @@ mode_T = mode(max_t);std_T = std(max_t);prD_T =  mean(pred_t,1);
 mode_X = mode(max_x);std_X = std(max_x);prD_X =  mean(pred_x,1);
 r1 = ones(size(rbms_pass_l,1)/6,1);r2 = ones(size(rbms_pass_l,1)/6,1)*2;r3 = ones(size(rbms_pass_l,1)/6,1)*3;
 r4 = ones(size(rbms_pass_l,1)/6,1)*4;r5 = ones(size(rbms_pass_l,1)/6,1)*5;r6 = ones(size(rbms_pass_l,1)/6,1)*6;
-acc1 = (max_a == r6);acc2 = (max_h == r4);acc3 = (max_m == r5);
-acc4 = (max_u == r2);acc5 = (max_t == r1);acc6 = (max_x == r3);
+% carefull, here for some reason, t<->acc5 and u<->acc4, ... @todo fix it 
+acc1 = (max_a == r1);acc2 = (max_h == r2);acc3 = (max_m == r3);
+acc4 = (max_u == r5);acc5 = (max_t == r4);acc6 = (max_x == r6);
 acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
 acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
 % create Table for Letters:
@@ -129,14 +122,16 @@ clear data;
 
 %load openCV_final_pletters.mat data target_l target_s
 load openCV_pletters_tF.mat data target_s target_l;
-
-
 d_double = zeros(size(data));
 for i=1:size(data,1)
     d_double(i,:) = reshape(im2double(reshape(data(i,:),[40 40 1])), [1 1600]);
 end
 clear data; data = d_double;
 target_ps = double(target_s);
+target_l = double(target_l);
+z = zeros(size(target_ps));
+target_ps = cat(2,z,target_ps);
+
 % pass letterdata throught RBMs:
 hid_out_1_pl = 1./(1 + exp(-data*vishid_1 - repmat(hidbiases_1,size(data,1),1)));
 rbms_pass_pl = 1./(1 + exp(-hid_out_1_pl*vishid_2 - repmat(hidbiases_2,size(hid_out_1_pl,1),1)));
@@ -145,12 +140,11 @@ if numhid3 ~= 0
 end
 %%%%%
 pred3 = net2(rbms_pass_pl');
-pred3 = pred3';
 [~, max_act_pl] = max(pred3,[],2);
-[r3,~] = find(target_ps');
+[r3,~] = find(target_l'); 
 acc_pl = (max_act_pl == r3);
 accuracy_pl = mean(acc_pl);
-fprintf(1,'\n Identification of PSEUDO-Letter based on their respetive geometrical shape');
+fprintf(1,'\n Identification of PSEUDO-Letter based on their letter identity');
 fprintf(1,'\n Accuracy = %d ',accuracy_pl);
 
 %%%% EXTENDED ASSESMENT
@@ -187,8 +181,9 @@ mode_pT = mode(max_pt);std_pT = std(max_pt);prD_pT =  mean(pred_pt,1);
 mode_pX = mode(max_px);std_pX = std(max_px);prD_pX =  mean(pred_px,1);
 r1 = ones(size(rbms_pass_pl,1)/6,1);r2 = ones(size(rbms_pass_pl,1)/6,1)*2;r3 = ones(size(rbms_pass_pl,1)/6,1)*3;
 r4 = ones(size(rbms_pass_pl,1)/6,1)*4;r5 = ones(size(rbms_pass_pl,1)/6,1)*5;r6 = ones(size(rbms_pass_pl,1)/6,1)*6;
-acc1 = (max_pa == r6);acc2 = (max_ph == r4);acc3 = (max_pm == r5);
-acc4 = (max_pu == r2);acc5 = (max_pt == r1);acc6 = (max_px == r3);
+
+acc1 = (max_pa == r1);acc2 = (max_ph == r2);acc3 = (max_pm == r3);
+acc4 = (max_pu == r5);acc5 = (max_pt == r4);acc6 = (max_px == r6);
 acc1 = mean(acc1);acc2 = mean(acc2);acc3 = mean(acc3);
 acc4 = mean(acc4);acc5 = mean(acc5);acc6 = mean(acc6);
 % create Table for Letters:
@@ -231,26 +226,32 @@ Targets = cat(1,str_target_l,str_target_pl);
 Subjects = repmat(subj_str,size(Accuracy,1),1);
 
 space_holder = repmat("-----",size(Accuracy,1),1);
+
 % letter   -- pred1
 % psletter -- pred3
-cross = cat(1,pred1(:,1),pred3(:,1));
-elipse = cat(1,pred1(:,2),pred3(:,2));
-hexa = cat(1,pred1(:,3),pred3(:,3));
-rectangle = cat(1,pred1(:,4),pred3(:,4));
-square = cat(1,pred1(:,5),pred3(:,5));
-triangle = cat(1,pred1(:,6),pred3(:,6));
+A = cat(1,pred1(:,1),pred3(:,1));
+H= cat(1,pred1(:,2),pred3(:,2));
+M= cat(1,pred1(:,3),pred3(:,3));
+T= cat(1,pred1(:,4),pred3(:,4));
+U= cat(1,pred1(:,5),pred3(:,5));
+X= cat(1,pred1(:,6),pred3(:,6));
+cross = cat(1,pred1(:,7),pred3(:,7));
+elipse = cat(1,pred1(:,8),pred3(:,8));
+hexa = cat(1,pred1(:,9),pred3(:,9));
+rectangle = cat(1,pred1(:,10),pred3(:,10));
+square = cat(1,pred1(:,11),pred3(:,11));
+triangle = cat(1,pred1(:,12),pred3(:,12));
 
 if ii == 1 
-    matrix_2_mlp = table(Subjects,Targets,Accuracy,space_holder,cross,elipse,hexa,rectangle, ...
-        square,triangle);
+matrix_2 = table(Subjects,Targets,Accuracy,space_holder,A,H,M,U,T,X, ...
+    cross,elipse,hexa,rectangle,square,triangle);
 else
-    m = table(Subjects,Targets,Accuracy,space_holder,cross,elipse,hexa,rectangle, ...
-        square,triangle);
-    matrix_2_mlp = cat(1,matrix_2_mlp,m);
+    m = table(Subjects,Targets,Accuracy,space_holder,A,H,M,U,T,X, ...
+        cross,elipse,hexa,rectangle,square,triangle);
+    matrix_2 = cat(1,matrix_2,m);
 end
 
-
-
+   
 function [str_letter] = letter_int2str(letter_id)
     str_letter = strings(size(letter_id,1),1);
     for i=1:size(letter_id,1)
@@ -288,6 +289,3 @@ function [str_letter] = psletter_int2str(letter_id)
         end
     end
 end
-
-
-

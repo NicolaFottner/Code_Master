@@ -21,10 +21,8 @@
 
 configurations;
 
-%       RUN WITH:
-% RBM2 --- SHAPE_POS3 && Letter POS 3
-% Class --- LetterWithinStrings (3pos)
-%       Assesment:
+% RUN WITH:
+% RBM"SHAPE_POS3 && Letter POS 3
 % LETTER_POS1
 % newCE_data_(pos1)
 

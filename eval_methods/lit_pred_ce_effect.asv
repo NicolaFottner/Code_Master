@@ -7,6 +7,7 @@
 %   models' hit rate on the inner target.
 %%%
 
+
 assert(literate);addpath("data/");
 load openCV_CE_data.mat cong_pl_d cong_pl_t cong_pl_s inc_pl_d inc_pl_t inc_pl_s 
 load openCV_newL_CE.mat cong_l_d cong_l_t cong_l_s inc_l_d inc_l_t inc_l_s 
@@ -139,8 +140,8 @@ Targets = ["A/Tria";"H/Rect";"M/Squ";"U/Elips";"T/Cross";"X/Hexa"];
 Acc = [acc1;acc2;acc3;acc5;acc4;acc6];
 Mode = [mode_a;mode_h;mode_m;mode_u;mode_t;mode_x];
 Std = [std_a;std_h;std_m;std_u;std_t;std_x];
-cl_ce_details_inner = table(Targets,Mode,Std,Acc);
-cl_ce_pdr_inner = [prD_a;prD_h;prD_m;prD_u;prD_t;prD_x];
+cl_ce_details_outer = table(Targets,Mode,Std,Acc);
+cl_ce_pdr_outer = [prD_a;prD_h;prD_m;prD_u;prD_t;prD_x];
 
 %% EVAL - Pseudo Letter congruent
 % pass data throught RBMs:
@@ -544,22 +545,24 @@ CE_eval.CEs_Letter = Shape_decisionAcc(1)*100 - Shape_decisionAcc(3)*100;
 CE_eval.CEs_psLetter = Shape_decisionAcc(2)*100 - Shape_decisionAcc(4)*100;
 
 Targets = ["A/Tria";"H/Rect";"M/Squ";"U/Elips";"T/Cross";"X/Hexa"];
-letter_acc = cl_ce_details_inner.Acc; letter_mode = cl_ce_details_inner.Mode;
+letter_acc = cl_ce_details_outer.Acc; letter_mode = cl_ce_details_outer.Mode;
 psLetter_acc = cpl_ce_details.Acc; psLetter_mode = cpl_ce_details.Mode;
 CE_eval.Congruent = table(Targets,letter_acc,letter_mode,psLetter_acc,psLetter_mode);
 
-Targets = ["A_Elips";"A_Rec";"H_Elips";"H_Tria";"M_Cross";"M_Hexa"; ...
-                "U_Tria";"U_Rec";"T_Hexa";"T_Squa";"X_Cross";"X_Squa"];
+Targets = ["A_Elips";"A_Rec";"H_Elips";"H_";"Squa_T";"Squa_X"; ...
+    "Elips_A";"Elips_H";"Cross_M";"Cross_X";"Hexa_M";"Hexa_T"];
+Targets = ["Tria_H";"Tria_U";"Rect_A";"Rect_U";"Squa_T";"Squa_X"; ...
+    "Elips_A";"Elips_H";"Cross_M";"Cross_X";"Hexa_M";"Hexa_T"];
 inc_whole = table(Targets,Letter_Acc,Letter_Mode,psLetter_Acc,psLetter_Mode);
 CE_eval.Incongruent = inc_whole;
 
-details.cong_l = cl_ce_details_inner;
+details.cong_l = cl_ce_details_outer;
 details.cong_pl = cpl_ce_details;
 details.inc_l = incl_ce_details;
 details.inc_pl = incpl_ce_details;
 % for pdf:
 % rows = targets (A,H,M,...) && columns = possible classes
-details.pdr_cong_l = cl_ce_pdr_inner;
+details.pdr_cong_l = cl_ce_pdr_outer;
 details.pdr_cong_pl = cpl_ce_pdr;
 details.pdr_inc_l = incl_ce_pdr;
 details.pdr_inc_pl = incpl_ce_pdr;

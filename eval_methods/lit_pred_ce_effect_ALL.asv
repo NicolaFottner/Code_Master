@@ -1,4 +1,5 @@
-assert(literate);
+
+weights = W2;
 addpath("data/new04Jl/");
 %load openCV_CE_data.mat 
 load openCV_CE_data.mat cong_pl_d cong_pl_t cong_pl_s inc_pl_d inc_pl_t inc_pl_s 
@@ -37,18 +38,27 @@ inc_pl_d = shapedata;
 inc_pl_t =  double(inc_pl_t);
 inc_pl_s = double(inc_pl_s);
 
-% load rbm data
+%load rbm data
 load t_model DN
 vishid_1 = DN.L{1,1}.vishid;
 hidbiases_1 = DN.L{1,1}.hidbiases;
 clear DN
-load l_rbm_2.mat vishid_2 hidbiases_2
+if literate
+    load l_rbm_2.mat vishid_2 hidbiases_2
+else
+    load g_rbm_2.mat vishid_2 hidbiases_2
+end
+%load rbm2_16J11h39.mat vishid_2 hidbiases_2
 
 %% EVAL - Letter congruent
 hid_out_1_d = 1./(1 + exp(-cong_l_d*vishid_1 - repmat(hidbiases_1,size(cong_l_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
+ONES = ones(size(rbms_pass, 1), 1); 
+rbms_pass = [rbms_pass ONES]; 
 % Compute prediction:
-pred_cl = net2(rbms_pass');
+pred_cl = rbms_pass*weights;
+softmax_pred_cl = softmax(dlarray(pred_cl','CB'));
+pred_cl = extractdata(softmax_pred_cl)';
 [~, max_act] = max(pred_cl,[],2); 
 [r2,~] = find(cong_l_s');
 acc_s_cong_l = (max_act == r2);

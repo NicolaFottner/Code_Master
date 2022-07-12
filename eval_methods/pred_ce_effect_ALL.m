@@ -145,7 +145,7 @@ s_targets = cat(1,cong_l_s,cong_pl_s);
 s_targets = cat(1,s_targets,inc_l_s);
 s_targets = cat(1,s_targets,inc_pl_s);
 
-
+%% matrix 1 & 1-pd
 Subjects = repmat(subj_str,size(accs,1),1);
 % to store full predictions:
 cross = cat(1,pred_cl(:,1),pred_cpl(:,1));
