@@ -2,7 +2,7 @@
 dd = strsplit(date,'-');clean_date = strcat(dd(1),dd(2)); %without "-YY
 weightsx = W2;
 index = floor(size(g_batchtargets,1)*p); % p = percentage of test data
-test_l =  g_batchtargets(1:index,:);
+test_l =  g_batchtargets(1:index,:); % here 'l' for 'labels'
 
 if numhid3 == 0
     eval_data = hid_out_2(1:index, :); % basically like the test set from before
@@ -19,7 +19,7 @@ pred = extractdata(softmax_pred)';
 [~, max_act] = max(pred,[],2);
 
 if geo_shape_class == 6
-    %% In 6 class problem
+    %% In 6 class problem -- Illiterate Model
     pred_1 = [];pred_2 = [];pred_3 = [];pred_4 = [];pred_5 = [];pred_6 = [];
     max_1 = [];max_2 = [];max_3 = [];max_4 = [];max_5 = [];max_6 = [];
     for i=1:size(max_act,1)
@@ -92,6 +92,7 @@ if geo_shape_class == 6
     Classifier_Details = table(Output,Accuracy);
 
 else % when geo_class  == 12
+
     %% In 12 class problem  --- Literate model
 
     %%% pred 1 -> 6, for letter identities
@@ -206,7 +207,7 @@ else % when geo_class  == 12
     xlabel('Triangle');
 
     sgtitle("Day: " + clean_date + ", Models' Prediction/Prob Distr: ");
-    file_name = "Evals/fig/PDFs/"+ clean_date + "_" + int2str(c(4)) + "h" + int2str(c(5))+"m_"+"cl_detail_distr" + ".pdf";
+    file_name = "Evals/plots/"+ "lit" + clean_date + "_" + int2str(c(4)) + "h" + int2str(c(5))+"m_"+"cl_detail_distr" + ".pdf";
     exportgraphics(f,file_name);
     r1 = ones(size(test_l,1)/12,1);r2 = ones(size(test_l,1)/12,1)*2;r3 = ones(size(test_l,1)/12,1)*3;
     r4 = ones(size(test_l,1)/12,1)*4;r5 = ones(size(test_l,1)/12,1)*5;r6 = ones(size(test_l,1)/12,1)*6;

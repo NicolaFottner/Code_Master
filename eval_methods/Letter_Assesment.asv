@@ -351,8 +351,8 @@ else
     %(assement of identification based on their "congruent"shape)
     max_a = [];max_h = [];max_m = [];max_u = [];max_t = [];max_x = [];
     pred_a = [];pred_h = [];pred_m = [];pred_u = [];pred_t = [];pred_x = [];
-%     max_cr = [];max_el = [];max_hex = [];max_rec = [];max_sq = [];max_tr = [];
-%     pred_cr = [];pred_el = [];pred_hex = [];pred_rec = [];pred_sq = [];pred_tr = [];
+    max_cr = [];max_el = [];max_hex = [];max_rec = [];max_sq = [];max_tr = [];
+    pred_cr = [];pred_el = [];pred_hex = [];pred_rec = [];pred_sq = [];pred_tr = [];
     for i=1:size(max_act_l,1)
         idx_l = find(target_l(i,:));
         if idx_l == 1 
@@ -441,6 +441,10 @@ else
     z = zeros(size(target_s));
     target_s = cat(2,z,target_s);
     target_l_save = cat(2,target_l_save,z);
+
+
+
+
 
 
 end
