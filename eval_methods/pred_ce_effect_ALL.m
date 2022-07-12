@@ -53,9 +53,7 @@ end
 %% EVAL - Letter congruent
 hid_out_1_d = 1./(1 + exp(-cong_l_d*vishid_1 - repmat(hidbiases_1,size(cong_l_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
-ONES = ones(size(rbms_pass, 1), 1); 
-rbms_pass = [rbms_pass ONES]; 
-% Compute prediction:
+ONES = ones(size(rbms_pass, 1), 1);rbms_pass = [rbms_pass ONES]; 
 pred_cl = rbms_pass*weights;
 softmax_pred_cl = softmax(dlarray(pred_cl','CB'));
 pred_cl = extractdata(softmax_pred_cl)';

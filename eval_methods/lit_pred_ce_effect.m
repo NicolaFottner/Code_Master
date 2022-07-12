@@ -1,5 +1,5 @@
 %%%
-%   This changed to the illiterate case in which the CE was computed based
+%   This method changed to its illiterate counterpart in which the CE was computed based
 %   on the outer shapes identity: (triangle-A) <-> (triangle-H)
 %   Here, it is measure based on the letter identity: (A-tr) <-> (A-sq)
 %
@@ -8,29 +8,30 @@
 %%%
 
 assert(literate);addpath("data/");
+weights = W2;
 load openCV_CE_data.mat cong_pl_d cong_pl_t cong_pl_s inc_pl_d inc_pl_t inc_pl_s 
 load openCV_newL_CE.mat cong_l_d cong_l_t cong_l_s inc_l_d inc_l_t inc_l_s 
 
 %% Prep and convert openCV_CE_data from uint8 to double:
-shapedata = zeros(size(cong_l_d));
+xdata = zeros(size(cong_l_d));
 for i=1:size(cong_l_d,1)
-    shapedata(i,:) = reshape(im2double(reshape(cong_l_d(i,:),[40 40 1])), [1 1600]);
+    xdata(i,:) = reshape(im2double(reshape(cong_l_d(i,:),[40 40 1])), [1 1600]);
 end
-cong_l_d = shapedata;shapedata = zeros(size(cong_pl_d));
+cong_l_d = xdata;xdata = zeros(size(cong_pl_d));
 for i=1:size(cong_pl_d,1)
-    shapedata(i,:) = reshape(im2double(reshape(cong_pl_d(i,:),[40 40 1])), [1 1600]);
+    xdata(i,:) = reshape(im2double(reshape(cong_pl_d(i,:),[40 40 1])), [1 1600]);
 end
-cong_pl_d = shapedata;shapedata = zeros(size(inc_l_d));
+cong_pl_d = xdata;xdata = zeros(size(inc_l_d));
 for i=1:size(inc_l_d,1)
-    shapedata(i,:) = reshape(im2double(reshape(inc_l_d(i,:),[40 40 1])), [1 1600]);
+    xdata(i,:) = reshape(im2double(reshape(inc_l_d(i,:),[40 40 1])), [1 1600]);
 end
-inc_l_d = shapedata;shapedata = zeros(size(inc_pl_d));
+inc_l_d = xdata;xdata = zeros(size(inc_pl_d));
 for i=1:size(inc_pl_d,1)
-    shapedata(i,:) = reshape(im2double(reshape(inc_pl_d(i,:),[40 40 1])), [1 1600]);
+    xdata(i,:) = reshape(im2double(reshape(inc_pl_d(i,:),[40 40 1])), [1 1600]);
 end
-inc_pl_d = shapedata;
+inc_pl_d = xdata;
 
-%%% concatenate the targets
+%%% concatenate the targets (might be unused)
 % cong_l_t changes from only targets for letter, for both letter and shape
 xcong_l_t = cat(2,double(cong_l_t),double(cong_l_s));
 xcong_pl_t =  cat(2,double(cong_pl_t),double(cong_pl_s));
@@ -42,6 +43,7 @@ cong_l_t =  cat(2,double(cong_l_t),z);
 cong_l_s = cat(2,z,double(cong_l_s));
 cong_pl_t =  cat(2,double(cong_pl_t),z);
 cong_pl_s = cat(2,z,double(cong_pl_s));
+z = zeros(size(inc_l_t));
 inc_l_t =  cat(2,double(inc_l_t),z);
 inc_l_s = cat(2,z,double(inc_l_s));
 inc_pl_t =  cat(2,double(inc_pl_t),z);
@@ -69,7 +71,14 @@ Letter_decisionAcc = zeros(4,1);
 hid_out_1_d = 1./(1 + exp(-cong_l_d*vishid_1 - repmat(hidbiases_1,size(cong_l_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
 % Compute prediction:
-pred = net(rbms_pass');
+ONES = ones(size(rbms_pass, 1), 1);  
+rbms_pass = [rbms_pass ONES];
+% Compute prediction:
+pred = rbms_pass*weights;
+% [a,b] =max(pred,[],2); --- % a has also  values  > 1 ---- 
+% i.e. a is unnormalized
+softmax_pred = softmax(dlarray(pred','CB'));
+pred = extractdata(softmax_pred)';
 [~, max_act] = max(pred,[],2); % max_act are indices of dim2 in pred of the highest value
 [r1,~] = find(cong_l_t'); % letter id
 [r2,~] = find(cong_l_s'); % shape id
@@ -146,8 +155,11 @@ cl_ce_pdr_inner = [prD_a;prD_h;prD_m;prD_u;prD_t;prD_x];
 % pass data throught RBMs:
 hid_out_1_d = 1./(1 + exp(-cong_pl_d*vishid_1 - repmat(hidbiases_1,size(cong_pl_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
-% Compute prediction:
-pred = net(rbms_pass');
+ONES = ones(size(rbms_pass, 1), 1);  
+rbms_pass = [rbms_pass ONES];
+pred = rbms_pass*weights;
+softmax_pred = softmax(dlarray(pred','CB'));
+pred = extractdata(softmax_pred)';
 [~, max_act] = max(pred,[],2); % max_act are indices of dim2 in pred of the highest value
 [r1,~] = find(cong_pl_t'); % find which columns (rows in transpose) are 1
 [r2,~] = find(cong_pl_s'); % find which columns (rows in transpose) are 1
@@ -220,7 +232,11 @@ cpl_ce_pdr = [prD_a;prD_h;prD_m;prD_u;prD_t;prD_x];
 hid_out_1_d = 1./(1 + exp(-inc_l_d*vishid_1 - repmat(hidbiases_1,size(inc_l_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
 % Compute prediction:
-pred = net(rbms_pass');
+ONES = ones(size(rbms_pass, 1), 1);  
+rbms_pass = [rbms_pass ONES];
+pred = rbms_pass*weights;
+softmax_pred = softmax(dlarray(pred','CB'));
+pred = extractdata(softmax_pred)';
 [~, max_act] = max(pred,[],2);
 [r1,~] = find(inc_l_t');
 [r2,~] = find(inc_l_s');
@@ -382,8 +398,11 @@ inc_l_pdr_detailed = [pred_a_el;pred_a_re;pred_h_el;pred_h_tr;pred_m_cr;pred_m_h
 % pass data throught RBMs:
 hid_out_1_d = 1./(1 + exp(-inc_pl_d*vishid_1 - repmat(hidbiases_1,size(inc_pl_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
-% Compute prediction:
-pred = net(rbms_pass');
+ONES = ones(size(rbms_pass, 1), 1);  
+rbms_pass = [rbms_pass ONES];
+pred = rbms_pass*weights;
+softmax_pred = softmax(dlarray(pred','CB'));
+pred = extractdata(softmax_pred)';
 [~, max_act] = max(pred,[],2); %
 [r1,~] = find(inc_pl_t');
 [r2,~] = find(inc_pl_s'); 

@@ -243,12 +243,12 @@ square = cat(1,pred1(:,11),pred3(:,11));
 triangle = cat(1,pred1(:,12),pred3(:,12));
 
 if ii == 1 
-matrix_2 = table(Subjects,Targets,Accuracy,space_holder,A,H,M,U,T,X, ...
+matrix_2_mlp = table(Subjects,Targets,Accuracy,space_holder,A,H,M,U,T,X, ...
     cross,elipse,hexa,rectangle,square,triangle);
 else
     m = table(Subjects,Targets,Accuracy,space_holder,A,H,M,U,T,X, ...
         cross,elipse,hexa,rectangle,square,triangle);
-    matrix_2 = cat(1,matrix_2,m);
+    matrix_2_mlp = cat(1,matrix_2_mlp,m);
 end
 
    
