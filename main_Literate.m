@@ -177,9 +177,21 @@ if length(min_str) == 1
     min_str = ['0' min_str(1)];
 end
 filename = "saved_models/literate_models/tf_matrix/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "trialTF_LS";
-save(filename,'matrix_1','matrix_1_pd','matrix_2','matrix_3_outer','matrix_3_inner');
-excel_TF_export(true,literate);
-filename = "saved_models/literate_models/tf_matrix/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "trialTF_MLP";
-save(filename,'matrix_1_mlp','matrix_1_pd_mlp','matrix_2_mlp','matrix_3_outer_mlp','matrix_3_inner_mlp');
-excel_TF_export(false,literate);
+save(filename,'matrix_1','matrix_1_pd','matrix_2','matrix_3');
+% excel TF matrix
+str_l = "lit_";
+filename = "excel_files/" + str_l+  "ls_trialData_"+clean_date+hour_str+"h"+min_str+"m." + "xlsx";
+writetable(matrix_1,filename,'WriteRowNames',true,'Sheet','Matrix_1')
+writetable(matrix_1_pd,filename,'WriteRowNames',true,'Sheet','Matrix_1pd')
+writetable(matrix_2,filename,'WriteRowNames',true,'Sheet','Matrix_2')
+writetable(matrix_3,filename,'WriteRowNames',true,'Sheet','Matrix_3')
 
+filename = "saved_models/literate_models/tf_matrix/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "trialTF_MLP";
+save(filename,'matrix_1_mlp','matrix_1_pd_mlp','matrix_2_mlp','matrix_3_mlp');
+% excel TF matrix
+str_l = "lit_";
+filename = "excel_files/" + str_l+  "mlp_trialData_"+clean_date+hour_str+"h"+min_str+"m." + "xlsx";
+writetable(matrix_1_mlp,filename,'WriteRowNames',true,'Sheet','Matrix_1')
+writetable(matrix_1_pd_mlp,filename,'WriteRowNames',true,'Sheet','Matrix_1pd')
+writetable(matrix_2_mlp,filename,'WriteRowNames',true,'Sheet','Matrix_2')
+writetable(matrix_3_mlp,filename,'WriteRowNames',true,'Sheet','Matrix_3_mlp')
