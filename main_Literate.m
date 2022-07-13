@@ -21,7 +21,7 @@
 
 configurations;
 
-%       RUN WITH:
+%%%%%%  RUN WITH:
 % RBM2 --- SHAPE_POS3 && Letter POS 3
 % Class --- LetterWithinStrings (3pos)
 %       Assesment:

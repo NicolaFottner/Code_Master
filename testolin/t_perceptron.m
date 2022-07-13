@@ -64,13 +64,15 @@ if ~isempty(te_patterns)
     ONES = ones(size(te_patterns, 1), 1);
     te_patterns = [te_patterns ONES];
     pred = te_patterns*weights;
+    softmax_pred = softmax(dlarray(pred','CB'));
+    pred = extractdata(softmax_pred)';
     [~, max_act] = max(pred,[],2);
     [r,~] = find(te_labels');
     acc = (max_act == r);
     te_accuracy = mean(acc);
+    softmax_pred = softmax(dlarray(pred','CB'));
+    te_loss = extractdata(crossentropy(softmax_pred,te_labels'));
 end
 
-softmax_pred = softmax(dlarray(pred','CB'));
-te_loss = extractdata(crossentropy(softmax_pred,te_labels'));
 end
 %V = arrayfun(@(x) -log(x),v); 
