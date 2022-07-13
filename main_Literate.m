@@ -42,15 +42,14 @@ loadData = dir([sourceDir '*.mat']);
 literate = true; % for data plotting methods
 
 for ii = 1 : size(loadData,1) % default being the "5 participants"
-    load([loadData(ii).name],'hidbiases_2','properties','visbiases_2','vishid_2','W2');
-    numhid = 1000;
-    numhid2 = properties.numhid2;
-    numhid3 = properties.numhid3;
-    dropout = properties.dropout;
-    batchsize = properties.minibatchsize;
-    geo_shape_class = 12; % problem with 12 clases (..bad name)
-
     for z=1:2 % loop to test on both LS-regrs and MLP
+        load([loadData(ii).name],'hidbiases_2','properties','visbiases_2','vishid_2','W2');
+        numhid = 1000;
+        numhid2 = properties.numhid2;
+        numhid3 = properties.numhid3;
+        dropout = properties.dropout;
+        batchsize = properties.minibatchsize;
+        geo_shape_class = 12; % problem with 12 clases (..bad name)
         if z ==1 
             least_square = true;
         else
@@ -163,29 +162,26 @@ for ii = 1 : size(loadData,1) % default being the "5 participants"
         end
 
         %% restart the run:
-        clearvars -except z ii configurations_list matrix_1 matrix_1_pd matrix_2 matrix_3...
-                matrix_1_mlp matrix_1_pd_mlp matrix_2_mlp matrix_3_mlp...
-                    least_square literate; 
+        clearvars -except z ii matrix_1 matrix_1_pd matrix_2 matrix_3...
+                matrix_1_mlp matrix_1_pd_mlp matrix_2_mlp matrix_3_mlp literate; 
         close all;
         save 
 
     end
-    dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date without "-YYYY"
-    hour_str = int2str(c(4));
-    min_str = int2str(c(5));
-    if length(hour_str) == 1
-        hour_str = ['0' hour_str(1)];
-    end
-    if length(min_str) == 1
-        min_str = ['0' min_str(1)];
-    end
-    if least_square
-        filename = "saved_models/literate_models/tf_matrix/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "trialTF_LS";
-        save(filename,'matrix_1','matrix_1_pd','matrix_2','matrix_3_outer','matrix_3_inner');
-        excel_TF_export;
-    else
-        filename = "saved_models/literate_models/tf_matrix/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "trialTF_MLP";
-        save(filename,'matrix_1_mlp','matrix_1_pd_mlp','matrix_2_mlp','matrix_3_outer_mlp','matrix_3_inner_mlp');
-        excel_TF_export;
-    end
 end
+dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date without "-YYYY"
+hour_str = int2str(c(4));
+min_str = int2str(c(5));
+if length(hour_str) == 1
+    hour_str = ['0' hour_str(1)];
+end
+if length(min_str) == 1
+    min_str = ['0' min_str(1)];
+end
+filename = "saved_models/literate_models/tf_matrix/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "trialTF_LS";
+save(filename,'matrix_1','matrix_1_pd','matrix_2','matrix_3_outer','matrix_3_inner');
+excel_TF_export(true,literate);
+filename = "saved_models/literate_models/tf_matrix/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "trialTF_MLP";
+save(filename,'matrix_1_mlp','matrix_1_pd_mlp','matrix_2_mlp','matrix_3_outer_mlp','matrix_3_inner_mlp');
+excel_TF_export(false,literate);
+

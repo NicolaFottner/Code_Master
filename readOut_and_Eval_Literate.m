@@ -114,7 +114,7 @@ end
 properties.dropout = dropout;
 properties.dropout_p1 = p_layer1;
 properties.dropout_cl = a1;
-properties.minibatchsize = g_batchsize;
+properties.minibatchsize = batchsize;
 properties.epoch2 = final_epoch;
 
 properties.numhid2 = numhid2;

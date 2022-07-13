@@ -37,7 +37,7 @@ elem.minibatchsize= 24;
 configurations_list = [configurations_list;elem];
 
 for z=1:size(configurations_list,1)
-    for ii=1:1    %% --- 5
+    for ii=1:5    %% --- 5
         % initialize hyperparameters
         maxepoch=1; % 500
         geo_shape_class = 6; %problem of 6 class/shapes
@@ -180,5 +180,6 @@ if length(min_str) == 1
 end
 filename = "saved_models/illiterate_models/tf_matrix/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "TF_matrix";
 save(filename,'matrix_1','matrix_1_pd','matrix_2','matrix_3_outer','matrix_3_inner');
-excel_TF_export;
+assert(~literate);
+excel_TF_export(true,literate);
 end
