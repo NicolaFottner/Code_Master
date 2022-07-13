@@ -163,7 +163,7 @@ for ii = 1 : size(loadData,1) % default being the "5 participants"
 
         %% restart the run:
         clearvars -except z ii matrix_1 matrix_1_pd matrix_2 matrix_3...
-                matrix_1_mlp matrix_1_pd_mlp matrix_2_mlp matrix_3_mlp literate; 
+                matrix_1_mlp matrix_1_pd_mlp matrix_2_mlp matrix_3_mlp literate loadData; 
         close all;
         save 
 

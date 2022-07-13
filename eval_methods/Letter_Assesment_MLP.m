@@ -24,7 +24,7 @@ end
 clear data; data = d_double;
 target_s= double(target_s);
 target_l = double(target_l);
-target_l_save = targel_l;
+target_l_save = target_l;
 z = zeros(size(s_target));
 s_target = cat(2,z,s_target);
 z = zeros(size(target_s));
@@ -46,14 +46,14 @@ if numhid3 ~= 0
 end
 %% General Assesment
 %%%%%
-pred1 = net2(rbms_pass_l');
+pred1 = net(rbms_pass_l');
 [~, max_act_l] = max(pred1,[],2);
 [r1,~] = find(target_l_save'); 
 acc_l = (max_act_l == r1);
 accuracy_l = mean(acc_l);
 
 %%%%%
-pred2 = net2(rbms_pass_s');
+pred2 = net(rbms_pass_s');
 [~, max_act_s] = max(pred2,[],2);
 [r2,~] = find(s_target'); 
 acmax_cs = (max_act_s == r2);
@@ -139,7 +139,7 @@ if numhid3 ~= 0
     rbms_pass_pl = 1./(1 + exp(-rbms_pass_pl*vishid_3 - repmat(hidbiases_3,size(rbms_pass_pl,1),1)));
 end
 %%%%%
-pred3 = net2(rbms_pass_pl');
+pred3 = net(rbms_pass_pl');
 [~, max_act_pl] = max(pred3,[],2);
 [r3,~] = find(target_l'); 
 acc_pl = (max_act_pl == r3);
