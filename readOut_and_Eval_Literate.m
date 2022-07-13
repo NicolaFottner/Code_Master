@@ -102,13 +102,13 @@ if least_square
     class_specific_output; %compute details of the output and saves them
     Letter_Assesment;
     % to get all the matrix data for the stat analysis
-    pred_ce_effect;
-    pred_ce_effect_ALL;
+    lit_pred_ce_effect;
+    lit_pred_ce_effect_ALL;
 else
     class_specific_output_MLP;
     Letter_Assesment_MLP;
-    pred_ce_effect_MLP;
-    pred_ce_effect_ALL_MLP;
+    lit_pred_ce_effect_MLP;
+    lit_pred_ce_effect_ALL_MLP;
 end
 
 properties.dropout = dropout;

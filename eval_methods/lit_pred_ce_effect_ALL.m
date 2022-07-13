@@ -278,9 +278,9 @@ for i=1:size(inc_pl_t)
         end
     end
     if find(inc_pl_t(i,:)) == 3
-        if find(inc_pl_s(i,:)) == 3
+        if find(inc_pl_s(i,:)) == 9
             inc_3a=[inc_3a;acc_inc_pl_t(i)];
-        elseif find(inc_pl_s(i,:)) == 1
+        elseif find(inc_pl_s(i,:)) == 7
             inc_3b=[inc_3b;acc_inc_pl_t(i)];
         end
     end

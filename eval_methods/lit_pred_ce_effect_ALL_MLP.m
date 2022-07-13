@@ -60,7 +60,7 @@ load l_rbm_2.mat vishid_2 hidbiases_2
 hid_out_1_d = 1./(1 + exp(-cong_l_d*vishid_1 - repmat(hidbiases_1,size(cong_l_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
 % Compute prediction:
-pred_cl = net(rbms_pass');
+pred_cl = net(rbms_pass')';
 [~, max_act] = max(pred_cl,[],2); 
 [r2,~] = find(cong_l_s');
 acc_cong_l_s = (max_act == r2);
@@ -70,7 +70,7 @@ acc_cong_l_t = (max_act == r1);
 %% EVAL - Pseudo Letter congruent
 hid_out_1_d = 1./(1 + exp(-cong_pl_d*vishid_1 - repmat(hidbiases_1,size(cong_pl_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
-pred_cpl = net(rbms_pass');
+pred_cpl = net(rbms_pass')';
 [~, max_act] = max(pred_cpl,[],2); 
 [r2,~] = find(cong_pl_s'); 
 acc_cong_pl_s = (max_act == r2);
@@ -80,7 +80,7 @@ acc_cong_pl_t = (max_act == r1);
 %% EVAL - Letter Incongruent
 hid_out_1_d = 1./(1 + exp(-inc_l_d*vishid_1 - repmat(hidbiases_1,size(inc_l_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
-pred_il = net(rbms_pass');
+pred_il = net(rbms_pass')';
 [~, max_act] = max(pred_il,[],2); 
 [r2,~] = find(inc_l_s'); 
 acc_inc_l_s = (max_act == r2);
@@ -89,7 +89,7 @@ acc_inc_l_t = (max_act == r1);
 %% EVAL - Pseudo-Letter Incongruent
 hid_out_1_d = 1./(1 + exp(-inc_pl_d*vishid_1 - repmat(hidbiases_1,size(inc_pl_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
-pred_ipl = net(rbms_pass');
+pred_ipl = net(rbms_pass')';
 [~, max_act] = max(pred_ipl,[],2); 
 [r2,~] = find(inc_pl_s'); 
 acc_inc_pl_s = (max_act == r2);
@@ -263,9 +263,9 @@ for i=1:size(inc_pl_t)
         end
     end
     if find(inc_pl_t(i,:)) == 3
-        if find(inc_pl_s(i,:)) == 3
+        if find(inc_pl_s(i,:)) == 9
             inc_3a=[inc_3a;acc_inc_pl_t(i)];
-        elseif find(inc_pl_s(i,:)) == 1
+        elseif find(inc_pl_s(i,:)) == 7
             inc_3b=[inc_3b;acc_inc_pl_t(i)];
         end
     end

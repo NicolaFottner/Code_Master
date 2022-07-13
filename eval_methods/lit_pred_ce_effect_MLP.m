@@ -70,7 +70,7 @@ Letter_decisionAcc = zeros(4,1);
 hid_out_1_d = 1./(1 + exp(-cong_l_d*vishid_1 - repmat(hidbiases_1,size(cong_l_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
 % Compute prediction:
-pred = net(rbms_pass');
+pred = net(rbms_pass')';
 [~, max_act] = max(pred,[],2); % max_act are indices of dim2 in pred of the highest value
 [r1,~] = find(cong_l_t'); % letter id
 [r2,~] = find(cong_l_s'); % shape id
@@ -148,7 +148,7 @@ cl_ce_pdr_inner = [prD_a;prD_h;prD_m;prD_u;prD_t;prD_x];
 hid_out_1_d = 1./(1 + exp(-cong_pl_d*vishid_1 - repmat(hidbiases_1,size(cong_pl_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
 % Compute prediction:
-pred = net(rbms_pass');
+pred = net(rbms_pass')';
 [~, max_act] = max(pred,[],2); % max_act are indices of dim2 in pred of the highest value
 [r1,~] = find(cong_pl_t'); % find which columns (rows in transpose) are 1
 [r2,~] = find(cong_pl_s'); % find which columns (rows in transpose) are 1
@@ -221,7 +221,7 @@ cpl_ce_pdr = [prD_a;prD_h;prD_m;prD_u;prD_t;prD_x];
 hid_out_1_d = 1./(1 + exp(-inc_l_d*vishid_1 - repmat(hidbiases_1,size(inc_l_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
 % Compute prediction:
-pred = net(rbms_pass');
+pred = net(rbms_pass')';
 [~, max_act] = max(pred,[],2);
 [r1,~] = find(inc_l_t');
 [r2,~] = find(inc_l_s');
@@ -384,7 +384,7 @@ inc_l_pdr_detailed = [pred_a_el;pred_a_re;pred_h_el;pred_h_tr;pred_m_cr;pred_m_h
 hid_out_1_d = 1./(1 + exp(-inc_pl_d*vishid_1 - repmat(hidbiases_1,size(inc_pl_d,1),1)));
 rbms_pass = 1./(1 + exp(-hid_out_1_d*vishid_2 - repmat(hidbiases_2,size(hid_out_1_d,1),1)));
 % Compute prediction:
-pred = net(rbms_pass');
+pred = net(rbms_pass')';
 [~, max_act] = max(pred,[],2); %
 [r1,~] = find(inc_pl_t');
 [r2,~] = find(inc_pl_s'); 

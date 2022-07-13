@@ -40,7 +40,7 @@ loadData = dir([sourceDir '*.mat']);
 literate = true; % for data plotting methods
 
 for ii = 1 : size(loadData,1) % default being the "5 participants"
-    for z=2:2 % loop to test on both LS-regrs and MLP
+    for z=1:2 % loop to test on both LS-regrs and MLP
         load([loadData(ii).name],'hidbiases_2','properties','visbiases_2','vishid_2','W2');
         numhid = 1000;
         numhid2 = properties.numhid2;
