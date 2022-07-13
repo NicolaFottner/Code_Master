@@ -1,18 +1,21 @@
 % class_specific_output; computed on the test set
 dd = strsplit(date,'-');clean_date = strcat(dd(1),dd(2)); %without "-YY
 weightsx = W2;
-index = floor(size(g_batchtargets,1)*p); % p = percentage of test data
-test_l =  g_batchtargets(1:index,:); % here 'l' for 'labels'
-if numhid3 == 0
-    eval_data = hid_out_2(1:index, :); % basically like the test set from before
-    str_hid3 = "";
-else
-    eval_data = hid_out_3(1:index, :);
-    str_hid3 = "three/";
-end
 
-test_l = g_batchtargets;
-eval_data = hid_out_2;
+if ~literate
+    index = floor(size(g_batchtargets,1)*p); % p = percentage of test data
+    test_l =  g_batchtargets(1:index,:); % here 'l' for 'labels'
+    if numhid3 == 0
+        eval_data = hid_out_2(1:index, :); % basically like the test set from before
+        str_hid3 = "";
+    else
+        eval_data = hid_out_3(1:index, :);
+        str_hid3 = "three/";
+    end
+else
+    eval_data = rbm2_pass_test;
+    test_l = test_t;
+end
 
 ONES = ones(size(eval_data, 1), 1);
 eval_data = [eval_data ONES];

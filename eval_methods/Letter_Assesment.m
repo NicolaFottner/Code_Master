@@ -40,7 +40,7 @@ end
 clear data; data = d_double;
 target_s= double(target_s);
 target_l = double(target_l);
-target_l_save = targel_l;
+target_l_save = target_l;
 if literate
     z = zeros(size(s_target));
     s_target = cat(2,z,s_target);

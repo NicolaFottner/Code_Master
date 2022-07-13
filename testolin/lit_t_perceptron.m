@@ -9,11 +9,6 @@
 
 function [weights, tr_acc,te_acc,tr_loss,te_loss] = lit_t_perceptron(a,tr_data,tr_targets,te_data,te_targets)
 
-%% prepare learning
-tr_acc = 0;
-te_acc = 0;
-
-
 % add biases
 ONES = ones(size(tr_data, 1), 1);  
 tr_data = [tr_data ONES];
@@ -52,12 +47,11 @@ ONES = ones(size(te_data, 1), 1);
 te_data= [te_data ONES];
 pred = te_data * weights;
 softmax_pred = softmax(dlarray(pred','CB'));
-te_loss = extractdata(crossentropy(softmax_pred,te_data'));
+te_loss = extractdata(crossentropy(softmax_pred,te_targets'));
 pred = extractdata(softmax_pred)';
 [~, max_act] = max(pred,[],2);
 [r,~] = find(te_targets');
 acc = (max_act == r);
 te_acc = mean(acc);
-
 
 end
