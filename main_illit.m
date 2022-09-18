@@ -29,16 +29,16 @@ least_square = true;
 % newCE_data_(pos1)
 
 configurations_list = [];
-elem.layer2=350;
+elem.layer2=300;
 elem.layer3= 0;
 elem.dropout= 0;
-elem.minibatchsize= 24;
+elem.minibatchsize= 12;
 configurations_list = [configurations_list;elem];
 
 for z=1:size(configurations_list,1)
     for ii=1:1    %% --- 5
         % initialize hyperparameters
-        maxepoch=1; % 500
+        maxepoch=100; % 500
         geo_shape_class = 6; %problem of 6 class/shapes
         numhid2 = configurations_list(z).layer2;
         numhid3 = configurations_list(z).layer3;
@@ -114,6 +114,8 @@ for z=1:size(configurations_list,1)
         rbm2.finalmomentum    = 0.9;
         rbm2.earlyStopping = true;
         restart=1;
+        
+
         rbm_2;
         vishid_2=vishid; hidbiases_2=hidbiases; visbiases_2=visbiases; hid_out_2 = batchposhidprobs_2;
         save g_rbm_2 vishid_2 hidbiases_2 visbiases_2; % hid_out_2;

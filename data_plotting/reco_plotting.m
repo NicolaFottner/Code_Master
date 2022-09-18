@@ -14,26 +14,26 @@ g_numcases = 12;
 f = figure;
 x_n= (1:size(full_rec_err,1));
 y_n=sum(full_rec_err,2)/numbatches;
-subplot(3,1,1);
+subplot(1,1,1);
 plot(x_n,y_n);
 title("")
 xlabel('Epoch'),ylabel('Average reconstruction error')
-
-% overfitting measure:
-% avgEnergy(training) - avgEnergy(validation)
-energy_diff = abs(Overfitting(:,1) - Overfitting(:,2));
-over_x=1:size(Overfitting,1);
-subplot(3,1,2);
-plot(over_x,Overfitting(:,1));
-hold on 
-plot(over_x,Overfitting(:,2));
-hold off
-subplot(3,1,3)
-plot(over_x,energy_diff);
-hold off
-title("")
-xlabel('Epoch')
-ylabel('Average Free energy')
+% % % 
+% % % % overfitting measure:
+% % % % avgEnergy(training) - avgEnergy(validation)
+% % % energy_diff = abs(Overfitting(:,1) - Overfitting(:,2));
+% % % over_x=1:size(Overfitting,1);
+% % % subplot(3,1,2);
+% % % plot(over_x,Overfitting(:,1));
+% % % hold on 
+% % % plot(over_x,Overfitting(:,2));
+% % % hold off
+% % % subplot(3,1,3)
+% % % plot(over_x,energy_diff);
+% % % hold off
+% % % title("")
+% % % xlabel('Epoch')
+% % % ylabel('Average Free energy')
 
 
 file_name = "data_plotting/18_Sep_Reco_error.pdf";
