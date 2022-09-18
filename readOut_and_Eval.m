@@ -120,48 +120,48 @@ filename = "Evals/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "H2"+ i
 save(filename,'properties','Classifier','Classifier_Details','Id_BasedOnGeoS','histograms', ...
     'CE_eval','Overfitting','reco_error');
 
-% 
-% %% Plot receptive fields
-% % create DN struct for facilitating later "plotting the receptive fields"
-% % for most fields, any number will do
-% if numhid3 == 0
-%     DN.layersize   = [1000 numhid2];           % network architecture
-%     DN.nlayers     = length(DN.layersize);
-%     DN.maxepochs   = 60;                    % unsupervised learning epochs
-%     DN.batchsize   = 160;                   % mini-batch size
-%     %set parameters of rbm 1 layer:
-%     DN.L{1}.hidbiases  = hidbiases_1;
-%     DN.L{1}.vishid     = vishid_1;
-%     DN.L{1}.visbiases  = visbiases_1;
-%     %set parameters of rbm 2 layer:
-%     DN.L{2}.hidbiases  = hidbiases_2;
-%     DN.L{2}.vishid     = vishid_2;
-%     DN.L{2}.visbiases  = visbiases_2;
-% else
-%     DN.layersize   = [1000 numhid2 numhid3];           % network architecture
-%     DN.nlayers     = length(DN.layersize);
-%     DN.maxepochs   = 60;                    % unsupervised learning epochs
-%     DN.batchsize   = 160;                   % mini-batch size
-%     %set parameters of rbm 1 layer:
-%     DN.L{1}.hidbiases  = hidbiases_1;
-%     DN.L{1}.vishid     = vishid_1;
-%     DN.L{1}.visbiases  = visbiases_1;
-%     %set parameters of rbm 2 layer:
-%     DN.L{2}.hidbiases  = hidbiases_2;
-%     DN.L{2}.vishid     = vishid_2;
-%     DN.L{2}.visbiases  = visbiases_2;
-%     %set parameters of rbm 3 layer:
-%     DN.L{3}.hidbiases  = hidbiases_3;
-%     DN.L{3}.vishid     = vishid_3;
-%     DN.L{3}.visbiases  = visbiases_3;
-% end
+
+%% Plot receptive fields
+% create DN struct for facilitating later "plotting the receptive fields"
+% for most fields, any number will do
+if numhid3 == 0
+    DN.layersize   = [1000 numhid2];           % network architecture
+    DN.nlayers     = length(DN.layersize);
+    DN.maxepochs   = 60;                    % unsupervised learning epochs
+    DN.batchsize   = 160;                   % mini-batch size
+    %set parameters of rbm 1 layer:
+    DN.L{1}.hidbiases  = hidbiases_1;
+    DN.L{1}.vishid     = vishid_1;
+    DN.L{1}.visbiases  = visbiases_1;
+    %set parameters of rbm 2 layer:
+    DN.L{2}.hidbiases  = hidbiases_2;
+    DN.L{2}.vishid     = vishid_2;
+    DN.L{2}.visbiases  = visbiases_2;
+else
+    DN.layersize   = [1000 numhid2 numhid3];           % network architecture
+    DN.nlayers     = length(DN.layersize);
+    DN.maxepochs   = 60;                    % unsupervised learning epochs
+    DN.batchsize   = 160;                   % mini-batch size
+    %set parameters of rbm 1 layer:
+    DN.L{1}.hidbiases  = hidbiases_1;
+    DN.L{1}.vishid     = vishid_1;
+    DN.L{1}.visbiases  = visbiases_1;
+    %set parameters of rbm 2 layer:
+    DN.L{2}.hidbiases  = hidbiases_2;
+    DN.L{2}.vishid     = vishid_2;
+    DN.L{2}.visbiases  = visbiases_2;
+    %set parameters of rbm 3 layer:
+    DN.L{3}.hidbiases  = hidbiases_3;
+    DN.L{3}.vishid     = vishid_3;
+    DN.L{3}.visbiases  = visbiases_3;
+end
 
 %plot_L1(DN,1000);
 
-%  
-% if ii == 1 && numhid3 == 0
-%     plot_L2(DN,numhid2,final_epoch);
-% elseif ii == 1 && numhid3 ~= 0
-%     plot_L2(DN,numhid2,final_epoch);
-%     plot_L3(DN,numhid3,final_epoch_3);
-% end
+ 
+if ii == 1 && numhid3 == 0
+    plot_L2(DN,numhid2,final_epoch);
+elseif ii == 1 && numhid3 ~= 0
+    plot_L2(DN,numhid2,final_epoch);
+    plot_L3(DN,numhid3,final_epoch_3);
+end

@@ -101,14 +101,20 @@ g_batchtargets = test_t;
 if least_square
     class_specific_output; %compute details of the output and saves them
     Letter_Assesment;
+    Letter_3posAssesment;
     % to get all the matrix data for the stat analysis
+    ii=1;
     lit_pred_ce_effect;
     lit_pred_ce_effect_ALL;
+    ii=7;
 else
+    ii=1;
     class_specific_output_MLP;
     Letter_Assesment_MLP;
+    Letter_3posAssesment;
     lit_pred_ce_effect_MLP;
     lit_pred_ce_effect_ALL_MLP;
+    ii=7;
 end
 
 properties.dropout = dropout;

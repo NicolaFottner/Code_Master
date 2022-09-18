@@ -168,13 +168,13 @@ else % when geo_class  == 12
     xlabel('M');
     %:
     subplot(4,3,4);
-    prD_U =  mean(pred_4,1);
-    bar(prD_U);
+    prD_T =  mean(pred_4,1);
+    bar(prD_T);
     xlabel('T');
     %:
     subplot(4,3,5);
-    prD_T =  mean(pred_5,1);
-    bar(prD_T);
+    prD_U =  mean(pred_5,1);
+    bar(prD_U);
     xlabel('U');
     %:
     subplot(4,3,6);

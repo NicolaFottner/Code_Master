@@ -558,9 +558,9 @@ inc_pl_pdr_detailed = [pred_a_el;pred_a_re;pred_h_el;pred_h_tr;pred_m_cr;pred_m_
                         pred_t_he;pred_t_sq;pred_x_cr;pred_x_sq];
 %% store the evaluation data
 Targets = ["Cong_Letter" ; "Cong_Ps-Letter"; "Inc_Letter";"Inc_Ps-Letter"];
-CE_eval.overall = table(Targets,Shape_decisionAcc,Letter_decisionAcc);
-CE_eval.CEs_Letter = Shape_decisionAcc(1)*100 - Shape_decisionAcc(3)*100;
-CE_eval.CEs_psLetter = Shape_decisionAcc(2)*100 - Shape_decisionAcc(4)*100;
+CE_eval.overall = table(Targets,Letter_decisionAcc,Shape_decisionAcc);
+CE_eval.CE_Letter = Letter_decisionAcc(1)*100 - Letter_decisionAcc(3)*100;
+CE_eval.CE_psLetter = Letter_decisionAcc(2)*100 - Letter_decisionAcc(4)*100;
 
 Targets = ["A/Tria";"H/Rect";"M/Squ";"U/Elips";"T/Cross";"X/Hexa"];
 letter_acc = cl_ce_details_inner.Acc; letter_mode = cl_ce_details_inner.Mode;
