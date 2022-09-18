@@ -28,7 +28,6 @@ least_square = true;
 % LETTER_POS1
 % newCE_data_(pos1)
 
-
 configurations_list = [];
 elem.layer2=350;
 elem.layer3= 0;

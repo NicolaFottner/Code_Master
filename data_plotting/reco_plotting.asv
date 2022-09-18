@@ -1,0 +1,33 @@
+% plot (avg batch) reconstruction error
+dd = strsplit(date,'-');
+clean_date = strcat(dd(1),dd(2)); %without "-YYYY"
+
+addpath("Evals/25J_tania/")
+load Evals/25J_tania/25Jun_13h41 m_H2300_H30.mat reco_error
+
+numbatches = size(reco_error,2);
+
+full_rec_err = reco_error;
+f = figure;
+
+x_n= (1:size(full_rec_err,1));
+y_n=sum(full_rec_err,2)/numbatches;
+subplot(1,2,1);
+plot(x_n,y_n);
+title("RBM 2 on: " + clean_date)
+xlabel('Epoch'),ylabel('avg batch Reco-error')
+
+file_name = "data_plotting/18_Sep_Reco_error.pdf";
+exportgraphics(f,file_name)
+
+
+
+
+
+
+
+
+
+
+
+
