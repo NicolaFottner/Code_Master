@@ -158,10 +158,12 @@ end
 
 %plot_L1(DN,1000);
 
- 
-if ii == 1 && numhid3 == 0
-    plot_L2(DN,numhid2,final_epoch);
-elseif ii == 1 && numhid3 ~= 0
-    plot_L2(DN,numhid2,final_epoch);
-    plot_L3(DN,numhid3,final_epoch_3);
-end
+plot_L2(DN,numhid2,final_epoch);
+
+%  
+% if ii == 1 && numhid3 == 0
+%     plot_L2(DN,numhid2,final_epoch);
+% elseif ii == 1 && numhid3 ~= 0
+%     plot_L2(DN,numhid2,final_epoch);
+%     plot_L3(DN,numhid3,final_epoch_3);
+% end

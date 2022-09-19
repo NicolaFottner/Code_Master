@@ -38,7 +38,7 @@ configurations_list = [configurations_list;elem];
 for z=1:size(configurations_list,1)
     for ii=1:1    %% --- 5
         % initialize hyperparameters
-        maxepoch=100; % 500
+        maxepoch=27; % 500
         geo_shape_class = 6; %problem of 6 class/shapes
         numhid2 = configurations_list(z).layer2;
         numhid3 = configurations_list(z).layer3;
@@ -112,7 +112,7 @@ for z=1:size(configurations_list,1)
         rbm2.initialmomentum  = 0.5;
         rbm2.patience = 3;
         rbm2.finalmomentum    = 0.9;
-        rbm2.earlyStopping = true;
+        rbm2.earlyStopping = false; %true;
         restart=1;
         
 
@@ -167,8 +167,8 @@ for z=1:size(configurations_list,1)
         save(model_name,'vishid_2','hidbiases_2', 'visbiases_2', 'W2','properties');
 
         %% restart the run:
-        clearvars -except z ii configurations_list matrix_1 matrix_1_pd matrix_2 least_square matrix_3_outer matrix_3_inner literate; 
-        close all;
+%         clearvars -except z ii configurations_list matrix_1 matrix_1_pd matrix_2 least_square matrix_3_outer matrix_3_inner literate; 
+%         close all;
     end
 dd = strsplit(date,'-'); clean_date = strcat(dd(1),dd(2));c=clock; %store date without "-YYYY"
 hour_str = int2str(c(4));
@@ -179,8 +179,8 @@ end
 if length(min_str) == 1
     min_str = ['0' min_str(1)];
 end
-filename = "saved_models/illiterate_models/tf_matrix/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "TF_matrix";
-save(filename,'matrix_1','matrix_1_pd','matrix_2','matrix_3_outer','matrix_3_inner');
-assert(~literate);
-excel_TF_export(true,literate);
+% filename = "saved_models/illiterate_models/tf_matrix/" + clean_date + "_" + hour_str + "h" + min_str+"m_" + "TF_matrix";
+% save(filename,'matrix_1','matrix_1_pd','matrix_2','matrix_3_outer','matrix_3_inner');
+% assert(~literate);
+% excel_TF_export(true,literate);
 end
